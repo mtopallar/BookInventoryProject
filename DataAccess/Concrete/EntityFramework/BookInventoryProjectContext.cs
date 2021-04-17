@@ -23,8 +23,6 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Nationality> Nationalities { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<UserBook> UserBooks { get; set; }
-        public DbSet<UserBookNote> UserBookNotes { get; set; }
-        public DbSet<UserReadStatue> UserReadStatues { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<OperationClaim> OperationClaims { get; set; }
         public DbSet<UserOperationClaim> UserOperationClaims { get; set; }

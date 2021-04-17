@@ -12,5 +12,7 @@ namespace Entities.Concrete
         public int Id { get; set; }
         public int UserId { get; set; }
         public int BookId { get; set; }
+        public bool ReadStatue { get; set; }
+        public string Note { get; set; }
     }
 }
