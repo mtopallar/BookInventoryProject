@@ -5,15 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Entities.Abstract;
 
-namespace Core.Entities.Concrete
+namespace Entities.DTOs
 {
-    public class User:IEntity
+    public class UserWithDetailsAndRolesDto:IDto
     {
-        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public byte[] PasswordSalt { get; set; }
-        public byte[] PasswordHash { get; set; }
+        public string ClaimName { get; set; }
     }
 }
