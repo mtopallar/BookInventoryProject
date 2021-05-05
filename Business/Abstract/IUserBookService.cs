@@ -18,9 +18,9 @@ namespace Business.Abstract
        IDataResult<List<BookForUserDto>> GetByAuthorNationality(int userId, int nationalityId);
        IDataResult<List<BookForUserDto>> GetByGenreId(int userId, int genreId);
        IDataResult<List<BookForUserDto>> GetByReadStatue(int userId, bool readStatue);
-       IResult Add(int userId, int bookId);
-       IResult Update(int userId, int bookId);
-       IResult Delete(int userId, int bookId);
+       IResult Add(UserBook userBook);
+       IResult Update(UserBook userBook);
+       IResult Delete(UserBook userBook);
 
    }
 }

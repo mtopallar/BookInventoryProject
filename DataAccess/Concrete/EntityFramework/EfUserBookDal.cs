@@ -22,13 +22,17 @@ namespace DataAccess.Concrete.EntityFramework
                     join publisher in context.Publishers on book.PublisherId equals publisher.Id
                     join author in context.Authors on book.AuthorId equals author.Id
                     join genre in context.Genres on book.GenreId equals genre.Id
+                    join nationality in context.Nationalities on author.NationalityId equals nationality.Id
                     select new BookForUserDto
                     {
+                        UserId = userbook.UserId,
                         BookId = book.Id,
                         Name = book.Name,
                         Isbn = book.Isbn,
                         PublisherName = publisher.Name,
-                        AuthorName = author.Name,
+                        AuthorName = author.FirstName,
+                        AuthorLastName = author.LastName,
+                        CountryName = nationality.CountryName,
                         GenreName = genre.Name,
                         ReadStatue = userbook.ReadStatue
                     };

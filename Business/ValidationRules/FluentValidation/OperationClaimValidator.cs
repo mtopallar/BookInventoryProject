@@ -8,12 +8,12 @@ using FluentValidation;
 
 namespace Business.ValidationRules.FluentValidation
 {
-    public class OperationClaimValidator:AbstractValidator<OperationClaim>
+    public class OperationClaimValidator:AbstractValidator<OperationClaim> //rolleri ön tanımlı yüklediğim için silinebilir.
     {
-        public OperationClaimValidator()
-        {
-            RuleFor(o => o.Name).NotEmpty();
-            RuleFor(o => o.Name).MinimumLength(4);
-        }
+        //public OperationClaimValidator()
+        //{
+        //    RuleFor(o => o.Name).NotEmpty();
+        //    RuleFor(o => o.Name).MinimumLength(4);
+        //}
     }
 }

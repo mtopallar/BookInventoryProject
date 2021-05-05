@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
+using Entities.DTOs;
 
 namespace Business.Abstract
 {
@@ -13,8 +14,9 @@ namespace Business.Abstract
         IDataResult<List<OperationClaim>> GetClaims(User user); //For auth.
         IDataResult<List<User>> GetAll();
         IDataResult<User> GetByMail(string email);
+        IDataResult<User> GetById(int id);
         IResult Add(User user);
-        IResult Update(User user);
+        IResult Update(UserForRegisterAndUpdateDto userForUpdateDto);
         IResult DeleteForAdmin(int userId);
         IResult DeleteForUser(string currentPassword, int userId);
 
