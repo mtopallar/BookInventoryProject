@@ -15,12 +15,11 @@ namespace Business.Concrete
     public class UserOperationClaimManager:IUserOperationClaimService
     {
         private readonly IUserOperationClaimDal _userOperationClaimDal;
-        private readonly IUserService _userService;
+        
 
-        public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal, IUserService userService)
+        public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal)
         {
             _userOperationClaimDal = userOperationClaimDal;
-            _userService = userService;
         }
 
         public IDataResult<List<UserOperationClaim>> GetAll()
@@ -34,21 +33,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<UserOperationClaim>>(
                 _userOperationClaimDal.GetAll(u => u.UserId == userId), Messages.GetUserOperationClaimByIdSuccessfully);
         }
-
-        public IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles()
-        {
-            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(_userOperationClaimDal
-                .GetRolesWithUserDetails(),Messages.GetAllUserDetailsWitrRolesSuccessfully);
-        }
-
-        public IDataResult<List<UserWithDetailsAndRolesDto>> GetUserDetailsWithRolesByUserId(int userId)
-        {
-            var getUser = _userService.GetById(userId).Data;
-            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(
-                _userOperationClaimDal.GetRolesWithUserDetails(u => u.Email == getUser.Email),
-                Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
-        }
-
+        
         public IResult Add(UserOperationClaim userOperationClaim)
         {
             _userOperationClaimDal.Add(userOperationClaim);

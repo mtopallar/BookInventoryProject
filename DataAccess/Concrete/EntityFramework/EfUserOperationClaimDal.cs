@@ -13,23 +13,6 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfUserOperationClaimDal:EfEntityRepositoryBase<UserOperationClaim,BookInventoryProjectContext>,IUserOperationClaimDal
     {
-        public List<UserWithDetailsAndRolesDto> GetRolesWithUserDetails(Expression<Func<UserWithDetailsAndRolesDto, bool>> filter=null)
-        {
-            using (var context = new BookInventoryProjectContext())
-            {
-                var result = from user in context.Users
-                    join userOperationClaim in context.UserOperationClaims on user.Id equals userOperationClaim.UserId
-                    join operaitonClaim in context.OperationClaims on userOperationClaim.OperationClaimId equals
-                        operaitonClaim.Id
-                    select new UserWithDetailsAndRolesDto
-                    {
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        ClaimName = operaitonClaim.Name
-                    };
-                return filter == null ? result.ToList() : result.Where(filter).ToList();
-            }
-        }
+       
     }
 }

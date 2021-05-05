@@ -12,6 +12,8 @@ namespace Business.Abstract
     public interface IUserService
     {
         IDataResult<List<OperationClaim>> GetClaims(User user); //For auth.
+        IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles();
+        IDataResult<List<UserWithDetailsAndRolesDto>> GetUserDetailsWithRolesByUserId(int userId);
         IDataResult<List<User>> GetAll();
         IDataResult<User> GetByMail(string email);
         IDataResult<User> GetById(int id);

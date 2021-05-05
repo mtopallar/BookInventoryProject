@@ -12,7 +12,6 @@ namespace DataAccess.Abstract
 {
    public interface IUserOperationClaimDal:IEntityRepository<UserOperationClaim>
    {
-       List<UserWithDetailsAndRolesDto> GetRolesWithUserDetails(
-           Expression<Func<UserWithDetailsAndRolesDto, bool>> filter=null);
+      
    }
 }

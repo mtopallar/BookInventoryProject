@@ -14,7 +14,7 @@ namespace Business.Concrete
 {
     public class UserManager:IUserService
     {
-        private IUserDal _userDal;
+        private readonly IUserDal _userDal;
 
         public UserManager(IUserDal userDal)
         {
@@ -25,6 +25,20 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetUserClaims(user),
                 Messages.GetUsersAllClaimsSuccessfully);
+        }
+
+        public IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles()
+        {
+            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(_userDal
+                .GetRolesWithUserDetails(),Messages.GetAllUserDetailsWitrRolesSuccessfully);
+        }
+
+        public IDataResult<List<UserWithDetailsAndRolesDto>> GetUserDetailsWithRolesByUserId(int userId)
+        {
+            var getUser = GetById(userId).Data;
+            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(
+                _userDal.GetRolesWithUserDetails(u => u.Email == getUser.Email),
+                Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
         }
 
         public IDataResult<List<User>> GetAll()

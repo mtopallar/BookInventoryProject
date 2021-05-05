@@ -77,13 +77,14 @@ namespace Business.Constants
         //UserOperationClaims
         public static string GetAllUserOperaitonClaimsSuccessfully="Tüm kullanıcı rolleri başarıyla listelendi.";
         public static string GetUserOperationClaimByIdSuccessfully="Kullanıcının rolleri başarıyla listelendi.";
-        public static string GetAllUserDetailsWitrRolesSuccessfully="Tüm kullanıcıların kullanıcı ve rol detayları başarıyla listelendi.";
-        public static string GetUserDetailsWithRolesByUserIdSuccessfully="Kullanıcının rolleri detaylarıyla listelendi.";
+        
         public static string UserOperationClaimAddedSuccessfully="Kullanıcıya rolü başarıyla eklenmiştir.";
         public static string UserOperationClaimUpdatedSuccessfully="Kullanıcını rolü başarıyla güncellenmiştir.";
         public static string UserOperationClaimDeletedSuccessfully="Kullanıcı rolü başarıyla silinmiştir.";
         
         //UserManager
         public static string GetUsersAllClaimsSuccessfully="Kullanıcının tüm rolleri rol formatında getirildi.";
+        public static string GetAllUserDetailsWitrRolesSuccessfully="Tüm kullanıcıların kullanıcı ve rol detayları başarıyla listelendi.";
+        public static string GetUserDetailsWithRolesByUserIdSuccessfully="Kullanıcının rolleri detaylarıyla listelendi.";
     }
 }
