@@ -18,6 +18,7 @@ namespace Business.Abstract
        IDataResult<List<BookForUserDto>> GetByAuthorNationality(int userId, int nationalityId);
        IDataResult<List<BookForUserDto>> GetByGenreId(int userId, int genreId);
        IDataResult<List<BookForUserDto>> GetByReadStatue(int userId, bool readStatue);
+       IDataResult<List<UserBook>> GetAllUserBooks(int userId); //user manager da kullanılacak.
        IResult Add(UserBook userBook);
        IResult Update(UserBook userBook);
        IResult Delete(UserBook userBook);

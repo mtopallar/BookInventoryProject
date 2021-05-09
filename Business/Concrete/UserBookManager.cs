@@ -84,6 +84,13 @@ namespace Business.Concrete
                 _userBookDal.GetBookWithDetails(b => b.UserId == userId && b.ReadStatue == readStatue),
                 Messages.GetUsersAllBookByReadStatueSuccessfully);
         }
+        [SecuredOperation("user,admin")]
+        public IDataResult<List<UserBook>> GetAllUserBooks(int userId)
+        {
+            return new SuccessDataResult<List<UserBook>>(_userBookDal.GetAll(u => u.UserId == userId),
+                Messages.GetAllUserBookEntitiesSuccessfully);
+        }
+
         [SecuredOperation("user")]
         public IResult Add(UserBook userBook)
         {

@@ -11,8 +11,10 @@ namespace Business.Abstract
     public interface IOperationClaimService
     {
         IDataResult<List<OperationClaim>> GetAll();
-        IResult Add();
+        IDataResult<OperationClaim> GetByClaimName(string claimName);
+        IResult Add(OperationClaim operationClaim);
         IResult Delete(OperationClaim operationClaim);
+
 
         //Aşağıdaki operasyonlar gereksiz konuma düştü. Rolü öntanımlı olarak ekliyorum.
         //IDataResult<OperationClaim> GetById(int id);

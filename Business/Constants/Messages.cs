@@ -53,6 +53,7 @@ namespace Business.Constants
         public static string ClaimAlreadyAdded="Yetki zaten mevcut.";
         public static string AllClaimsAddedSuccessfully="Öntanımlı yetkiler başarıyla eklendi.";
         public static string OperationClaimDeletedSuccessfully="Yetki başarıyla silindi.";
+        public static string GetOperationClaimByNameSuccessfully="Ada göre rol detayları başarıyla getirildi.";
         
         
         //Publishers
@@ -73,6 +74,8 @@ namespace Business.Constants
         public static string UserBookAddedSuccessfully="Kitap kütüphanenize başarıyla eklendi.";
         public static string UserBookUpdatedSuccessfully="Kitap detaylarınız başarıyla güncelleştirildi.";
         public static string UserBookDeletedSuccessfully="Kitap kütüphanenizden başarıyla silinmiştir.";
+        public static string GetAllUserBookEntitiesSuccessfully="Kullanıcı kitapları başarıyla listelenmiştir.";
+        public static string AllUserBookDeletedSuccessfully="Kullanıcının kütüphanesi başarıyla silinmiştir.";
 
         //UserOperationClaims
         public static string GetAllUserOperaitonClaimsSuccessfully="Tüm kullanıcı rolleri başarıyla listelendi.";
@@ -86,5 +89,14 @@ namespace Business.Constants
         public static string GetUsersAllClaimsSuccessfully="Kullanıcının tüm rolleri rol formatında getirildi.";
         public static string GetAllUserDetailsWitrRolesSuccessfully="Tüm kullanıcıların kullanıcı ve rol detayları başarıyla listelendi.";
         public static string GetUserDetailsWithRolesByUserIdSuccessfully="Kullanıcının rolleri detaylarıyla listelendi.";
+        public static string GetAllUsersSuccessfully="Tüm kullanıcılar başarıyla listelendi.";
+        public static string GetUserByEmailSuccessfully="Mail adresine göre kullanıcı detayları başarıyla listelendi.";
+        public static string GetUserByIdSuccessfully="Kullanıcı detayları başarıyla getirildi.";
+        public static string UserAddedSuccessfully="Kaydınız başarıyla yapılmıştır.";
+        public static string CurrentUserPasswordError="Mevcut şifrenizi hatalı girdiniz.";
+        public static string UserUpdatedSuccessfully="Kullanıcı bilgileriniz başarıyla güncellendi.";
+        public static string NewEmailAlreadyExists="Kullanmak istediğiniz Email başka kullanıcı tarafından kullanılıyor.";
+        public static string UserAndUsersBooksDeletedSuccessfullyByAdmin="Kullanıcı (ve kullanıcının kütüphanesi) yönetici tarafından başarıyla silinmiştir.";
+        public static string UserAndUsersBooksDeletedSuccessfullyByUser="Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
     }
 }

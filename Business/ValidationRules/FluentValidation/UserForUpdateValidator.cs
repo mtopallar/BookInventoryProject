@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Core.Entities.Concrete;
-using Entities.Concrete;
+using System.Threading.Tasks;
 using Entities.DTOs;
 using FluentValidation;
 
 namespace Business.ValidationRules.FluentValidation
 {
-    public class UserValidator : AbstractValidator<UserForRegisterAndUpdateDto>
+    public class UserForUpdateValidator:AbstractValidator<UserForUpdateDto>
     {
-        public UserValidator()
+        public UserForUpdateValidator()
         {
             RuleFor(u => u.FirstName).NotEmpty();
             RuleFor(u => u.FirstName).MinimumLength(3);
@@ -18,8 +18,8 @@ namespace Business.ValidationRules.FluentValidation
             RuleFor(u => u.LastName).MinimumLength(2);
             RuleFor(u => u.Email).NotEmpty();
             RuleFor(u => u.Email).EmailAddress();
-            RuleFor(u => u.Password).NotEmpty();
-
+            RuleFor(u => u.CurrentPassword).NotEmpty();
+            RuleFor(u => u.NewPassword).NotEmpty();
         }
     }
 }

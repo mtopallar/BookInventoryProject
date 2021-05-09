@@ -38,7 +38,13 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OperationClaim>>(_operationClaimDal.GetAll(),
                 Messages.GetAllOperationClaimsSuccessfully);
         }
-        
+
+        public IDataResult<OperationClaim> GetByClaimName(string claimName)
+        {
+            return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(o => o.Name == claimName),
+                Messages.GetOperationClaimByNameSuccessfully);
+        }
+
         [SecuredOperation("admin")]
         public IResult Add()
         {
