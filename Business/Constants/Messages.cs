@@ -86,12 +86,13 @@ namespace Business.Constants
         public static string AllUserBookDeletedSuccessfully="Kullanıcının kütüphanesi başarıyla silinmiştir.";
 
         //UserOperationClaims
-        public static string GetAllUserOperaitonClaimsSuccessfully="Tüm kullanıcı rolleri başarıyla listelendi.";
-        public static string GetUserOperationClaimByIdSuccessfully="Kullanıcının rolleri başarıyla listelendi.";
-        public static string UserRoleSuccessfullyAddedToUser="Kullanıcıya kullanıcı rolü başarıyla eklendi.";
-        public static string UserOperationClaimAddedSuccessfully="Kullanıcıya rolü başarıyla eklenmiştir.";
-        public static string UserOperationClaimUpdatedSuccessfully="Kullanıcını rolü başarıyla güncellenmiştir.";
-        public static string UserOperationClaimDeletedSuccessfully="Kullanıcı rolü başarıyla silinmiştir.";
+        public static string GetAllUserOperaitonClaimsSuccessfully="Tüm kullanıcı yetkileri başarıyla listelendi.";
+        public static string GetUserOperationClaimByIdSuccessfully="Kullanıcının yetkileri başarıyla listelendi.";
+        public static string UserRoleSuccessfullyAddedToUser="Yeni kullanıcıya yetkisi başarıyla eklendi.";
+        public static string UserOperationClaimAddedSuccessfully="Kullanıcıya yetkisi başarıyla eklenmiştir.";
+        public static string UserOperationClaimUpdatedSuccessfully="Kullanıcını yetkisi başarıyla güncellenmiştir.";
+        public static string UserOperationClaimDeletedSuccessfully="Kullanıcı yetkisi başarıyla silinmiştir.";
+        public static string UserOperationClaimDeletedSuccessfullyByUser="Kullanıcının yetkileri kullanıcı isteğiyle başarıyla silinmiştir.";
         
         //UserManager
         public static string GetUsersAllClaimsSuccessfully="Kullanıcının tüm rolleri rol formatında getirildi.";
@@ -104,8 +105,8 @@ namespace Business.Constants
         public static string CurrentUserPasswordError="Mevcut şifrenizi hatalı girdiniz.";
         public static string UserUpdatedSuccessfully="Kullanıcı bilgileriniz başarıyla güncellendi.";
         public static string NewEmailAlreadyExists="Kullanmak istediğiniz Email başka kullanıcı tarafından kullanılıyor.";
-        public static string UserAndUsersBooksDeletedSuccessfullyByAdmin="Kullanıcı (ve kullanıcının kütüphanesi) yönetici tarafından başarıyla silinmiştir.";
-        public static string UserAndUsersBooksDeletedSuccessfullyByUser="Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
+        public static string UserAndUsersBooksDeletedSuccessfullyByAdmin="Kullanıcı, kullanıcının tüm yetkileri kütüphanesi yönetici tarafından başarıyla silinmiştir.";
+        public static string UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser="Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
         
     }
 }

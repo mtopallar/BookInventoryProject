@@ -18,5 +18,6 @@ namespace Business.Abstract
         IResult AddUserRoleForUsers(UserOperationClaim userClaim);
         IResult Update(UserOperationClaim userOperationClaim);
         IResult Delete(UserOperationClaim userOperationClaim);
+        IResult DeleteForUsersOwnClaim(int userId);
     }
 }

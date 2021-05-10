@@ -108,9 +108,11 @@ namespace Business.Concrete
             var userToDelete = GetById(userId).Data;
             if (DeleteUserBooks(userId).Success)
             {
-                _userDal.Delete(userToDelete);
+                if (DeleteUserFromUserOperationClaims(userId).Success)
+                {
+                    _userDal.Delete(userToDelete);
+                }
             }
-
             return new SuccessResult(Messages.UserAndUsersBooksDeletedSuccessfullyByAdmin);
         }
         [SecuredOperation("user")]
@@ -122,8 +124,11 @@ namespace Business.Concrete
             {
                 if (DeleteUserBooks(userId).Success)
                 {
-                    _userDal.Delete(existUser);
-                    return new SuccessResult(Messages.UserAndUsersBooksDeletedSuccessfullyByUser);
+                    if (DeleteUserFromUserOperationClaims(userId).Success)
+                    { 
+                        _userDal.Delete(existUser);
+                        return new SuccessResult(Messages.UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser);
+                    }
                 }
             }
             return new ErrorResult(Messages.CurrentUserPasswordError);
@@ -177,6 +182,12 @@ namespace Business.Concrete
             }
 
             return new SuccessResult(Messages.AllUserBookDeletedSuccessfully);
+        }
+
+        private IResult DeleteUserFromUserOperationClaims(int userId)
+        {
+           var result = _userOperationClaimService.DeleteForUsersOwnClaim(userId);
+           return result;
         }
 
         private bool UserCurrentPasswordChecker(string currentPassword, int userId, out User existUser)

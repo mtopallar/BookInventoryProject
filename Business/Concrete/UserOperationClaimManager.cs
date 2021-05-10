@@ -30,7 +30,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<UserOperationClaim>>(_userOperationClaimDal.GetAll(),
                 Messages.GetAllUserOperaitonClaimsSuccessfully);
         }
-        [SecuredOperation("admin,user.admin")]
+        [SecuredOperation("admin,user.admin,user")]
         public IDataResult<List<UserOperationClaim>> GetByUserId(int userId)
         {
             return new SuccessDataResult<List<UserOperationClaim>>(
@@ -59,6 +59,16 @@ namespace Business.Concrete
         {
             _userOperationClaimDal.Delete(userOperationClaim);
             return new SuccessResult(Messages.UserOperationClaimDeletedSuccessfully);
+        }
+        [SecuredOperation("user")]
+        public IResult DeleteForUsersOwnClaim(int userId)
+        {
+            var userRoles = GetByUserId(userId).Data;
+            foreach (UserOperationClaim userOperationClaim in userRoles)
+            {
+                _userOperationClaimDal.Delete(userOperationClaim);
+            }
+            return new SuccessResult(Messages.UserOperationClaimDeletedSuccessfullyByUser);
         }
     }
 }
