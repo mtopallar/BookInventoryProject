@@ -24,13 +24,13 @@ namespace Business.Concrete
         {
             _genreDal = genreDal;
         }
-        [SecuredOperation("admin,genre.admin")]
+        [SecuredOperation("admin,genre.admin,user")]
         [CacheAspect()]
         public IDataResult<List<Genre>> GetAll()
         {
             return new SuccessDataResult<List<Genre>>(_genreDal.GetAll(), Messages.GetAllGenresSuccessfully);
         }
-        [SecuredOperation("admin,genre.admin")]
+        [SecuredOperation("admin,genre.admin,user")]
         public IDataResult<Genre> GetById(int id)
         {
             return new SuccessDataResult<Genre>(_genreDal.Get(g => g.Id == id), Messages.GetGenreByIdSuccessfully);

@@ -30,8 +30,7 @@ namespace DataAccess.Concrete.EntityFramework
                         Name = book.Name,
                         Isbn = book.Isbn,
                         PublisherName = publisher.Name,
-                        AuthorName = author.FirstName,
-                        AuthorLastName = author.LastName,
+                        AuthorFullName = $"{author.FirstName} {author.LastName}",
                         CountryName = nationality.CountryName,
                         GenreName = genre.Name,
                         ReadStatue = userbook.ReadStatue

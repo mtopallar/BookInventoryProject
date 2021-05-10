@@ -38,53 +38,42 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OperationClaim>>(_operationClaimDal.GetAll(),
                 Messages.GetAllOperationClaimsSuccessfully);
         }
-
-        public IDataResult<OperationClaim> GetByClaimName(string claimName)
+        [SecuredOperation("admin")]
+        public IDataResult<List<OperationClaim>> GetPredefinedClaims()
+        {
+            return new SuccessDataResult<List<OperationClaim>>(_predefinedClaims,
+                Messages.PredefinedClaimsListedSuccessfully);
+        }
+        [SecuredOperation("admin")]
+        public IDataResult<OperationClaim> GetById(int id)
+        {
+            return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(c => c.Id == id),
+                Messages.GetClaimByIdSuccessfully);
+        }
+        [SecuredOperation("admin,user")]
+        public IDataResult<OperationClaim> GetByClaimName(string claimName) 
         {
             return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(o => o.Name == claimName),
                 Messages.GetOperationClaimByNameSuccessfully);
         }
-
         [SecuredOperation("admin")]
-        public IResult Add()
+        public IResult Add(OperationClaim operationClaim)
         {
-            var result = CheckRolesIfAlreadyExistorNot();
-            if (result != null)
+            var getClaimIfExists = _operationClaimDal.Get(c => c.Name == operationClaim.Name);
+            if (getClaimIfExists==null)
             {
-                foreach (OperationClaim operationClaim in result)
-                {
-                    _operationClaimDal.Add(operationClaim);
-
-                }
-                return new SuccessResult(Messages.AllClaimsAddedSuccessfully);
+                _operationClaimDal.Add(operationClaim);
+                return new SuccessResult(Messages.ClaimAddedSuccessfully);
             }
 
-            return new ErrorResult(Messages.ClaimAlreadyAdded);
-
+            return new ErrorResult(Messages.OperationClaimAlreadyExists);
         }
         [SecuredOperation("admin")]
         public IResult Delete(OperationClaim operationClaim)
         {
             _operationClaimDal.Delete(operationClaim);
-            return new SuccessResult(Messages.OperationClaimDeletedSuccessfully);
+            return new SuccessResult(Messages.ClaimDeletedSuccessfully);
         }
         
-        private List<OperationClaim> CheckRolesIfAlreadyExistorNot()
-        {
-            List<OperationClaim> claimsToAdd = new List<OperationClaim>();
-            
-
-            foreach (OperationClaim predefinedClaim in _predefinedClaims)
-            {
-                var existingClaims = _operationClaimDal.Get(o => o.Name == predefinedClaim.Name);
-                if (existingClaims == null)
-                {
-                    claimsToAdd.Add(predefinedClaim);
-                }
-            }
-
-            return claimsToAdd;
-        }
-
     }
 }

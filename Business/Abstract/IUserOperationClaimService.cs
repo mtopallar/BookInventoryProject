@@ -15,6 +15,7 @@ namespace Business.Abstract
         IDataResult<List<UserOperationClaim>> GetAll();
         IDataResult<List<UserOperationClaim>> GetByUserId(int userId);
         IResult Add(UserOperationClaim userOperationClaim);
+        IResult AddUserRoleForUsers(UserOperationClaim userClaim);
         IResult Update(UserOperationClaim userOperationClaim);
         IResult Delete(UserOperationClaim userOperationClaim);
     }

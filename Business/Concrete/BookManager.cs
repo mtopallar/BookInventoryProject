@@ -13,16 +13,25 @@ using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 
 namespace Business.Concrete
 {
    public class BookManager:IBookService
    {
        private readonly IBookDal _bookDal;
+       private readonly IPublisherService _publisherService;
+       private readonly IAuthorService _authorService;
+       private readonly IGenreService _genreService;
+       private readonly INationalityService _nationalityService;
 
-       public BookManager(IBookDal bookDal)
+       public BookManager(IBookDal bookDal, IPublisherService publisherService, IAuthorService authorService, IGenreService genreService, INationalityService nationalityService)
        {
            _bookDal = bookDal;
+           _publisherService = publisherService;
+           _authorService = authorService;
+           _genreService = genreService;
+           _nationalityService = nationalityService;
        }
         [SecuredOperation("admin,book.admin")]
         [CacheAspect()]
@@ -35,6 +44,59 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<Book>(_bookDal.Get(b => b.Id == id), Messages.GetBookByIdSuccessfully);
         }
+        [SecuredOperation("admin,book.admin,user")]
+        [CacheAspect()]
+        public IDataResult<List<BookForAddToLibraryDto>> GetAllForAddToLibrary()
+        {
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(_bookDal.GetBooksForAddToLibrary(),
+                Messages.GetAllBooksForAddToLibrarySuccessfully);
+        }
+        [SecuredOperation("admin,book.admin,user")]
+        public IDataResult<BookForAddToLibraryDto> GetByIsbnForAddToLibrary(string isbn)
+        {
+            return new SuccessDataResult<BookForAddToLibraryDto>(_bookDal.GetBooksForAddToLibrary(b => b.Isbn == isbn).FirstOrDefault(),
+                Messages.GetBookForAddToLibraryByIsbnSuccessfully);
+        }
+        [SecuredOperation("admin,book.admin,user")]
+        public IDataResult<List<BookForAddToLibraryDto>> GetLisyByBookNameForAddToLibrary(string bookName)
+        {
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
+                _bookDal.GetBooksForAddToLibrary(b => b.Name == bookName),
+                Messages.GetBookForAddToLibraryByBookNameSuccessfully);
+        }
+        [SecuredOperation("admin,book.admin,user")]
+        public IDataResult<List<BookForAddToLibraryDto>> GetListByPublisherIdForAddToLibrary(int publisherId)
+        {
+            var publisher = _publisherService.GetById(publisherId).Data;
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
+                _bookDal.GetBooksForAddToLibrary(b => b.PublisherName == publisher.Name),
+                Messages.GetBookForAddToLibraryByPublisherIdSuccessfully);
+        }
+        [SecuredOperation("admin,book.admin,user")]
+        public IDataResult<List<BookForAddToLibraryDto>> GetListByAuthorIdForAddToLibrary(int authorId)
+        {
+            var author = _authorService.GetById(authorId).Data;
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
+                _bookDal.GetBooksForAddToLibrary(b => b.AuthorFullName == $"{author.FirstName} {author.LastName}"),
+                Messages.GetBookForAddToLibraryByAuthorIdSuccessfully);
+        }
+        [SecuredOperation("admin,book.admin,user")]
+        public IDataResult<List<BookForAddToLibraryDto>> GetListByCountryIdForAddToLibrary(int nationalityId)
+        {
+            var nationality = _nationalityService.GetById(nationalityId).Data;
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
+                _bookDal.GetBooksForAddToLibrary(b => b.CountryName == nationality.CountryName),
+                Messages.GetBookForAddToLibraryByNationalityIdSuccessfully);
+        }
+        [SecuredOperation("admin,book.admin,user")]
+        public IDataResult<List<BookForAddToLibraryDto>> GetListByGenreIdForAddToLibrary(int genreId)
+        {
+            var genre = _genreService.GetById(genreId).Data;
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
+                _bookDal.GetBooksForAddToLibrary(b => b.GenreName == genre.Name),
+                Messages.GetBookForAddToLibraryByGenreIdSuccessfully);
+        }
+
         [SecuredOperation("admin,book.admin")]
         [CacheRemoveAspect("IBookService.Get")]
         [TransactionScopeAspect]
@@ -53,13 +115,6 @@ namespace Business.Concrete
             _bookDal.Update(book);
             return new SuccessResult(Messages.BookUpdatedSuccessfully);
         }
-        //[SecuredOperation("admin,book.admin")]
-        //[CacheRemoveAspect("IBookService.Get")]
-        //[TransactionScopeAspect]
-        //public IResult Delete(Book book)
-        //{
-        //    _bookDal.Delete(book);
-        //    return new SuccessResult(Messages.BookDeletedSuccessfully);
-        //}
+        
     }
 }

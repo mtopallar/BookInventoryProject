@@ -24,14 +24,14 @@ namespace Business.Concrete
         {
             _nationalityDal = nationalityDal;
         }
-        [SecuredOperation("admin,nationality.admin")]
+        [SecuredOperation("admin,nationality.admin,user")]
         [CacheAspect()]
         public IDataResult<List<Nationality>> GetAll()
         {
             return new SuccessDataResult<List<Nationality>>(_nationalityDal.GetAll(),
                 Messages.GetAllNationalitySuccessfull);
         }
-        [SecuredOperation("admin,nationality.admin")]
+        [SecuredOperation("admin,nationality.admin,user")]
         public IDataResult<Nationality> GetById(int id)
         {
             return new SuccessDataResult<Nationality>(_nationalityDal.Get(n => n.Id == id),

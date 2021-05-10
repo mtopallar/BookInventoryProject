@@ -11,14 +11,11 @@ namespace Business.Abstract
     public interface IOperationClaimService
     {
         IDataResult<List<OperationClaim>> GetAll();
-        IDataResult<OperationClaim> GetByClaimName(string claimName);
+        IDataResult<List<OperationClaim>> GetPredefinedClaims();
+        IDataResult<OperationClaim> GetById(int id);
+        IDataResult<OperationClaim> GetByClaimName(string claimName); //user manager kullanıyor.
         IResult Add(OperationClaim operationClaim);
         IResult Delete(OperationClaim operationClaim);
-
-
-        //Aşağıdaki operasyonlar gereksiz konuma düştü. Rolü öntanımlı olarak ekliyorum.
-        //IDataResult<OperationClaim> GetById(int id);
-        //IResult Update(OperationClaim operationClaim);
-
+        
     }
 }

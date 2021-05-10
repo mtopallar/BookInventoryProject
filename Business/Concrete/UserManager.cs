@@ -4,7 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Transaction;
+using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
@@ -27,19 +32,20 @@ namespace Business.Concrete
             _userOperationClaimService = userOperationClaimService;
             _userBookService = userBookService;
         }
-
+        [SecuredOperation("admin,user.admin")]
         public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetUserClaims(user),
                 Messages.GetUsersAllClaimsSuccessfully);
         }
-
+        [SecuredOperation("admin,user.admin")]
+        [CacheAspect()]
         public IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles()
         {
             return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(_userDal
                 .GetRolesWithUserDetails(), Messages.GetAllUserDetailsWitrRolesSuccessfully);
         }
-
+        [SecuredOperation("admin,user.admin")]
         public IDataResult<List<UserWithDetailsAndRolesDto>> GetUserDetailsWithRolesByUserId(int userId)
         {
             var getUser = GetById(userId).Data;
@@ -47,30 +53,35 @@ namespace Business.Concrete
                 _userDal.GetRolesWithUserDetails(u => u.Email == getUser.Email),
                 Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
         }
-
+        [SecuredOperation("admin,user.admin")]
+        [CacheAspect()]
         public IDataResult<List<User>> GetAll()
         {
             return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.GetAllUsersSuccessfully);
         }
-
+        [SecuredOperation("admin,user.admin,user")]
         public IDataResult<User> GetByMail(string email)
         {
             return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email),
                 Messages.GetUserByEmailSuccessfully);
         }
-
+        [SecuredOperation("admin,user.admin")]
         public IDataResult<User> GetById(int id)
         {
             return new SuccessDataResult<User>(_userDal.Get(u => u.Id == id), Messages.GetUserByIdSuccessfully);
         }
-
+        [SecuredOperation("admin,user.admin,user")]
+        [CacheRemoveAspect("IUserService.Get")]
+        [TransactionScopeAspect]
         public IResult Add(User user)
         {
             _userDal.Add(user);
             AddUserRoleIfNotExist(user);
             return new SuccessResult(Messages.UserAddedSuccessfully);
         }
-
+        [SecuredOperation("admin,user.admin,user")]
+        [ValidationAspect(typeof(UserForUpdateValidator))]
+        [CacheRemoveAspect("IUserService.Get")]
         public IResult Update(UserForUpdateDto userForUpdateDto)
         {
             User user = null;
@@ -89,7 +100,9 @@ namespace Business.Concrete
 
             return checkNewMailIsExists;
         }
-
+        [SecuredOperation("admin,user.admin")]
+        [CacheRemoveAspect("IUserService.Get")]
+        [TransactionScopeAspect]
         public IResult DeleteForAdmin(int userId)
         {
             var userToDelete = GetById(userId).Data;
@@ -100,7 +113,9 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.UserAndUsersBooksDeletedSuccessfullyByAdmin);
         }
-
+        [SecuredOperation("user")]
+        [CacheRemoveAspect("IUserService.Get")]
+        [TransactionScopeAspect]
         public IResult DeleteForUser(string currentPassword, int userId)
         {
             if (UserCurrentPasswordChecker(currentPassword,userId,out var existUser))
@@ -117,19 +132,8 @@ namespace Business.Concrete
         private void AddUserRoleIfNotExist(User user)
         {
             var claimName = "user";
-            var isRoleExists = _operationClaimService.GetByClaimName(claimName);
-            if (isRoleExists.Success)
-            {
-                _userOperationClaimService.Add(new UserOperationClaim
-                { UserId = user.Id, OperationClaimId = isRoleExists.Data.Id });
-            }
-            else
-            {
-                _operationClaimService.Add(new OperationClaim { Name = claimName });
-                var addedClaim = _operationClaimService.GetByClaimName(claimName).Data;
-                _userOperationClaimService.Add(new UserOperationClaim
-                { UserId = user.Id, OperationClaimId = addedClaim.Id });
-            }
+            var getClaimUser = _operationClaimService.GetByClaimName(claimName).Data;
+            _userOperationClaimService.AddUserRoleForUsers(new UserOperationClaim { UserId = user.Id, OperationClaimId = getClaimUser.Id });
         }
 
         private IResult UpdateUserWithPasswordSaltAndHash(UserForUpdateDto updateUserDto, ref User user)

@@ -24,13 +24,13 @@ namespace Business.Concrete
         {
             _authorDal = authorDal;
         }
-        [SecuredOperation("admin,author.admin")]
+        [SecuredOperation("admin,author.admin,user")]
         [CacheAspect()]
         public IDataResult<List<Author>> GetAll()
         {
             return new SuccessDataResult<List<Author>>(_authorDal.GetAll(), Messages.GetAllAuthorsSuccessfully);
         }
-        [SecuredOperation("admin,author.admin")]
+        [SecuredOperation("admin,author.admin,user")]
         public IDataResult<Author> GetById(int id)
         {
             return new SuccessDataResult<Author>(_authorDal.Get(a => a.Id == id), Messages.GetAuthorByIdSuccessfully);

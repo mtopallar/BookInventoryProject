@@ -58,8 +58,7 @@ namespace Business.Concrete
             var getAuthor = _authorService.GetById(authorId).Data;
             return new SuccessDataResult<List<BookForUserDto>>(
                 _userBookDal.GetBookWithDetails(b =>
-                    b.UserId == userId && b.AuthorName == getAuthor.FirstName &&
-                    b.AuthorLastName == getAuthor.LastName), Messages.GetUsersAllBooksByAuthorId);
+                    b.UserId == userId && b.AuthorFullName == $"{getAuthor.FirstName} {getAuthor.LastName}"), Messages.GetUsersAllBooksByAuthorId);
         }
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetByAuthorNationality(int userId, int nationalityId)
@@ -103,7 +102,7 @@ namespace Business.Concrete
             _userBookDal.Update(userBook);
             return new SuccessResult(Messages.UserBookUpdatedSuccessfully);
         }
-        [SecuredOperation("user")]
+        [SecuredOperation("admin,user")]
         public IResult Delete(UserBook userBook)
         {
             _userBookDal.Delete(userBook);

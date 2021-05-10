@@ -32,8 +32,14 @@ namespace Business.Constants
         public static string GetBookByIdSuccessfully="Kitap detaylarına başarıyla ulaşıldı.";
         public static string BookAddedSuccessfully="Kitap başarıyla kaydedildi.";
         public static string BookUpdatedSuccessfully="Kitap bilgileri başarıyla güncellendi.";
-        //public static string BookDeletedSuccessfully="Kitap başarıyla silindi.";
-        
+        public static string GetAllBooksForAddToLibrarySuccessfully="Tüm kitaplar kütüphane formatında listelenmiştir.";
+        public static string GetBookForAddToLibraryByIsbnSuccessfully="Isbn numarasına göre kitap kütüphane formatında getirilmiştir.";
+        public static string GetBookForAddToLibraryByBookNameSuccessfully="Kitap adına göre kitaplar kütüphane formatında listelenmiştir.";
+        public static string GetBookForAddToLibraryByPublisherIdSuccessfully="Yayınevine göre kitaplar kütüphane formatında listelenmiştir.";
+        public static string GetBookForAddToLibraryByAuthorIdSuccessfully="Yazara göre kitaplar kütüphane formatında başarıyla listelenmiştir.";
+        public static string GetBookForAddToLibraryByNationalityIdSuccessfully="Yazar ülkesine göre kitaplar kütüphane formatında başarıyla listelenmiştir.";
+        public static string GetBookForAddToLibraryByGenreIdSuccessfully="Türe göre kitaplar kütüphane formatında başarıyla listelenmiştir.";
+
         //Genres
         public static string GetAllGenresSuccessfully="Tüm türler başarıyla listelendi.";
         public static string GetGenreByIdSuccessfully="Tür detaylarına başarıyla ulaşıldı.";
@@ -50,10 +56,12 @@ namespace Business.Constants
         
         //Operation Claims
         public static string GetAllOperationClaimsSuccessfully="Tüm yetkiler başarıyla listelendi.";
-        public static string ClaimAlreadyAdded="Yetki zaten mevcut.";
-        public static string AllClaimsAddedSuccessfully="Öntanımlı yetkiler başarıyla eklendi.";
-        public static string OperationClaimDeletedSuccessfully="Yetki başarıyla silindi.";
-        public static string GetOperationClaimByNameSuccessfully="Ada göre rol detayları başarıyla getirildi.";
+        public static string ClaimAddedSuccessfully="Yetkiler başarıyla eklendi.";
+        public static string GetOperationClaimByNameSuccessfully="Ada göre yetki detayları başarıyla getirildi.";
+        public static string PredefinedClaimsListedSuccessfully="Öntanımlı yetkiler başarıyla listelendi.";
+        public static string OperationClaimAlreadyExists="Bu yetki sisteme daha önce eklenmiş.";
+        public static string GetClaimByIdSuccessfully="Yetki detayları başarıyla getirildi.";
+        public static string ClaimDeletedSuccessfully="Yetki başarıyla silindi.";
         
         
         //Publishers
@@ -80,7 +88,7 @@ namespace Business.Constants
         //UserOperationClaims
         public static string GetAllUserOperaitonClaimsSuccessfully="Tüm kullanıcı rolleri başarıyla listelendi.";
         public static string GetUserOperationClaimByIdSuccessfully="Kullanıcının rolleri başarıyla listelendi.";
-        
+        public static string UserRoleSuccessfullyAddedToUser="Kullanıcıya kullanıcı rolü başarıyla eklendi.";
         public static string UserOperationClaimAddedSuccessfully="Kullanıcıya rolü başarıyla eklenmiştir.";
         public static string UserOperationClaimUpdatedSuccessfully="Kullanıcını rolü başarıyla güncellenmiştir.";
         public static string UserOperationClaimDeletedSuccessfully="Kullanıcı rolü başarıyla silinmiştir.";
@@ -98,5 +106,6 @@ namespace Business.Constants
         public static string NewEmailAlreadyExists="Kullanmak istediğiniz Email başka kullanıcı tarafından kullanılıyor.";
         public static string UserAndUsersBooksDeletedSuccessfullyByAdmin="Kullanıcı (ve kullanıcının kütüphanesi) yönetici tarafından başarıyla silinmiştir.";
         public static string UserAndUsersBooksDeletedSuccessfullyByUser="Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
+        
     }
 }
