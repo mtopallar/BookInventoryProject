@@ -15,7 +15,7 @@ namespace Business.Abstract
        IDataResult<List<BookForUserDto>> GetByNoteIncluded(int userId);
        IDataResult<List<BookForUserDto>> GetByPublisherId(int userId,int publisherId); //pipe
        IDataResult<List<BookForUserDto>> GetByAuthorId(int userId, int authorId); //pipe
-       IDataResult<List<BookForUserDto>> GetByAuthorNationality(int userId, int nationalityId); //pipe
+       IDataResult<List<BookForUserDto>> GetByAuthorNativeStatue(int userId, bool native); //pipe
        IDataResult<List<BookForUserDto>> GetByGenreId(int userId, int genreId); //pipe
        IDataResult<List<BookForUserDto>> GetByReadStatue(int userId, bool readStatue); //pipe
        IDataResult<List<UserBook>> GetAllUserBooks(int userId); //user manager da kullanılacak.

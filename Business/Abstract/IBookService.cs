@@ -18,7 +18,7 @@ namespace Business.Abstract
         IDataResult<List<BookForAddToLibraryDto>> GetLisyByBookNameForAddToLibrary(string bookName); //pipe
         IDataResult<List<BookForAddToLibraryDto>> GetListByPublisherIdForAddToLibrary(int publisherId); //pipe
         IDataResult<List<BookForAddToLibraryDto>> GetListByAuthorIdForAddToLibrary(int authorId); //pipe
-        IDataResult<List<BookForAddToLibraryDto>> GetListByCountryIdForAddToLibrary(int nationalityId); //pipe
+        IDataResult<List<BookForAddToLibraryDto>> GetListByNativeStatueForAddToLibrary(bool native); //pipe
         IDataResult<List<BookForAddToLibraryDto>> GetListByGenreIdForAddToLibrary(int genreId); //pipe
         IResult Add(Book book);
         IResult Update(Book book);

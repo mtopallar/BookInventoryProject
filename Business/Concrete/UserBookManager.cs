@@ -19,16 +19,14 @@ namespace Business.Concrete
         private readonly IUserBookDal _userBookDal;
         private readonly IPublisherService _publisherService;
         private readonly IAuthorService _authorService;
-        private readonly INationalityService _nationalityService;
         private readonly IGenreService _genreService;
         
 
-        public UserBookManager(IUserBookDal userBookDal, IPublisherService publisherService, IAuthorService authorService, INationalityService nationalityService, IGenreService genreService)
+        public UserBookManager(IUserBookDal userBookDal, IPublisherService publisherService, IAuthorService authorService, IGenreService genreService)
         {
             _userBookDal = userBookDal;
             _publisherService = publisherService;
             _authorService = authorService;
-            _nationalityService = nationalityService;
             _genreService = genreService;
         }
         [SecuredOperation("user")]
@@ -60,14 +58,14 @@ namespace Business.Concrete
                 _userBookDal.GetBookWithDetails(b =>
                     b.UserId == userId && b.AuthorFullName == $"{getAuthor.FirstName} {getAuthor.LastName}"), Messages.GetUsersAllBooksByAuthorId);
         }
+
         [SecuredOperation("user")]
-        public IDataResult<List<BookForUserDto>> GetByAuthorNationality(int userId, int nationalityId)
+        public IDataResult<List<BookForUserDto>> GetByAuthorNativeStatue(int userId, bool native)
         {
-            var getNationality = _nationalityService.GetById(nationalityId).Data;
-            return new SuccessDataResult<List<BookForUserDto>>(
-                _userBookDal.GetBookWithDetails(b => b.UserId == userId && b.CountryName == getNationality.CountryName),
-                Messages.GetUsersAllBooksByAuthorNationality);
+            return new SuccessDataResult<List<BookForUserDto>>(_userBookDal.GetBookWithDetails(b => b.Native == native),
+                Messages.GetUserBooksByNativeStatueSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetByGenreId(int userId, int genreId)
         {

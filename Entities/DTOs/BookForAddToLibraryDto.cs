@@ -14,8 +14,8 @@ namespace Entities.DTOs
         public string Name { get; set; }
         public string PublisherName { get; set; }
         public string AuthorFullName { get; set; }
-        public string CountryName { get; set; }
         public string GenreName { get; set; }
+        public bool Native { get; set; }
         
     }
 }

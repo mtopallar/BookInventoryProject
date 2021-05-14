@@ -37,7 +37,7 @@ namespace Business.Constants
         public static string GetBookForAddToLibraryByBookNameSuccessfully="Kitap adına göre kitaplar kütüphane formatında listelenmiştir.";
         public static string GetBookForAddToLibraryByPublisherIdSuccessfully="Yayınevine göre kitaplar kütüphane formatında listelenmiştir.";
         public static string GetBookForAddToLibraryByAuthorIdSuccessfully="Yazara göre kitaplar kütüphane formatında başarıyla listelenmiştir.";
-        public static string GetBookForAddToLibraryByNationalityIdSuccessfully="Yazar ülkesine göre kitaplar kütüphane formatında başarıyla listelenmiştir.";
+        public static string GetBooksForAddToLibraryListByNativeStatueSuccessfully="Yerli / yabancı seçiminize göre kitap listesi başarıyla listelenmiştir.";
         public static string GetBookForAddToLibraryByGenreIdSuccessfully="Türe göre kitaplar kütüphane formatında başarıyla listelenmiştir.";
 
         //Genres
@@ -46,14 +46,8 @@ namespace Business.Constants
         public static string GenreAddedSuccessfully="Tür başarıyla kaydedildi.";
         public static string GenreUpdatedSuccessfully="Tür bilgileri başarıyla güncellendi.";
         public static string GenreDeletedSuccessfully="Tür başarıyla silindi.";
-
-        //Nationalities
-        public static string GetAllNationalitySuccessfull="Tüm ülkeler başarıyla listelendi.";
-        public static string GetNationalityByIdSuccessfully="Ülke detayları başarıyla getirildi.";
-        public static string NationalityAddedSuccessfully="Ülke başarıyla eklendi.";
-        public static string NationalityUpdatedSuccessfully="Ükle bilgileri başarıyla güncellendi.";
-        public static string NationalityDeletedSuccessfully="Ülke başarıyla silindi.";
         
+
         //Operation Claims
         public static string GetAllOperationClaimsSuccessfully="Tüm yetkiler başarıyla listelendi.";
         public static string ClaimAddedSuccessfully="Yetkiler başarıyla eklendi.";
@@ -76,7 +70,7 @@ namespace Business.Constants
         public static string GetUsersAllBooksWichHasNoteSuccessfully="Not eklediğiniz tüm kitaplarınız başarıyla listelendi.";
         public static string GetUsersAllBooksByPublisherId="Yayınevine göre tüm kitaplarınız başarıyla listelendi.";
         public static string GetUsersAllBooksByAuthorId="Yazara göre tüm kitaplarınız başarıyla listelendi.";
-        public static string GetUsersAllBooksByAuthorNationality="Yazar ülkesine göre tüm kitaplarınız başarıyla listelendi.";
+        public static string GetUserBooksByNativeStatueSuccessfully="Yerli / Yabancı seçiminize göre kitaplarınız başarıyla listelenmiştir.";
         public static string GetUsersAllBookByGenreIdSuccessfully="Türe göre tüm kitaplarınız başarıyla getirildi.";
         public static string GetUsersAllBookByReadStatueSuccessfully="Okuma durumunuza göre kitap listeniz başarıyla listelendi.";
         public static string UserBookAddedSuccessfully="Kitap kütüphanenize başarıyla eklendi.";
@@ -94,6 +88,7 @@ namespace Business.Constants
         public static string UserOperationClaimDeletedSuccessfully="Kullanıcı yetkisi başarıyla silinmiştir.";
         public static string UserOperationClaimDeletedSuccessfullyByUser="Kullanıcının yetkileri kullanıcı isteğiyle başarıyla silinmiştir.";
         
+        
         //UserManager
         public static string GetUsersAllClaimsSuccessfully="Kullanıcının tüm rolleri rol formatında getirildi.";
         public static string GetAllUserDetailsWitrRolesSuccessfully="Tüm kullanıcıların kullanıcı ve rol detayları başarıyla listelendi.";
@@ -107,6 +102,7 @@ namespace Business.Constants
         public static string NewEmailAlreadyExists="Kullanmak istediğiniz Email başka kullanıcı tarafından kullanılıyor.";
         public static string UserAndUsersBooksDeletedSuccessfullyByAdmin="Kullanıcı, kullanıcının tüm yetkileri kütüphanesi yönetici tarafından başarıyla silinmiştir.";
         public static string UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser="Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
+       
         
     }
 }

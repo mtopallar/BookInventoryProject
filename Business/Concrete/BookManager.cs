@@ -23,15 +23,13 @@ namespace Business.Concrete
        private readonly IPublisherService _publisherService;
        private readonly IAuthorService _authorService;
        private readonly IGenreService _genreService;
-       private readonly INationalityService _nationalityService;
 
-       public BookManager(IBookDal bookDal, IPublisherService publisherService, IAuthorService authorService, IGenreService genreService, INationalityService nationalityService)
+       public BookManager(IBookDal bookDal, IPublisherService publisherService, IAuthorService authorService, IGenreService genreService)
        {
            _bookDal = bookDal;
            _publisherService = publisherService;
            _authorService = authorService;
            _genreService = genreService;
-           _nationalityService = nationalityService;
        }
         [SecuredOperation("admin,book.admin")]
         [CacheAspect()]
@@ -81,13 +79,14 @@ namespace Business.Concrete
                 Messages.GetBookForAddToLibraryByAuthorIdSuccessfully);
         }
         [SecuredOperation("admin,book.admin,user")]
-        public IDataResult<List<BookForAddToLibraryDto>> GetListByCountryIdForAddToLibrary(int nationalityId)
+        public IDataResult<List<BookForAddToLibraryDto>> GetListByNativeStatueForAddToLibrary(bool native)
         {
-            var nationality = _nationalityService.GetById(nationalityId).Data;
             return new SuccessDataResult<List<BookForAddToLibraryDto>>(
-                _bookDal.GetBooksForAddToLibrary(b => b.CountryName == nationality.CountryName),
-                Messages.GetBookForAddToLibraryByNationalityIdSuccessfully);
+                _bookDal.GetBooksForAddToLibrary(b => b.Native == native),
+                Messages.GetBooksForAddToLibraryListByNativeStatueSuccessfully);
         }
+        
+       
         [SecuredOperation("admin,book.admin,user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByGenreIdForAddToLibrary(int genreId)
         {

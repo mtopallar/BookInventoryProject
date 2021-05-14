@@ -21,7 +21,6 @@ namespace DataAccess.Concrete.EntityFramework
                     join publisher in context.Publishers on book.PublisherId equals publisher.Id
                     join author in context.Authors on book.AuthorId equals author.Id
                     join genre in context.Genres on book.GenreId equals genre.Id
-                    join nationality in context.Nationalities on author.NationalityId equals nationality.Id
                     select new BookForAddToLibraryDto
                     {
                         BookId = book.Id,
@@ -29,7 +28,7 @@ namespace DataAccess.Concrete.EntityFramework
                         Isbn = book.Isbn,
                         PublisherName = publisher.Name,
                         AuthorFullName = $"{author.FirstName} {author.LastName}",
-                        CountryName = nationality.CountryName,
+                        Native = author.Native,
                         GenreName = genre.Name
                     };
 

@@ -13,5 +13,6 @@ namespace Entities.Concrete
         public int NationalityId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public bool Native { get; set; }
     }
 }

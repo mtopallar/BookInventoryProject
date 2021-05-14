@@ -27,9 +27,6 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<GenreManager>().As<IGenreService>().SingleInstance();
             builder.RegisterType<EfGenreDal>().As<IGenreDal>().SingleInstance();
 
-            builder.RegisterType<NationalityManager>().As<INationalityService>().SingleInstance();
-            builder.RegisterType<EfNationalityDal>().As<INationalityDal>().SingleInstance();
-
             builder.RegisterType<OperationClaimManager>().As<IOperationClaimService>().SingleInstance();
             builder.RegisterType<EfOperationClaimDal>().As<IOperationClaimDal>().SingleInstance();
 

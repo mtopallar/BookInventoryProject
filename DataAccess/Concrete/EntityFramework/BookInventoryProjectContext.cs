@@ -20,7 +20,6 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Author> Authors { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<Genre> Genres { get; set; }
-        public DbSet<Nationality> Nationalities { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<UserBook> UserBooks { get; set; }
         public DbSet<User> Users { get; set; }

@@ -22,7 +22,6 @@ namespace Business.Concrete
             new OperationClaim {Name = "author.admin"},
             new OperationClaim {Name = "genre.admin"},
             new OperationClaim {Name = "publisher.admin"},
-            new OperationClaim {Name = "nationality.admin"},
             new OperationClaim {Name = "user"},
             new OperationClaim {Name = "user.admin"}
 
