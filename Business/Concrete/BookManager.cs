@@ -11,6 +11,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
+using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
@@ -102,6 +103,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Add(Book book)
         {
+            book.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
             _bookDal.Add(book);
             return new SuccessResult(Messages.BookAddedSuccessfully);
         }
@@ -111,6 +113,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Update(Book book)
         {
+            book.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
             _bookDal.Update(book);
             return new SuccessResult(Messages.BookUpdatedSuccessfully);
         }

@@ -11,6 +11,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
+using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
 using Entities.Concrete;
 
@@ -43,6 +44,7 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Add(Publisher publisher)
         {
+            publisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
             _publisherDal.Add(publisher);
             return new SuccessResult(Messages.PublisherAddedSuccessfully);
         }
@@ -52,6 +54,7 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Update(Publisher publisher)
         {
+            publisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
             _publisherDal.Update(publisher);
             return new SuccessResult(Messages.UpdatedPublisherSuccessfully);
         }

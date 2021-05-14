@@ -13,6 +13,7 @@ using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
+using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
 using Entities.DTOs;
 
@@ -75,6 +76,8 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult Add(User user)
         {
+            user.FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.FirstName));
+            user.LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.LastName));
             _userDal.Add(user);
             AddUserRoleIfNotExist(user);
             return new SuccessResult(Messages.UserAddedSuccessfully);
@@ -91,6 +94,8 @@ namespace Business.Concrete
             {
                 if (isItOk.Success)
                 {
+                    user.FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.FirstName));
+                    user.LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.LastName));
                     _userDal.Update(user);
                     return new SuccessResult(Messages.UserUpdatedSuccessfully);
                 }

@@ -11,6 +11,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
+using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
 using Entities.Concrete;
 
@@ -41,6 +42,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(GenreValidator))]
         public IResult Add(Genre genre)
         {
+            genre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
             _genreDal.Add(genre);
             return new SuccessResult(Messages.GenreAddedSuccessfully);
         }
@@ -50,6 +52,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(GenreValidator))]
         public IResult Update(Genre genre)
         {
+            genre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
             _genreDal.Update(genre);
             return new SuccessResult(Messages.GenreUpdatedSuccessfully);
         }

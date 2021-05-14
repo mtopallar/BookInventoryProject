@@ -11,6 +11,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
+using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
 using Entities.Concrete;
 
@@ -41,6 +42,23 @@ namespace Business.Concrete
         [ValidationAspect(typeof(AuthorValidator))]
         public IResult Add(Author author)
         {
+            if (!author.Native)
+            {
+                author.FirstName =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToEngLocaleCamelCase(author.FirstName));
+
+                author.LastName =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToEngLocaleCamelCase(author.LastName));
+
+            }
+            else
+            {
+                author.FirstName =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(author.FirstName));
+
+                author.LastName =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(author.LastName));
+            }
             _authorDal.Add(author);
             return new SuccessResult(Messages.AuthorAddedSuccessfully);
         }
@@ -50,6 +68,23 @@ namespace Business.Concrete
         [ValidationAspect(typeof(AuthorValidator))]
         public IResult Update(Author author)
         {
+            if (!author.Native)
+            {
+                author.FirstName =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToEngLocaleCamelCase(author.FirstName));
+
+                author.LastName =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToEngLocaleCamelCase(author.LastName));
+
+            }
+            else
+            {
+                author.FirstName =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(author.FirstName));
+
+                author.LastName =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(author.LastName));
+            }
             _authorDal.Update(author);
             return new SuccessResult(Messages.AuthorUpdatedSuccessfully);
         }
