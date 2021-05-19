@@ -10,9 +10,9 @@ namespace Entities.Concrete
     public class Author:IEntity
     {
         public int Id { get; set; }
-        public int NationalityId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public bool Native { get; set; }
+        public bool Active { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
@@ -17,7 +18,7 @@ using Entities.Concrete;
 
 namespace Business.Concrete
 {
-    public class GenreManager:IGenreService
+    public class GenreManager : IGenreService
     {
         private readonly IGenreDal _genreDal;
 
@@ -42,8 +43,24 @@ namespace Business.Concrete
         [ValidationAspect(typeof(GenreValidator))]
         public IResult Add(Genre genre)
         {
-            genre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
-            _genreDal.Add(genre);
+            var genreExistAndActiveAlready = BusinessRules.Run(IsGenreAlreadyExistAndActive(genre));
+            if (genreExistAndActiveAlready != null)
+            {
+                return genreExistAndActiveAlready;
+            }
+
+            var result = IsGenreAddedBeforeAndNotActiveNow(genre);
+            if (result == null)
+            {
+                genre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+                genre.Active = true;
+                _genreDal.Add(genre);
+            }
+            else
+            {
+                _genreDal.Update(result);
+            }
+
             return new SuccessResult(Messages.GenreAddedSuccessfully);
         }
         [SecuredOperation("admin,genre.admin")]
@@ -52,6 +69,12 @@ namespace Business.Concrete
         [ValidationAspect(typeof(GenreValidator))]
         public IResult Update(Genre genre)
         {
+            var genreExistAndActiveAlready = BusinessRules.Run(IsGenreAlreadyExistAndActive(genre));
+            if (genreExistAndActiveAlready != null)
+            {
+                return genreExistAndActiveAlready;
+            }
+
             genre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
             _genreDal.Update(genre);
             return new SuccessResult(Messages.GenreUpdatedSuccessfully);
@@ -61,8 +84,38 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult Delete(Genre genre)
         {
-            _genreDal.Delete(genre);
+            var genreToDelete = GetById(genre.Id).Data;
+            genreToDelete.Active = false;
+            _genreDal.Update(genreToDelete);
             return new SuccessResult(Messages.GenreDeletedSuccessfully);
+        }
+
+        private Genre IsGenreAddedBeforeAndNotActiveNow(Genre genre)
+        {
+            var genreNameToFind =
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+            var tryToGetGenre = _genreDal.Get(g => g.Name == genreNameToFind && g.Active == false);
+            if (tryToGetGenre != null)
+            {
+                tryToGetGenre.Active = true;
+                return tryToGetGenre;
+            }
+
+            return null;
+        }
+
+        private IResult IsGenreAlreadyExistAndActive(Genre genre)
+        {
+            var genreNameToFind =
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+            var tryToGetGenre = _genreDal.Get(g => g.Name == genreNameToFind && g.Active);
+
+            if (tryToGetGenre != null)
+            {
+                return new ErrorResult(Messages.GenreAlreadyAdded);
+            }
+
+            return new SuccessResult();
         }
     }
 }

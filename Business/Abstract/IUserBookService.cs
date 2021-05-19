@@ -18,7 +18,7 @@ namespace Business.Abstract
        IDataResult<List<BookForUserDto>> GetByAuthorNativeStatue(int userId, bool native); //pipe
        IDataResult<List<BookForUserDto>> GetByGenreId(int userId, int genreId); //pipe
        IDataResult<List<BookForUserDto>> GetByReadStatue(int userId, bool readStatue); //pipe
-       IDataResult<List<UserBook>> GetAllUserBooks(int userId); //user manager da kullanılacak.
+       IDataResult<List<UserBook>> GetAllUserBooks(int userId); //user manager da kullanılacak. API de olmasına gerek yok.
        IResult Add(UserBook userBook);
        IResult Update(UserBook userBook);
        IResult Delete(UserBook userBook);

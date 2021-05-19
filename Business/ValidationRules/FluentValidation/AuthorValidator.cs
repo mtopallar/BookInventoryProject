@@ -16,7 +16,7 @@ namespace Business.ValidationRules.FluentValidation
             RuleFor(a => a.FirstName).MaximumLength(3);
             RuleFor(a => a.LastName).NotEmpty();
             RuleFor(a => a.LastName).MinimumLength(2);
-            RuleFor(a => a.NationalityId).NotEmpty();
+            RuleFor(a => a.Native).NotEmpty();
         }
     }
 }

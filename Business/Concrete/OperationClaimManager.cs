@@ -7,7 +7,9 @@ using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Core.Entities.Concrete;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
+using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
 
 namespace Business.Concrete
@@ -50,7 +52,7 @@ namespace Business.Concrete
                 Messages.GetClaimByIdSuccessfully);
         }
         [SecuredOperation("admin,user")]
-        public IDataResult<OperationClaim> GetByClaimName(string claimName) 
+        public IDataResult<OperationClaim> GetByClaimName(string claimName)
         {
             return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(o => o.Name == claimName),
                 Messages.GetOperationClaimByNameSuccessfully);
@@ -58,21 +60,64 @@ namespace Business.Concrete
         [SecuredOperation("admin")]
         public IResult Add(OperationClaim operationClaim)
         {
-            var getClaimIfExists = _operationClaimDal.Get(c => c.Name == operationClaim.Name);
-            if (getClaimIfExists==null)
+            var isOperationClaimAlreadyExistAndActive =
+                BusinessRules.Run(IsOperationClaimAlreadyExistAndActive(operationClaim));
+
+            if (isOperationClaimAlreadyExistAndActive!=null)
             {
-                _operationClaimDal.Add(operationClaim);
-                return new SuccessResult(Messages.ClaimAddedSuccessfully);
+                return isOperationClaimAlreadyExistAndActive;
             }
 
-            return new ErrorResult(Messages.OperationClaimAlreadyExists);
+            var result = IsOperationClaimAddedBeforeAndNotActiveNow(operationClaim);
+            if (result==null)
+            {
+                operationClaim.Name =
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name));
+                operationClaim.Active = true;
+                _operationClaimDal.Add(operationClaim);
+            }
+            else
+            {
+                _operationClaimDal.Update(result);
+            }
+
+            return new SuccessResult(Messages.ClaimAddedSuccessfully);
         }
         [SecuredOperation("admin")]
         public IResult Delete(OperationClaim operationClaim)
         {
-            _operationClaimDal.Delete(operationClaim);
+            var operationClaimToDelete = GetById(operationClaim.Id).Data;
+            operationClaimToDelete.Active = false;
+            _operationClaimDal.Update(operationClaimToDelete);
             return new SuccessResult(Messages.ClaimDeletedSuccessfully);
         }
-        
+
+        private OperationClaim IsOperationClaimAddedBeforeAndNotActiveNow(OperationClaim operationClaim)
+        {
+            var nameEditedClaim =
+                StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name));
+            var tryToFindOperationClaim = _operationClaimDal.Get(o => o.Name == nameEditedClaim && o.Active == false);
+            if (tryToFindOperationClaim != null)
+            {
+                tryToFindOperationClaim.Active = true;
+                return tryToFindOperationClaim;
+            }
+
+            return null;
+        }
+
+        private IResult IsOperationClaimAlreadyExistAndActive(OperationClaim operationClaim)
+        {
+            var nameEditedClaim =
+                StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name));
+            var tryToFindOperationClaim = _operationClaimDal.Get(o => o.Name == nameEditedClaim && o.Active);
+            if (tryToFindOperationClaim!=null)
+            {
+                return new ErrorResult(Messages.OperationClaimAlreadyAdded);
+            }
+
+            return new SuccessResult();
+        }
+
     }
 }

@@ -10,6 +10,7 @@ using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
@@ -103,6 +104,13 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Add(Book book)
         {
+            var isBookAddedAlreadyBefore = BusinessRules.Run(IsBookAddedAlreadyBefore(book));
+
+            if (isBookAddedAlreadyBefore!=null)
+            {
+                return isBookAddedAlreadyBefore;
+            }
+
             book.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
             _bookDal.Add(book);
             return new SuccessResult(Messages.BookAddedSuccessfully);
@@ -113,9 +121,30 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Update(Book book)
         {
+            var isBookAddedAlreadyBefore = BusinessRules.Run(IsBookAddedAlreadyBefore(book));
+
+            if (isBookAddedAlreadyBefore!=null)
+            {
+                return isBookAddedAlreadyBefore;
+            }
+
             book.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
             _bookDal.Update(book);
             return new SuccessResult(Messages.BookUpdatedSuccessfully);
+        }
+
+        private IResult IsBookAddedAlreadyBefore(Book book)
+        {
+            var bookNameTryToFind =
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
+            var tryGetBook = _bookDal.Get(b =>
+                b.Name == bookNameTryToFind && b.Isbn == book.Isbn && b.PublisherId == book.PublisherId);
+            if (tryGetBook!=null)
+            {
+                return new ErrorResult(Messages.BookAddedAlreadyBefore);
+            }
+
+            return new SuccessResult();
         }
         
     }

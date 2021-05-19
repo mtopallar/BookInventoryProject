@@ -10,6 +10,7 @@ using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
@@ -17,7 +18,7 @@ using Entities.Concrete;
 
 namespace Business.Concrete
 {
-    public class PublisherManager:IPublisherService
+    public class PublisherManager : IPublisherService
     {
         private readonly IPublisherDal _publisherDal;
 
@@ -44,8 +45,25 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Add(Publisher publisher)
         {
-            publisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
-            _publisherDal.Add(publisher);
+            var isPublisherAlreadyExistAndActive = BusinessRules.Run(IsPublisherAlreadyExistAndActive(publisher));
+            if (isPublisherAlreadyExistAndActive != null)
+            {
+                return isPublisherAlreadyExistAndActive;
+            }
+
+            var result = IsPublisherAddedBeforeAndNotActiveNow(publisher);
+
+            if (result == null)
+            {
+                publisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+                publisher.Active = true;
+                _publisherDal.Add(publisher);
+            }
+            else
+            {
+                _publisherDal.Update(result);
+            }
+
             return new SuccessResult(Messages.PublisherAddedSuccessfully);
         }
         [SecuredOperation("admin,publisher.admin")]
@@ -54,6 +72,12 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Update(Publisher publisher)
         {
+            var isPublisherAlreadyExistAndActive = BusinessRules.Run(IsPublisherAlreadyExistAndActive(publisher));
+            if (isPublisherAlreadyExistAndActive != null)
+            {
+                return isPublisherAlreadyExistAndActive;
+            }
+
             publisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
             _publisherDal.Update(publisher);
             return new SuccessResult(Messages.UpdatedPublisherSuccessfully);
@@ -63,8 +87,39 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Delete(Publisher publisher)
         {
-            _publisherDal.Delete(publisher);
+            var publishertoDelete = GetById(publisher.Id).Data;
+            publishertoDelete.Active = false;
+            _publisherDal.Update(publishertoDelete);
             return new SuccessResult(Messages.DeletePublisherSuccessfully);
+        }
+
+        private Publisher IsPublisherAddedBeforeAndNotActiveNow(Publisher publisher)
+        {
+            var nameEditedPublisher =
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+            var tryToGetPublisher = _publisherDal.Get(p => p.Name == nameEditedPublisher && p.Active == false);
+
+            if (tryToGetPublisher != null)
+            {
+                tryToGetPublisher.Active = true;
+                return tryToGetPublisher;
+            }
+
+            return null;
+        }
+
+        private IResult IsPublisherAlreadyExistAndActive(Publisher publisher)
+        {
+            var nameEditedPublisher =
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+            var tryToGetPublisher = _publisherDal.Get(p => p.Name == nameEditedPublisher && p.Active);
+
+            if (tryToGetPublisher != null)
+            {
+                return new ErrorResult(Messages.PublisherAlreadyAdded);
+            }
+
+            return new SuccessResult();
         }
     }
 }

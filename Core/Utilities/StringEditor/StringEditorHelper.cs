@@ -33,6 +33,13 @@ namespace Core.Utilities.StringEditor
             return editedText;
         }
 
+        public static string ToTrLocaleLowerCase(string entry)
+        {
+            TextInfo textInfo = new CultureInfo("tr-TR", false).TextInfo;
+            var editedText = textInfo.ToLower(entry);
+            return editedText;
+        }
+
         private static string StringReplace(string entry)
         {
             entry = entry.Replace("İ", "I");
