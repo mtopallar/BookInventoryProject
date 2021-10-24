@@ -124,12 +124,10 @@ namespace Business.Concrete
         {
             foreach (BookForUserDto bookForUserDto in bookForUserDtos)
             {
-                var getNotes = _userBookDal.GetAll(u =>
+                var getBookNote = _userBookDal.Get(u =>
                     u.UserId == bookForUserDto.UserId && u.BookId == bookForUserDto.BookId);
-                foreach (UserBook userBook in getNotes)
-                {
-                    bookForUserDto.NoteDetail = userBook.Note;
-                }
+
+                bookForUserDto.NoteDetail = getBookNote.Note;
             }
 
             return bookForUserDtos;
