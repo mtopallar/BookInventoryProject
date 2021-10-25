@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Business.BusinessAspects.Autofac
 {
-    //Authorization Acpect kullanabilmek için oluşturduğumuz bir class. Authorization aspectleri genellikle business içinde yer alır. Çünkü her projenin yetkilendirme algoritması değişebilir. Altyapıyı Core içine yazıyoruz ama aspect kısmını genellikle Business içine yerleştiriyoruz.
+    //Authorization Aspect kullanabilmek için oluşturduğumuz bir class. Authorization aspectleri genellikle business içinde yer alır. Çünkü her projenin yetkilendirme algoritması değişebilir. Altyapıyı Core içine yazıyoruz ama aspect kısmını genellikle Business içine yerleştiriyoruz.
     public class SecuredOperation:MethodInterception
     {
         //Bu aspect JWT için yazıldı.
