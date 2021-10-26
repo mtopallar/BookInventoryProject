@@ -5,7 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Utilities.IoC
 {
-    public static class ServiceTool //Bu tool ile zincir dışında kalan uygulamalarda -mesela wep api business ı business dal ı çağırır ama mesela aspect bu zincirin dışındadır- dependency injection yapabiliyoruz. Bu tool u kullanmazsa zincir dışında kalan kısma bakılmayacağı için injectionlar çalışmayacaktır (asp.net web API onu göremez.). Service tool bizim injection altyapımızı okumaya yarıyan bir tool.
+    //WebAPI Startup ya da Autofac de oluşturulan injectionları oluşturmamızı sağlar.
+    public static class ServiceTool //Bu tool ile zincir dışında kalan uygulamalarda -zincir derken mesela web api business ı, business dal ı, çağırır ama mesela aspect bu zincirin dışındadır- dependency injection yapabiliyoruz. Bu tool u kullanmazsa zincir dışında kalan kısma bakılmayacağı için injectionlar çalışmayacaktır (asp.net web API onu göremez.). Service tool bizim injection altyapımızı okumaya yarıyan bir tool.
     {
         public static IServiceProvider ServiceProvider { get; private set; }
 
@@ -15,4 +16,6 @@ namespace Core.Utilities.IoC
             return services;
         }
     }
+
+    // IServiceCollections zaten Microsoft.Extensions.DependencyInjection dan geliyor.
 }

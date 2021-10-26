@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Business.BusinessAspects.Autofac
 {
-    //Authorization Aspect kullanabilmek için oluşturduğumuz bir class. Authorization aspectleri genellikle business içinde yer alır. Çünkü her projenin yetkilendirme algoritması değişebilir. Altyapıyı Core içine yazıyoruz ama aspect kısmını genellikle Business içine yerleştiriyoruz.
+    // Bu class Authorization Aspect kullanabilmek için oluşturduğumuz bir class. Authorization aspectleri genellikle business içinde yer alır. Çünkü her projenin yetkilendirme algoritması değişebilir. Altyapıyı Core içine yazıyoruz ama aspect kısmını genellikle Business içine yerleştiriyoruz.
     public class SecuredOperation:MethodInterception
     {
         //Bu aspect JWT için yazıldı.
@@ -20,19 +20,19 @@ namespace Business.BusinessAspects.Autofac
 
         public SecuredOperation(string roles)
         {
-            _roles = roles.Split(',');
-            _httpContextAccessor =  ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>(); //JWT zincirin içinde olduğu için injection ile IConfiguration ı enjekte edip çalıştırabilmiştik. Ancak Aspect zincirin dışında olduğu için, bu satırla Autofac ile oluşturduğumuz servis mimarisine ulaş ve karşılığı al demiş oluyor. Örneğin elimizde productService olsa ve bir winform uygulası yazıyor olsak (dependency injection imkanımız olmasa) productService = ServiceTool.ServiceProvider.GerService<IProdductService>(); gibi IoC deki karşılığı alabilir ve kullanabiliriz.
+            _roles = roles.Split(',');//aspect içinde belirttiğimiz rolleri virgül ile bölüp array formatına getiriyoruz.
+            _httpContextAccessor =  ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>(); //JWT zincirin içinde olduğu için injection ile IConfiguration ı enjekte edip çalıştırabilmiştik. Ancak Aspect zincirin dışında olduğu için, bu satırla Autofac ile oluşturduğumuz servis mimarisine ulaş ve karşılığı al demiş oluyor. Örneğin elimizde productService olsa ve bir winform uygulası yazıyor olsak (dependency injection imkanımız olmasa)                                         productService = ServiceTool.ServiceProvider.GetService<IProdductService>();                    gibi IoC deki karşılığı alabilir ve kullanabiliriz. Provider olarak Autofac i verdiğimiz için Autofac deki karşılıkları alacaktır. (WebAPI deki Program.cs deki .UseServiceProviderFactory(new AutofacServiceProviderFactory())) 
 
         }
 
         protected override void OnBefore(IInvocation invocation)
         {
-            var roleClaims = _httpContextAccessor.HttpContext.User.ClaimRoles();
+            var roleClaims = _httpContextAccessor.HttpContext.User.ClaimRoles(); //ClaimsPrincipalExtension dan faydalanarak JWT içindeki rolleri alıyoruz.
             foreach (var role in _roles)
             {
                 if (roleClaims.Contains(role))
                 {
-                    return;
+                    return; //aspectin bulunduğu metodu (mesela add) çalıştırmaya devam et.
                 }
             }
             throw new Exception(Messages.AuthorizationDenied);
