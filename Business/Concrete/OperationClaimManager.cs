@@ -63,16 +63,15 @@ namespace Business.Concrete
             var isOperationClaimAlreadyExistAndActive =
                 BusinessRules.Run(IsOperationClaimAlreadyExistAndActive(operationClaim));
 
-            if (isOperationClaimAlreadyExistAndActive!=null)
+            if (isOperationClaimAlreadyExistAndActive != null)
             {
                 return isOperationClaimAlreadyExistAndActive;
             }
 
             var result = IsOperationClaimAddedBeforeAndNotActiveNow(operationClaim);
-            if (result==null)
+            if (result == null)
             {
-                operationClaim.Name =
-                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name));
+                /*operaitonClaim.Name = StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name)); */
                 operationClaim.Active = true;
                 _operationClaimDal.Add(operationClaim);
             }
@@ -94,9 +93,9 @@ namespace Business.Concrete
 
         private OperationClaim IsOperationClaimAddedBeforeAndNotActiveNow(OperationClaim operationClaim)
         {
-            var nameEditedClaim =
-                StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name));
-            var tryToFindOperationClaim = _operationClaimDal.Get(o => o.Name == nameEditedClaim && o.Active == false);
+            /*var nameEditedClaim =
+            StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name)); */
+            var tryToFindOperationClaim = _operationClaimDal.Get(o => o.Name == operationClaim.Name && o.Active == false);
             if (tryToFindOperationClaim != null)
             {
                 tryToFindOperationClaim.Active = true;
@@ -108,10 +107,10 @@ namespace Business.Concrete
 
         private IResult IsOperationClaimAlreadyExistAndActive(OperationClaim operationClaim)
         {
-            var nameEditedClaim =
-                StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name));
-            var tryToFindOperationClaim = _operationClaimDal.Get(o => o.Name == nameEditedClaim && o.Active);
-            if (tryToFindOperationClaim!=null)
+            /*var nameEditedClaim =
+            StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name)); */
+            var tryToFindOperationClaim = _operationClaimDal.Get(o => o.Name == operationClaim.Name && o.Active);
+            if (tryToFindOperationClaim != null)
             {
                 return new ErrorResult(Messages.OperationClaimAlreadyAdded);
             }

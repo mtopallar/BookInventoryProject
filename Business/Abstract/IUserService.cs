@@ -14,10 +14,10 @@ namespace Business.Abstract
         IDataResult<List<OperationClaim>> GetClaims(User user); //For auth.
         IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles();
         IDataResult<List<UserWithDetailsAndRolesDto>> GetUserDetailsWithRolesByUserId(int userId);
-        IDataResult<List<User>> GetAll();
-        IDataResult<User> GetByMail(string email);
+        IDataResult<List<User>> GetAll(); //api ye yazmadım.
+        IDataResult<User> GetByMail(string email); //apiye şimdilik dahil etmedim.
         IDataResult<User> GetById(int id);
-        IResult Add(User user);
+        IResult Add(User user); //managerlar kullanıyor apiye yazmadım.
         IResult Update(UserForUpdateDto userForUpdateDto);
         IResult DeleteForAdmin(int userId);
         IResult DeleteForUser(string currentPassword, int userId);

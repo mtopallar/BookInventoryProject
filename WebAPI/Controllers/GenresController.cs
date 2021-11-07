@@ -11,19 +11,19 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthorsController : ControllerBase
+    public class GenresController : ControllerBase
     {
-        private IAuthorService _authorService;
+        private IGenreService _genreService;
 
-        public AuthorsController(IAuthorService authorService)
+        public GenresController(IGenreService genreService)
         {
-            _authorService = authorService;
+            _genreService = genreService;
         }
 
-        [HttpGet("geteall")]
+        [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _authorService.GetAll();
+            var result = _genreService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
         [HttpGet("getbyid")]
         public IActionResult GetById(int id)
         {
-            var result = _authorService.GetById(id);
+            var result = _genreService.GetById(id);
             if (result.Success)
             {
                 return Ok(result);
@@ -45,9 +45,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult Add(Author author)
+        public IActionResult Add(Genre genre)
         {
-            var result = _authorService.Add(author);
+            var result = _genreService.Add(genre);
             if (result.Success)
             {
                 return Ok(result);
@@ -57,9 +57,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult Update(Author author)
+        public IActionResult Update(Genre genre)
         {
-            var result = _authorService.Update(author);
+            var result = _genreService.Update(genre);
             if (result.Success)
             {
                 return Ok(result);
@@ -69,9 +69,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("delete")]
-        public IActionResult Delete(Author author)
+        public IActionResult Delete(Genre genre)
         {
-            var result = _authorService.Delete(author);
+            var result = _genreService.Delete(genre);
             if (result.Success)
             {
                 return Ok(result);

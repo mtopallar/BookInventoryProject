@@ -15,9 +15,11 @@ namespace Business.Abstract
         IDataResult<List<UserOperationClaim>> GetAll();
         IDataResult<List<UserOperationClaim>> GetByUserId(int userId);
         IResult Add(UserOperationClaim userOperationClaim);
-        IResult AddUserRoleForUsers(UserOperationClaim userClaim);
+        IResult AddUserRoleForUsers(UserOperationClaim userClaim); //apide görünmesi gerekmez.
         IResult Update(UserOperationClaim userOperationClaim);
         IResult Delete(UserOperationClaim userOperationClaim);
-        IResult DeleteForUsersOwnClaim(int userId);
+        IResult DeleteForUsersOwnClaim(int userId); //apide olması gerekmez.
+
+        // Gerekirse bir DTO ekleyip rol adını kullanıcı adı ile çekebilirim.
     }
 }

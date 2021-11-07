@@ -11,19 +11,19 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthorsController : ControllerBase
+    public class PublishersController : ControllerBase
     {
-        private IAuthorService _authorService;
+        private IPublisherService _publisherService;
 
-        public AuthorsController(IAuthorService authorService)
+        public PublishersController(IPublisherService publisherService)
         {
-            _authorService = authorService;
+            _publisherService = publisherService;
         }
 
-        [HttpGet("geteall")]
+        [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _authorService.GetAll();
+            var result = _publisherService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
@@ -32,10 +32,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getbyid")]
+        [HttpGet("getbyId")]
         public IActionResult GetById(int id)
         {
-            var result = _authorService.GetById(id);
+            var result = _publisherService.GetById(id);
             if (result.Success)
             {
                 return Ok(result);
@@ -45,9 +45,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult Add(Author author)
+        public IActionResult Add(Publisher publisher)
         {
-            var result = _authorService.Add(author);
+            var result = _publisherService.Add(publisher);
             if (result.Success)
             {
                 return Ok(result);
@@ -57,9 +57,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult Update(Author author)
+        public IActionResult Update(Publisher publisher)
         {
-            var result = _authorService.Update(author);
+            var result = _publisherService.Update(publisher);
             if (result.Success)
             {
                 return Ok(result);
@@ -69,9 +69,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("delete")]
-        public IActionResult Delete(Author author)
+        public IActionResult Delete(Publisher publisher)
         {
-            var result = _authorService.Delete(author);
+            var result = _publisherService.Delete(publisher);
             if (result.Success)
             {
                 return Ok(result);

@@ -11,11 +11,11 @@ namespace Business.Abstract
 {
     public interface IBookService
     {
-        IDataResult<List<Book>> GetAll();
+        IDataResult<List<Book>> GetAll(); // GetAllForAddToLibrary(); yeterli olabilir.
         IDataResult<Book> GetById(int id);
         IDataResult<List<BookForAddToLibraryDto>> GetAllForAddToLibrary();
         IDataResult<BookForAddToLibraryDto> GetByIsbnForAddToLibrary(string isbn); //pipe ile çözülebilir
-        IDataResult<List<BookForAddToLibraryDto>> GetLisyByBookNameForAddToLibrary(string bookName); //pipe
+        IDataResult<List<BookForAddToLibraryDto>> GetListByBookNameForAddToLibrary(string bookName); //pipe
         IDataResult<List<BookForAddToLibraryDto>> GetListByPublisherIdForAddToLibrary(int publisherId); //pipe
         IDataResult<List<BookForAddToLibraryDto>> GetListByAuthorIdForAddToLibrary(int authorId); //pipe
         IDataResult<List<BookForAddToLibraryDto>> GetListByNativeStatueForAddToLibrary(bool native); //pipe

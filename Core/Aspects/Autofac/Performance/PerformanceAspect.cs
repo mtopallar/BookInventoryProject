@@ -31,6 +31,7 @@ namespace Core.Aspects.Autofac.Performance
             if (_stopwatch.Elapsed.TotalSeconds>_interval)
             {
                 Debug.WriteLine($"Performance : {invocation.Method.DeclaringType.FullName}.{invocation.Method.Name}-->{_stopwatch.Elapsed.TotalSeconds}");
+                //Debug.Writeline VS daki output ekranına yazırmak için kullanılıyor.
             }
             _stopwatch.Reset();
         }

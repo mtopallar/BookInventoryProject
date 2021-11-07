@@ -11,6 +11,7 @@ namespace Core.Extensions
         public static List<string> Claims(this ClaimsPrincipal claimsPrincipal, string claimType)
         {
             // mesela claim type olarak roles diyoruz ve roles claimlerini List<string> olarak dönüyor.
+            //** Burada erişebileceklerimiz sadece role ile sınırlı değil mesela olur da gerekirse claim in id sine, dğier claimlere vs erişmek de bu yöntemle mümkün.
             var result = claimsPrincipal?.FindAll(claimType)?.Select(x => x.Value).ToList();
             return result;
         }

@@ -17,7 +17,7 @@ namespace Core.DependencyResolvers
         {
             serviceCollection.AddMemoryCache(); //IMemoryCache injection ının (yani MemoryCacheManager sınıfının içindeki IMemoryCache _memoryCache in) çalışabilmesi için gerekli. IMemoryCache de buradaki servicesCollection.AddMemoryCache de Microsoftun kendi sınıfları. Yani startup dan direk injection yapabiliriz ancak aspect olarak yazdığımız için API den daha geride yapıyoruz injectionlarımızı. serviceCollection.AddMemoryCache() Microsoft'un built in cache manajerinin devreye alınması için gerekli.
             serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>();
+            serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>(); //cache sistemi olarak Microsoft un cache sistemini kullanacağımızı belirtiyoruz.
             serviceCollection.AddSingleton<Stopwatch>(); //kronometre enjeksiyonu.
         }
     }

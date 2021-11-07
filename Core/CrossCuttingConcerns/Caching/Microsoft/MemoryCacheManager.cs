@@ -12,6 +12,8 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft
     public class MemoryCacheManager : ICacheManager
     {
         private readonly IMemoryCache _memoryCache; //ctor enjeksiyonu burada çalışmaz çünkü bu da bir aspect olacak ve zincirin dışında. Enjeksiyonu Core.DependencyResolvers altındaki core module dan yapmalıyız.
+        
+        //**Burada CoreModule içindeki Load metodunun içine eklediğimiz serviceCollection.AddMemoryCache() servisine erişim sağlıyor ve onu okuyoruz.
 
         public MemoryCacheManager()
         {

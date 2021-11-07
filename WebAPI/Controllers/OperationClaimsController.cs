@@ -5,25 +5,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Business.Abstract;
-using Entities.Concrete;
+using Core.Entities.Concrete;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthorsController : ControllerBase
+    public class OperationClaimsController : ControllerBase
     {
-        private IAuthorService _authorService;
+        private IOperationClaimService _operationClaimService;
 
-        public AuthorsController(IAuthorService authorService)
+        public OperationClaimsController(IOperationClaimService operationClaimService)
         {
-            _authorService = authorService;
+            _operationClaimService = operationClaimService;
         }
 
-        [HttpGet("geteall")]
+        [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _authorService.GetAll();
+            var result = _operationClaimService.GetAll();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpGet("getpredefinedclaims")]
+        public IActionResult GetPredefinedClaims()
+        {
+            var result = _operationClaimService.GetPredefinedClaims();
             if (result.Success)
             {
                 return Ok(result);
@@ -35,7 +47,7 @@ namespace WebAPI.Controllers
         [HttpGet("getbyid")]
         public IActionResult GetById(int id)
         {
-            var result = _authorService.GetById(id);
+            var result = _operationClaimService.GetById(id);
             if (result.Success)
             {
                 return Ok(result);
@@ -45,21 +57,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult Add(Author author)
+        public IActionResult Add(OperationClaim operationClaim)
         {
-            var result = _authorService.Add(author);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
-
-        [HttpPost("update")]
-        public IActionResult Update(Author author)
-        {
-            var result = _authorService.Update(author);
+            var result = _operationClaimService.Add(operationClaim);
             if (result.Success)
             {
                 return Ok(result);
@@ -69,9 +69,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("delete")]
-        public IActionResult Delete(Author author)
+        public IActionResult Delete(OperationClaim operationClaim)
         {
-            var result = _authorService.Delete(author);
+            var result = _operationClaimService.Delete(operationClaim);
             if (result.Success)
             {
                 return Ok(result);

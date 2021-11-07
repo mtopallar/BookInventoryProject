@@ -58,7 +58,7 @@ namespace Business.Concrete
                 Messages.GetBookForAddToLibraryByIsbnSuccessfully);
         }
         [SecuredOperation("admin,book.admin,user")]
-        public IDataResult<List<BookForAddToLibraryDto>> GetLisyByBookNameForAddToLibrary(string bookName)
+        public IDataResult<List<BookForAddToLibraryDto>> GetListByBookNameForAddToLibrary(string bookName)
         {
             return new SuccessDataResult<List<BookForAddToLibraryDto>>(
                 _bookDal.GetBooksForAddToLibrary(b => b.Name == bookName),
