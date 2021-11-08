@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Entities.Concrete;
+using Entities.Concrete;
 
 namespace Business.Constants
 {
@@ -27,6 +28,8 @@ namespace Business.Constants
         public static string AuthorUpdatedSuccessfully="Yazar bilgileri başarıyla güncellendi.";
         public static string AuthorDeletedSuccessfully="Yazar başarıyla silindi.";
         public static string AuthorAlreadyAdded="Yazar sistemde zaten mevcut.";
+        public static string NoActiveAuthorsFound="Sistemde kullanılabilecek yazar bulunmamaktadır.Sistem yöneticinize danışınız.";
+        public static string CanNotFindActiveAuthor="Belirtilen yazara erişilemiyor.Sistem yöneticinize danışınız.";
         
         //Books
         public static string GetAllBooksSuccessfully="Tüm kitaplar başarıyla listelendi.";

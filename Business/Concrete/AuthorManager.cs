@@ -30,11 +30,21 @@ namespace Business.Concrete
         [CacheAspect()]
         public IDataResult<List<Author>> GetAll()
         {
-            return new SuccessDataResult<List<Author>>(_authorDal.GetAll(a => a.Active), Messages.GetAllAuthorsSuccessfully);
+            var checkIfNoActiveAuthors = _authorDal.GetAll(a => a.Active);
+            if (checkIfNoActiveAuthors.Count==0)
+            {
+                return new ErrorDataResult<List<Author>>(Messages.NoActiveAuthorsFound);
+            }
+            return new SuccessDataResult<List<Author>>(checkIfNoActiveAuthors, Messages.GetAllAuthorsSuccessfully);
         }
         [SecuredOperation("admin,author.admin,user")]
         public IDataResult<Author> GetById(int id)
         {
+            var tryGetAuthorByIdIfAuthorActive = _authorDal.Get(a => a.Id == id && a.Active);
+            if (tryGetAuthorByIdIfAuthorActive==null)
+            {
+                return new ErrorDataResult<Author>(Messages.CanNotFindActiveAuthor);
+            }
             return new SuccessDataResult<Author>(_authorDal.Get(a => a.Id == id && a.Active), Messages.GetAuthorByIdSuccessfully);
         }
         [SecuredOperation("admin,author.admin")]
@@ -80,6 +90,7 @@ namespace Business.Concrete
 
             author.FirstName = AuthorNameEditorByAuthorNativeStatue(author).FirstName;
             author.LastName = AuthorNameEditorByAuthorNativeStatue(author).LastName;
+            author.Active = true;
             _authorDal.Update(author);
             return new SuccessResult(Messages.AuthorUpdatedSuccessfully);
         }
@@ -119,6 +130,7 @@ namespace Business.Concrete
 
         private Author IsAuthorAddedBeforeAndNotActiveNow(Author author)
         {
+            //author un  id değerine göre author getirilip active değeri false ise kontrolü de yapılabilir.
             var nameEditedAuthor = AuthorNameEditorByAuthorNativeStatue(author);
 
             var authorMakeActiveAgain = _authorDal.Get(a => a.FirstName == nameEditedAuthor.FirstName && a.LastName == nameEditedAuthor.LastName && a.Native==author.Native && a.Active==false);
@@ -134,6 +146,7 @@ namespace Business.Concrete
 
         private IResult IsAuthorAlreadyExistAndActive(Author author)
         {
+            //author un  id değerine göre author getirilip active değeri false ise kontrolü de yapılabilir.
             var nameEditedAuthor = AuthorNameEditorByAuthorNativeStatue(author);
             var tryToFindAuthor = _authorDal.Get(a =>
                 a.FirstName == nameEditedAuthor.FirstName && a.LastName == nameEditedAuthor.LastName &&

@@ -13,10 +13,10 @@ namespace Business.ValidationRules.FluentValidation
         public AuthorValidator()
         {
             RuleFor(a => a.FirstName).NotEmpty();
-            RuleFor(a => a.FirstName).MaximumLength(3);
+            RuleFor(a => a.FirstName).MinimumLength(3);
             RuleFor(a => a.LastName).NotEmpty();
             RuleFor(a => a.LastName).MinimumLength(2);
-            RuleFor(a => a.Native).NotEmpty();
+            RuleFor(a => a.Native).NotNull();
         }
     }
 }

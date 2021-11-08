@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
             _authorService = authorService;
         }
 
-        [HttpGet("geteall")]
+        [HttpGet("getall")]
         public IActionResult GetAll()
         {
             var result = _authorService.GetAll();
