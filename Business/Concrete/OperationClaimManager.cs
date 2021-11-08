@@ -51,11 +51,15 @@ namespace Business.Concrete
             return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(c => c.Id == id),
                 Messages.GetClaimByIdSuccessfully);
         }
-        [SecuredOperation("admin,user")]
-        public IDataResult<OperationClaim> GetByClaimName(string claimName)
+        //[SecuredOperation("admin,user")] sil ya da user rolü için s ecured olmayan bir metod yaz. ama apide olmayacağı için karşılığı yok zaten silinebilir.
+        public IDataResult<OperationClaim> GetByClaimNameIfClaimActive(string claimName)
         {
-            return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(o => o.Name == claimName),
-                Messages.GetOperationClaimByNameSuccessfully);
+            var result = _operationClaimDal.Get(o => o.Name == claimName && o.Active);
+            if (result==null)
+            {
+                return new ErrorDataResult<OperationClaim>(Messages.ClaimNotFoundOrNotActive);
+            }
+            return new SuccessDataResult<OperationClaim>(result, Messages.GetOperationClaimByNameSuccessfully);
         }
         [SecuredOperation("admin")]
         public IResult Add(OperationClaim operationClaim)

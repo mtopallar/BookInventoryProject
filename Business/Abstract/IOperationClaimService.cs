@@ -13,7 +13,7 @@ namespace Business.Abstract
         IDataResult<List<OperationClaim>> GetAll();
         IDataResult<List<OperationClaim>> GetPredefinedClaims();
         IDataResult<OperationClaim> GetById(int id);
-        IDataResult<OperationClaim> GetByClaimName(string claimName); //user manager kullanıyor.
+        IDataResult<OperationClaim> GetByClaimNameIfClaimActive(string claimName); //user manager kullanıyor.
         IResult Add(OperationClaim operationClaim);
         IResult Delete(OperationClaim operationClaim);
         

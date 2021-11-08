@@ -16,13 +16,12 @@ namespace Business.Concrete
     public class UserOperationClaimManager:IUserOperationClaimService
     {
         private readonly IUserOperationClaimDal _userOperationClaimDal;
-        private readonly IOperationClaimService _operationClaimService;
+        //private readonly IOperationClaimService _operationClaimService;
         
 
-        public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal, IOperationClaimService operationClaimService)
+        public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal)
         {
             _userOperationClaimDal = userOperationClaimDal;
-            _operationClaimService = operationClaimService;
         }
         [SecuredOperation("admin,user.admin")]
         public IDataResult<List<UserOperationClaim>> GetAll()
@@ -42,7 +41,7 @@ namespace Business.Concrete
             _userOperationClaimDal.Add(userOperationClaim);
             return new SuccessResult(Messages.UserOperationClaimAddedSuccessfully);
         }
-        [SecuredOperation("user")]
+        
         public IResult AddUserRoleForUsers(UserOperationClaim userClaim)
         {
             _userOperationClaimDal.Add(userClaim);

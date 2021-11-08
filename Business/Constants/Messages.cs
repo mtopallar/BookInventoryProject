@@ -59,6 +59,7 @@ namespace Business.Constants
         public static string GetClaimByIdSuccessfully="Yetki detayları başarıyla getirildi.";
         public static string ClaimDeletedSuccessfully="Yetki başarıyla silindi.";
         public static string OperationClaimAlreadyAdded="Yetki sistemde zaten mevcut.";
+        public static string ClaimNotFoundOrNotActive = "Kullanıcı yetkisinde bir problem var. Sistem yöneticinize danışınız.";
         
         
         //Publishers

@@ -11,6 +11,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.StringEditor;
@@ -33,7 +34,7 @@ namespace Business.Concrete
             _userOperationClaimService = userOperationClaimService;
             _userBookService = userBookService;
         }
-        [SecuredOperation("admin,user.admin")]
+        //[SecuredOperation("admin,user.admin")] APİ'de zaten yok. Register ya da login olmak için kullanılıyor. Silinmeli.
         public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetUserClaims(user),
@@ -60,7 +61,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.GetAllUsersSuccessfully);
         }
-        [SecuredOperation("admin,user.admin,user")]
+        //[SecuredOperation("admin,user.admin,user")] sil
         public IDataResult<User> GetByMail(string email)
         {
             return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email),
@@ -71,16 +72,23 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<User>(_userDal.Get(u => u.Id == id), Messages.GetUserByIdSuccessfully);
         }
-        [SecuredOperation("admin,user.admin,user")]
+        [ValidationAspect(typeof(UserValidator))]
         [CacheRemoveAspect("IUserService.Get")]
         [TransactionScopeAspect]
         public IResult Add(User user)
         {
+            var userRoleName = "user";
+            var checkUserRoleBeforeUserAdded = _operationClaimService.GetByClaimNameIfClaimActive(userRoleName);
             user.FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.FirstName));
             user.LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.LastName));
-            _userDal.Add(user);
-            AddUserRoleIfNotExist(user);
-            return new SuccessResult(Messages.UserAddedSuccessfully);
+            if (checkUserRoleBeforeUserAdded.Success)
+            {
+                _userDal.Add(user);
+                AddUserRoleIfNotExist(user);
+                return new SuccessResult(Messages.UserAddedSuccessfully);
+            }
+
+            return new ErrorResult(checkUserRoleBeforeUserAdded.Message);
         }
         [SecuredOperation("admin,user.admin,user")]
         [ValidationAspect(typeof(UserForUpdateValidator))]
@@ -125,12 +133,12 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForUser(string currentPassword, int userId)
         {
-            if (UserCurrentPasswordChecker(currentPassword,userId,out var existUser))
+            if (UserCurrentPasswordChecker(currentPassword, userId, out var existUser))
             {
                 if (DeleteUserBooks(userId).Success)
                 {
                     if (DeleteUserFromUserOperationClaims(userId).Success)
-                    { 
+                    {
                         _userDal.Delete(existUser);
                         return new SuccessResult(Messages.UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser);
                     }
@@ -142,7 +150,7 @@ namespace Business.Concrete
         private void AddUserRoleIfNotExist(User user)
         {
             var claimName = "user";
-            var getClaimUser = _operationClaimService.GetByClaimName(claimName).Data;
+            var getClaimUser = _operationClaimService.GetByClaimNameIfClaimActive(claimName).Data;
             _userOperationClaimService.AddUserRoleForUsers(new UserOperationClaim { UserId = user.Id, OperationClaimId = getClaimUser.Id });
         }
 
@@ -191,8 +199,8 @@ namespace Business.Concrete
 
         private IResult DeleteUserFromUserOperationClaims(int userId)
         {
-           var result = _userOperationClaimService.DeleteForUsersOwnClaim(userId);
-           return result;
+            var result = _userOperationClaimService.DeleteForUsersOwnClaim(userId);
+            return result;
         }
 
         private bool UserCurrentPasswordChecker(string currentPassword, int userId, out User existUser)
