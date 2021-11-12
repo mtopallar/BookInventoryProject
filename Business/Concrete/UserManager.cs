@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Business.Abstract;
@@ -16,6 +17,7 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.DTOs;
 
 namespace Business.Concrete
@@ -34,7 +36,7 @@ namespace Business.Concrete
             _userOperationClaimService = userOperationClaimService;
             _userBookService = userBookService;
         }
-        //[SecuredOperation("admin,user.admin")] APİ'de zaten yok. Register ya da login olmak için kullanılıyor. Silinmeli.
+        
         public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetUserClaims(user),
@@ -44,16 +46,29 @@ namespace Business.Concrete
         [CacheAspect()]
         public IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles()
         {
-            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(_userDal
-                .GetRolesWithUserDetails(), Messages.GetAllUserDetailsWitrRolesSuccessfully);
+            var usersDetailsWithoutRoleList = UserToUserWithDetailsAndRolesDto();
+            foreach (var userWithDetailsAndRolesDto in usersDetailsWithoutRoleList)
+            {
+                var usersRoles = GetClaims(new User { Id = userWithDetailsAndRolesDto.UserId }).Data;
+                foreach (var userOperationClaim in usersRoles)
+                {
+                    userWithDetailsAndRolesDto.UserRoleNames.Add(userOperationClaim.Name);
+                }
+            }
+
+            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(usersDetailsWithoutRoleList, Messages.GetAllUserDetailsWitrRolesSuccessfully);
         }
-        [SecuredOperation("admin,user.admin")]
-        public IDataResult<List<UserWithDetailsAndRolesDto>> GetUserDetailsWithRolesByUserId(int userId)
+        [SecuredOperation("user")]
+        public IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsWithRolesByUserId(int userId)
         {
-            var getUser = GetById(userId).Data;
-            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(
-                _userDal.GetRolesWithUserDetails(u => u.Email == getUser.Email),
-                Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
+            var userDetailWithoutRoleList = UserToUserWithDetailsAndRolesDto(userId).Single();
+            var userRoleNameList = GetClaims(new User { Id = userId }).Data;
+            
+            foreach (var roleNames in userRoleNameList)
+            {
+                userDetailWithoutRoleList.UserRoleNames.Add(roleNames.Name);
+            }
+            return new SuccessDataResult<UserWithDetailsAndRolesDto>(userDetailWithoutRoleList, Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
         }
         [SecuredOperation("admin,user.admin")]
         [CacheAspect()]
@@ -61,11 +76,15 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.GetAllUsersSuccessfully);
         }
-        //[SecuredOperation("admin,user.admin,user")] sil
+        
         public IDataResult<User> GetByMail(string email)
         {
-            return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email),
-                Messages.GetUserByEmailSuccessfully);
+            var currentMail = _userDal.Get(u => u.Email == email);
+            if (currentMail == null)
+            {
+                return new ErrorDataResult<User>(Messages.UserNotFoundByThisMail);
+            }
+            return new SuccessDataResult<User>(currentMail, Messages.GetUserByEmailSuccessfully);
         }
         [SecuredOperation("admin,user.admin")]
         public IDataResult<User> GetById(int id)
@@ -129,15 +148,16 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserAndUsersBooksDeletedSuccessfullyByAdmin);
         }
         [SecuredOperation("user")]
+        [ValidationAspect(typeof(UserForDeleteValidator))]
         [CacheRemoveAspect("IUserService.Get")]
         [TransactionScopeAspect]
-        public IResult DeleteForUser(string currentPassword, int userId)
+        public IResult DeleteForUser(UserForDeleteDto userForDeleteDto)
         {
-            if (UserCurrentPasswordChecker(currentPassword, userId, out var existUser))
+            if (UserCurrentPasswordChecker(userForDeleteDto.CurrentPassword, userForDeleteDto.UserId, out var existUser))
             {
-                if (DeleteUserBooks(userId).Success)
+                if (DeleteUserBooks(userForDeleteDto.UserId).Success)
                 {
-                    if (DeleteUserFromUserOperationClaims(userId).Success)
+                    if (DeleteUserFromUserOperationClaims(userForDeleteDto.UserId).Success)
                     {
                         _userDal.Delete(existUser);
                         return new SuccessResult(Messages.UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser);
@@ -209,6 +229,35 @@ namespace Business.Concrete
             var existUsersCurrentPasswordChecker = HashingHelper.VerifyPasswordHash(currentPassword, existUser.PasswordHash, existUser.PasswordSalt);
 
             return existUsersCurrentPasswordChecker;
+        }
+
+        private List<UserWithDetailsAndRolesDto> UserToUserWithDetailsAndRolesDto(int userId = 0)
+        {
+            List<UserWithDetailsAndRolesDto> userWithDetailsAndRolesDtos = new List<UserWithDetailsAndRolesDto>();
+            var users = new List<User>();
+            if (userId == 0)
+            {
+                users = GetAll().Data;
+            }
+            else
+            {
+                users.Add(GetById(userId).Data);
+            }
+            foreach (var userAlias in users)
+            {
+                UserWithDetailsAndRolesDto dto = new UserWithDetailsAndRolesDto
+                {
+                    Email = userAlias.Email,
+                    FirstName = userAlias.FirstName,
+                    LastName = userAlias.LastName,
+                    UserId = userAlias.Id,
+                    UserRoleNames = new List<string>()
+                };
+
+                userWithDetailsAndRolesDtos.Add(dto);
+            }
+
+            return userWithDetailsAndRolesDtos;
         }
     }
 }

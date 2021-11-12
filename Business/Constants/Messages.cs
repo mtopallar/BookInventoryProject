@@ -100,8 +100,8 @@ namespace Business.Constants
         
         //UserManager
         public static string GetUsersAllClaimsSuccessfully="Kullanıcının tüm rolleri rol formatında getirildi.";
-        public static string GetAllUserDetailsWitrRolesSuccessfully="Tüm kullanıcıların kullanıcı ve rol detayları başarıyla listelendi.";
-        public static string GetUserDetailsWithRolesByUserIdSuccessfully="Kullanıcının rolleri detaylarıyla listelendi.";
+        public static string GetAllUserDetailsWitrRolesSuccessfully="Tüm kullanıcıların detayları ve sahip olduğu roller başarıyla listelendi.";
+        public static string GetUserDetailsWithRolesByUserIdSuccessfully="Kullanıcının detayları ve sahip olduğu roller başarıyla listelendi.";
         public static string GetAllUsersSuccessfully="Tüm kullanıcılar başarıyla listelendi.";
         public static string GetUserByEmailSuccessfully="Mail adresine göre kullanıcı detayları başarıyla listelendi.";
         public static string GetUserByIdSuccessfully="Kullanıcı detayları başarıyla getirildi.";
@@ -111,6 +111,6 @@ namespace Business.Constants
         public static string NewEmailAlreadyExists="Kullanmak istediğiniz Email başka kullanıcı tarafından kullanılıyor.";
         public static string UserAndUsersBooksDeletedSuccessfullyByAdmin="Kullanıcı, kullanıcının tüm yetkileri kütüphanesi yönetici tarafından başarıyla silinmiştir.";
         public static string UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser="Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
-        
+        public static string UserNotFoundByThisMail="Girilen mail ile kayıtlı kullanıcı bulunmamaktadır.";
     }
 }

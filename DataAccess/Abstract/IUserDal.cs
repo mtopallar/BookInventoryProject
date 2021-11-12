@@ -13,7 +13,6 @@ namespace DataAccess.Abstract
     public interface IUserDal:IEntityRepository<User>
     {
         List<OperationClaim> GetUserClaims(User user);
-        List<UserWithDetailsAndRolesDto> GetRolesWithUserDetails(
-            Expression<Func<UserWithDetailsAndRolesDto, bool>> filter=null);
+        //List<UserWithDetailsAndRolesDto> GetRolesWithUserDetails(Expression<Func<UserWithDetailsAndRolesDto, bool>> filter=null);
     }
 }
