@@ -56,13 +56,14 @@ namespace Business.Constants
 
         //Operation Claims
         public static string GetAllOperationClaimsSuccessfully="Tüm yetkiler başarıyla listelendi.";
-        public static string ClaimAddedSuccessfully="Yetkiler başarıyla eklendi.";
+        public static string ClaimAddedSuccessfully="Yetki başarıyla eklendi.";
         public static string GetOperationClaimByNameSuccessfully="Ada göre yetki detayları başarıyla getirildi.";
         public static string PredefinedClaimsListedSuccessfully="Öntanımlı yetkiler başarıyla listelendi.";
         public static string GetClaimByIdSuccessfully="Yetki detayları başarıyla getirildi.";
         public static string ClaimDeletedSuccessfully="Yetki başarıyla silindi.";
         public static string OperationClaimAlreadyAdded="Yetki sistemde zaten mevcut.";
-        public static string ClaimNotFoundOrNotActive = "Kullanıcı yetkisinde bir problem var. Sistem yöneticinize danışınız.";
+        public static string ClaimNotFoundOrNotActive = "Kullanıcı yetkisinde yok ya da aktif değil.";
+        public static string OperationClaimWrongIdOrClaimNotActive="Rol detaylarına ulaşılamıyor. Hatalı id ya da rol aktif değil.";
         
         
         //Publishers
@@ -112,5 +113,6 @@ namespace Business.Constants
         public static string UserAndUsersBooksDeletedSuccessfullyByAdmin="Kullanıcı, kullanıcının tüm yetkileri kütüphanesi yönetici tarafından başarıyla silinmiştir.";
         public static string UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser="Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
         public static string UserNotFoundByThisMail="Girilen mail ile kayıtlı kullanıcı bulunmamaktadır.";
+        
     }
 }

@@ -17,15 +17,15 @@ namespace Business.Concrete
     public class OperationClaimManager : IOperationClaimService
     {
         private readonly IOperationClaimDal _operationClaimDal;
-        private readonly List<OperationClaim> _predefinedClaims = new List<OperationClaim>
+        private readonly List<OperationClaim> _predefinedClaims = new()
         {
             new OperationClaim {Name = "admin"},
             new OperationClaim {Name = "book.admin"},
             new OperationClaim {Name = "author.admin"},
             new OperationClaim {Name = "genre.admin"},
             new OperationClaim {Name = "publisher.admin"},
-            new OperationClaim {Name = "user"},
-            new OperationClaim {Name = "user.admin"}
+            new OperationClaim {Name = "user.admin"},
+            new OperationClaim {Name = "user"}
 
         };
 
@@ -36,7 +36,8 @@ namespace Business.Concrete
         [SecuredOperation("admin")]
         public IDataResult<List<OperationClaim>> GetAll()
         {
-            return new SuccessDataResult<List<OperationClaim>>(_operationClaimDal.GetAll(),
+            //Aktif rol yoksa error dön kontrolü yapmadım zira aktif rol yoksa sistem zaten çalışmaz. en az user rolü ekli ve aktif olmalıdır.
+            return new SuccessDataResult<List<OperationClaim>>(_operationClaimDal.GetAll(o=>o.Active),
                 Messages.GetAllOperationClaimsSuccessfully);
         }
         [SecuredOperation("admin")]
@@ -48,7 +49,12 @@ namespace Business.Concrete
         [SecuredOperation("admin")]
         public IDataResult<OperationClaim> GetById(int id)
         {
-            return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(c => c.Id == id),
+            var result = _operationClaimDal.Get(c => c.Id == id && c.Active);
+            if (result==null)
+            {
+                return new ErrorDataResult<OperationClaim>(Messages.OperationClaimWrongIdOrClaimNotActive);
+            }
+            return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(c => c.Id == id && c.Active),
                 Messages.GetClaimByIdSuccessfully);
         }
         //[SecuredOperation("admin,user")] sil ya da user rolü için s ecured olmayan bir metod yaz. ama apide olmayacağı için karşılığı yok zaten silinebilir.

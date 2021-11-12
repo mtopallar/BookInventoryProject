@@ -16,7 +16,7 @@ namespace Business.Abstract
         IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsWithRolesByUserId(int userId);//list ten teke çektim
         IDataResult<List<User>> GetAll(); //api ye yazmadım.
         IDataResult<User> GetByMail(string email); //apiye şimdilik dahil etmedim. Manager lar kullanıyor. Register  ve login için kullanılıyor.
-        IDataResult<User> GetById(int id);
+        IDataResult<User> GetById(int id); // apiye yazmadım.
         IResult Add(User user); //managerlar kullanıyor apiye yazmadım.
         IResult Update(UserForUpdateDto userForUpdateDto);
         IResult DeleteForAdmin(int userId);

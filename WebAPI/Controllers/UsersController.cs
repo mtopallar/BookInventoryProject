@@ -44,21 +44,7 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
-
-        //GetByMail gerekirse apiye ekle.
-
-        [HttpGet("getbyid")]
-        public IActionResult GetById(int id)
-        {
-            var result = _userService.GetById(id);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
-
+        
 
         [HttpPost("update")]
         public IActionResult Update(UserForUpdateDto userForUpdateDto)
