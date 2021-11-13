@@ -30,11 +30,21 @@ namespace Business.Concrete
         [CacheAspect()]
         public IDataResult<List<Genre>> GetAll()
         {
-            return new SuccessDataResult<List<Genre>>(_genreDal.GetAll(), Messages.GetAllGenresSuccessfully);
+            var result = _genreDal.GetAll(g => g.Active);
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<Genre>>(Messages.NoActiveGenreFound);
+            }
+            return new SuccessDataResult<List<Genre>>(_genreDal.GetAll(g=>g.Active), Messages.GetAllGenresSuccessfully);
         }
         [SecuredOperation("admin,genre.admin,user")]
         public IDataResult<Genre> GetById(int id)
         {
+            var result = _genreDal.Get(g => g.Id == id && g.Active);
+            if (result==null)
+            {
+                return new ErrorDataResult<Genre>(Messages.GenreWrongIdOrClaimNotActive);
+            }
             return new SuccessDataResult<Genre>(_genreDal.Get(g => g.Id == id), Messages.GetGenreByIdSuccessfully);
         }
         [SecuredOperation("admin,genre.admin")]

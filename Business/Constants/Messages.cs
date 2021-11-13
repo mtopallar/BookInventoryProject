@@ -52,6 +52,8 @@ namespace Business.Constants
         public static string GenreUpdatedSuccessfully="Tür bilgileri başarıyla güncellendi.";
         public static string GenreDeletedSuccessfully="Tür başarıyla silindi.";
         public static string GenreAlreadyAdded="Tür sistemde zaten mevcut.";
+        public static string GenreWrongIdOrClaimNotActive = "Tür detaylarına ulaşılamıyor. Hatalı id ya da tür aktif değil.";
+        public static string NoActiveGenreFound="Sistemde kullanılabilecek tür bulunmamaktadır.Sistem yöneticinize danışınız.";
         
 
         //Operation Claims

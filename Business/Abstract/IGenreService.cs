@@ -10,7 +10,7 @@ namespace Business.Abstract
 {
     public interface IGenreService
     {
-        IDataResult<List<Genre>> GetAll();
+        IDataResult<List<Genre>> GetAll(); //sadece aktifolanları getiriyor.
         IDataResult<Genre> GetById(int id);
         IResult Add(Genre genre);
         IResult Update(Genre genre);

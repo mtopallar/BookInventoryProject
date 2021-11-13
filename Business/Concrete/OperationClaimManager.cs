@@ -36,7 +36,7 @@ namespace Business.Concrete
         [SecuredOperation("admin")]
         public IDataResult<List<OperationClaim>> GetAll()
         {
-            //Aktif rol yoksa error dön kontrolü yapmadım zira aktif rol yoksa sistem zaten çalışmaz. en az user rolü ekli ve aktif olmalıdır.
+            //Aktif rol yoksa error dön kontrolü yapmadım zira aktif rol yoksa sistem zaten çalışmaz. en az user rolü ekli ve aktif olmalıdır. üstelik bu metodu admin rolüne sahip kullanıcılar kullanabilir :)
             return new SuccessDataResult<List<OperationClaim>>(_operationClaimDal.GetAll(o=>o.Active),
                 Messages.GetAllOperationClaimsSuccessfully);
         }
