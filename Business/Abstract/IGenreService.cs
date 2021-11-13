@@ -11,9 +11,9 @@ namespace Business.Abstract
     public interface IGenreService
     {
         IDataResult<List<Genre>> GetAll(); //sadece aktifolanları getiriyor.
-        IDataResult<Genre> GetById(int id);
+        IDataResult<Genre> GetById(int id); //eğer rol aktifse
         IResult Add(Genre genre);
-        IResult Update(Genre genre);
+        IResult Update(Genre genre); //idye göre
         IResult Delete(Genre genre);
     }
 }

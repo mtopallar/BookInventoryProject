@@ -81,17 +81,11 @@ namespace Business.Concrete
         [ValidationAspect(typeof(AuthorValidator))]
         public IResult Update(Author author)
         {
-            var authorExistsAndActiveAlready = BusinessRules.Run(IsAuthorAlreadyExistAndActive(author));
-
-            if (authorExistsAndActiveAlready!=null)
-            {
-                return authorExistsAndActiveAlready;
-            }
-
-            author.FirstName = AuthorNameEditorByAuthorNativeStatue(author).FirstName;
-            author.LastName = AuthorNameEditorByAuthorNativeStatue(author).LastName;
-            author.Active = true;
-            _authorDal.Update(author);
+            var tryToGetAuthor = _authorDal.Get(a => a.Id == author.Id);
+            tryToGetAuthor.FirstName = AuthorNameEditorByAuthorNativeStatue(author).FirstName;
+            tryToGetAuthor.LastName =  AuthorNameEditorByAuthorNativeStatue(author).LastName;
+            tryToGetAuthor.Native = author.Native;
+            _authorDal.Update(tryToGetAuthor);
             return new SuccessResult(Messages.AuthorUpdatedSuccessfully);
         }
         [SecuredOperation("admin,author.admin")]

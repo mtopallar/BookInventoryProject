@@ -13,7 +13,7 @@ namespace Business.Abstract
         IDataResult<List<Author>> GetAll();
         IDataResult<Author> GetById(int id);
         IResult Add(Author author);
-        IResult Update(Author author);
+        IResult Update(Author author); //id ye göre
         IResult Delete(Author author);
     }
 }

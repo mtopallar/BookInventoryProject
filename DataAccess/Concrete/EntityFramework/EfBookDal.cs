@@ -27,7 +27,8 @@ namespace DataAccess.Concrete.EntityFramework
                         Name = book.Name,
                         Isbn = book.Isbn,
                         PublisherName = publisher.Name,
-                        AuthorFullName = $"{author.FirstName} {author.LastName}",
+                        //AuthorFullName = $"{author.FirstName} {author.LastName}", // => ada göre getirirken string formatı bu şekilde hata veriyor.
+                        AuthorFullName = author.FirstName+" "+author.LastName,
                         Native = author.Native,
                         GenreName = genre.Name
                     };

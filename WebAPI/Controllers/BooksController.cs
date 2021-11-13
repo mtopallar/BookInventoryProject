@@ -19,24 +19,12 @@ namespace WebAPI.Controllers
         {
             _bookService = bookService;
         }
+        
 
-        /*
-        [HttpGet("getall")]
-        public IActionResult GetAll()
+        [HttpGet("getallview")]
+        public IActionResult GetAllView()
         {
-            var result = _bookService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        } */
-
-        [HttpGet("getbyid")]
-        public IActionResult GetById(int id)
-        {
-            var result = _bookService.GetById(id);
+            var result = _bookService.GetAllForAddToLibrary();
             if (result.Success)
             {
                 return Ok(result);
@@ -45,10 +33,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getallview")]
-        public IActionResult GetAllView()
+        [HttpGet("getbyidview")]
+        public IActionResult GetByIdView(int id)
         {
-            var result = _bookService.GetAllForAddToLibrary();
+            var result = _bookService.GetByIdForAddToLibrary(id);
             if (result.Success)
             {
                 return Ok(result);

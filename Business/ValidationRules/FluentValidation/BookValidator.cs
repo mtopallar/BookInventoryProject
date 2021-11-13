@@ -13,7 +13,7 @@ namespace Business.ValidationRules.FluentValidation
         public BookValidator()
         {
             RuleFor(b => b.Name).NotEmpty();
-            RuleFor(b => b.Name).MinimumLength(3);
+            RuleFor(b => b.Name).MinimumLength(1);
             RuleFor(b => b.PublisherId).NotEmpty();
             RuleFor(b => b.AuthorId).NotEmpty();
             RuleFor(b => b.GenreId).NotEmpty();

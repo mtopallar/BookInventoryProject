@@ -15,6 +15,7 @@ using Core.Utilities.Results;
 using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 
 namespace Business.Concrete
 {
@@ -30,14 +31,22 @@ namespace Business.Concrete
         [CacheAspect()]
         public IDataResult<List<Publisher>> GetAll()
         {
-            return new SuccessDataResult<List<Publisher>>(_publisherDal.GetAll(),
-                Messages.GetAllPublishersSuccessfully);
+            var result = _publisherDal.GetAll(p => p.Active);
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<Publisher>>(Messages.NoActivePubliserFound);
+            }
+            return new SuccessDataResult<List<Publisher>>(result, Messages.GetAllPublishersSuccessfully);
         }
         [SecuredOperation("admin,publisher.admin,user")]
         public IDataResult<Publisher> GetById(int id)
         {
-            return new SuccessDataResult<Publisher>(_publisherDal.Get(p => p.Id == id),
-                Messages.GetPublisherByIdSuccessfully);
+            var result = _publisherDal.Get(p => p.Id == id && p.Active);
+            if (result==null)
+            {
+                return new ErrorDataResult<Publisher>(Messages.PublisherWrongIdOrPublisherNotActive);
+            }
+            return new SuccessDataResult<Publisher>(result, Messages.GetPublisherByIdSuccessfully);
         }
         [SecuredOperation("admin,publisher.admin")]
         [TransactionScopeAspect]
@@ -45,7 +54,7 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Add(Publisher publisher)
         {
-            var isPublisherAlreadyExistAndActive = BusinessRules.Run(IsPublisherAlreadyExistAndActive(publisher));
+            var isPublisherAlreadyExistAndActive = BusinessRules.Run(IsPublisherAlreadyExistAndActive(publisher.Name));
             if (isPublisherAlreadyExistAndActive != null)
             {
                 return isPublisherAlreadyExistAndActive;
@@ -72,16 +81,12 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Update(Publisher publisher)
         {
-            var isPublisherAlreadyExistAndActive = BusinessRules.Run(IsPublisherAlreadyExistAndActive(publisher));
-            if (isPublisherAlreadyExistAndActive != null)
-            {
-                return isPublisherAlreadyExistAndActive;
-            }
-
-            publisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
-            _publisherDal.Update(publisher);
+            var tryToGetPublisher = _publisherDal.Get(p => p.Id == publisher.Id);
+            tryToGetPublisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+            _publisherDal.Update(tryToGetPublisher);
             return new SuccessResult(Messages.UpdatedPublisherSuccessfully);
         }
+
         [SecuredOperation("admin,publisher.admin")]
         [TransactionScopeAspect]
         [CacheRemoveAspect("IPublisherService.Get")]
@@ -108,10 +113,10 @@ namespace Business.Concrete
             return null;
         }
 
-        private IResult IsPublisherAlreadyExistAndActive(Publisher publisher)
+        private IResult IsPublisherAlreadyExistAndActive(string publisherName)
         {
             var nameEditedPublisher =
-                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisherName));
             var tryToGetPublisher = _publisherDal.Get(p => p.Name == nameEditedPublisher && p.Active);
 
             if (tryToGetPublisher != null)
@@ -121,5 +126,6 @@ namespace Business.Concrete
 
             return new SuccessResult();
         }
+
     }
 }

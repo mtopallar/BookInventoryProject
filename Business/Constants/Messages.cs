@@ -37,6 +37,7 @@ namespace Business.Constants
         public static string BookAddedSuccessfully="Kitap başarıyla kaydedildi.";
         public static string BookUpdatedSuccessfully="Kitap bilgileri başarıyla güncellendi.";
         public static string GetAllBooksForAddToLibrarySuccessfully="Tüm kitaplar kütüphane formatında listelenmiştir.";
+        public static string GetBookByIdForAddToLibrarySuccessfully = "Kitap detayları kütüphane formatında listelenmiştir.";
         public static string GetBookForAddToLibraryByIsbnSuccessfully="Isbn numarasına göre kitap kütüphane formatında getirilmiştir.";
         public static string GetBookForAddToLibraryByBookNameSuccessfully="Kitap adına göre kitaplar kütüphane formatında listelenmiştir.";
         public static string GetBookForAddToLibraryByPublisherIdSuccessfully="Yayınevine göre kitaplar kütüphane formatında listelenmiştir.";
@@ -64,7 +65,7 @@ namespace Business.Constants
         public static string GetClaimByIdSuccessfully="Yetki detayları başarıyla getirildi.";
         public static string ClaimDeletedSuccessfully="Yetki başarıyla silindi.";
         public static string OperationClaimAlreadyAdded="Yetki sistemde zaten mevcut.";
-        public static string ClaimNotFoundOrNotActive = "Kullanıcı yetkisinde yok ya da aktif değil.";
+        public static string ClaimNotFoundOrNotActive = "Yetki sistemde yok ya da aktif değil.";
         public static string OperationClaimWrongIdOrClaimNotActive="Rol detaylarına ulaşılamıyor. Hatalı id ya da rol aktif değil.";
         
         
@@ -75,6 +76,8 @@ namespace Business.Constants
         public static string UpdatedPublisherSuccessfully="Yayınevi bilgileri başarıyla güncellendi.";
         public static string DeletePublisherSuccessfully="Yayınevi başarıyla silindi.";
         public static string PublisherAlreadyAdded="Yayınevi sistemde zaten mevcut.";
+        public static string NoActivePubliserFound="Sistemde kullanılabilecek yayınevi bulunmamaktadır.Sistem yöneticinize danışınız.";
+        public static string PublisherWrongIdOrPublisherNotActive="Yayınevi detaylarına ulaşılamıyor. Hatalı id ya da yayınevi aktif değil.";
         
         //UserBooks
         public static string GetUsersAllBooksSuccessfully="Tüm kitaplarınız başarıyla listelendi.";

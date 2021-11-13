@@ -35,7 +35,7 @@ namespace Business.Concrete
             {
                 return new ErrorDataResult<List<Genre>>(Messages.NoActiveGenreFound);
             }
-            return new SuccessDataResult<List<Genre>>(_genreDal.GetAll(g=>g.Active), Messages.GetAllGenresSuccessfully);
+            return new SuccessDataResult<List<Genre>>(result, Messages.GetAllGenresSuccessfully);
         }
         [SecuredOperation("admin,genre.admin,user")]
         public IDataResult<Genre> GetById(int id)
@@ -45,7 +45,7 @@ namespace Business.Concrete
             {
                 return new ErrorDataResult<Genre>(Messages.GenreWrongIdOrClaimNotActive);
             }
-            return new SuccessDataResult<Genre>(_genreDal.Get(g => g.Id == id), Messages.GetGenreByIdSuccessfully);
+            return new SuccessDataResult<Genre>(result, Messages.GetGenreByIdSuccessfully);
         }
         [SecuredOperation("admin,genre.admin")]
         [CacheRemoveAspect("IGenreService.Get")]
@@ -79,14 +79,9 @@ namespace Business.Concrete
         [ValidationAspect(typeof(GenreValidator))]
         public IResult Update(Genre genre)
         {
-            var genreExistAndActiveAlready = BusinessRules.Run(IsGenreAlreadyExistAndActive(genre));
-            if (genreExistAndActiveAlready != null)
-            {
-                return genreExistAndActiveAlready;
-            }
-
-            genre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
-            _genreDal.Update(genre);
+            var tryToGetGenre = _genreDal.Get(g => g.Id == genre.Id);
+            tryToGetGenre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+            _genreDal.Update(tryToGetGenre);
             return new SuccessResult(Messages.GenreUpdatedSuccessfully);
         }
         [SecuredOperation("admin,genre.admin")]

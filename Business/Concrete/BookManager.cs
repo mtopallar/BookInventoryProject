@@ -19,26 +19,26 @@ using Entities.DTOs;
 
 namespace Business.Concrete
 {
-   public class BookManager:IBookService
-   {
-       private readonly IBookDal _bookDal;
-       private readonly IPublisherService _publisherService;
-       private readonly IAuthorService _authorService;
-       private readonly IGenreService _genreService;
+    public class BookManager : IBookService
+    {
+        private readonly IBookDal _bookDal;
+        private readonly IPublisherService _publisherService;
+        private readonly IAuthorService _authorService;
+        private readonly IGenreService _genreService;
 
-       public BookManager(IBookDal bookDal, IPublisherService publisherService, IAuthorService authorService, IGenreService genreService)
-       {
-           _bookDal = bookDal;
-           _publisherService = publisherService;
-           _authorService = authorService;
-           _genreService = genreService;
-       }
+        public BookManager(IBookDal bookDal, IPublisherService publisherService, IAuthorService authorService, IGenreService genreService)
+        {
+            _bookDal = bookDal;
+            _publisherService = publisherService;
+            _authorService = authorService;
+            _genreService = genreService;
+        }
         [SecuredOperation("admin,book.admin")]
         [CacheAspect()]
-       public IDataResult<List<Book>> GetAll()
-       {
-           return new SuccessDataResult<List<Book>>(_bookDal.GetAll(), Messages.GetAllBooksSuccessfully);
-       }
+        public IDataResult<List<Book>> GetAll()
+        {
+            return new SuccessDataResult<List<Book>>(_bookDal.GetAll(), Messages.GetAllBooksSuccessfully);
+        }
         [SecuredOperation("admin,book.admin")]
         public IDataResult<Book> GetById(int id)
         {
@@ -51,6 +51,13 @@ namespace Business.Concrete
             return new SuccessDataResult<List<BookForAddToLibraryDto>>(_bookDal.GetBooksForAddToLibrary(),
                 Messages.GetAllBooksForAddToLibrarySuccessfully);
         }
+        [SecuredOperation("admin,book.admin,user")]
+        public IDataResult<List<BookForAddToLibraryDto>> GetByIdForAddToLibrary(int id)
+        {
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
+                _bookDal.GetBooksForAddToLibrary(b => b.BookId == id), Messages.GetBookByIdForAddToLibrarySuccessfully);
+        }
+
         [SecuredOperation("admin,book.admin,user")]
         public IDataResult<BookForAddToLibraryDto> GetByIsbnForAddToLibrary(string isbn)
         {
@@ -75,8 +82,8 @@ namespace Business.Concrete
         [SecuredOperation("admin,book.admin,user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByAuthorIdForAddToLibrary(int authorId)
         {
-            var author = _authorService.GetById(authorId).Data;
-            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
+           var author = _authorService.GetById(authorId).Data;
+           return new SuccessDataResult<List<BookForAddToLibraryDto>>(
                 _bookDal.GetBooksForAddToLibrary(b => b.AuthorFullName == $"{author.FirstName} {author.LastName}"),
                 Messages.GetBookForAddToLibraryByAuthorIdSuccessfully);
         }
@@ -87,8 +94,8 @@ namespace Business.Concrete
                 _bookDal.GetBooksForAddToLibrary(b => b.Native == native),
                 Messages.GetBooksForAddToLibraryListByNativeStatueSuccessfully);
         }
-        
-       
+
+
         [SecuredOperation("admin,book.admin,user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByGenreIdForAddToLibrary(int genreId)
         {
@@ -106,7 +113,7 @@ namespace Business.Concrete
         {
             var isBookAddedAlreadyBefore = BusinessRules.Run(IsBookAddedAlreadyBefore(book));
 
-            if (isBookAddedAlreadyBefore!=null)
+            if (isBookAddedAlreadyBefore != null)
             {
                 return isBookAddedAlreadyBefore;
             }
@@ -121,15 +128,13 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Update(Book book)
         {
-            var isBookAddedAlreadyBefore = BusinessRules.Run(IsBookAddedAlreadyBefore(book));
-
-            if (isBookAddedAlreadyBefore!=null)
-            {
-                return isBookAddedAlreadyBefore;
-            }
-
-            book.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
-            _bookDal.Update(book);
+            var tryToGetBook = _bookDal.Get(b => b.Id == book.Id);
+            tryToGetBook.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
+            tryToGetBook.Isbn = book.Isbn;
+            tryToGetBook.PublisherId = book.PublisherId;
+            tryToGetBook.AuthorId = book.AuthorId;
+            tryToGetBook.GenreId = book.GenreId;
+            _bookDal.Update(tryToGetBook);
             return new SuccessResult(Messages.BookUpdatedSuccessfully);
         }
 
@@ -139,13 +144,14 @@ namespace Business.Concrete
                 StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
             var tryGetBook = _bookDal.Get(b =>
                 b.Name == bookNameTryToFind && b.Isbn == book.Isbn && b.PublisherId == book.PublisherId);
-            if (tryGetBook!=null)
+            if (tryGetBook != null)
             {
                 return new ErrorResult(Messages.BookAddedAlreadyBefore);
             }
 
             return new SuccessResult();
         }
-        
+
+
     }
 }
