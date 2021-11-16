@@ -36,7 +36,7 @@ namespace Business.Concrete
             _userOperationClaimService = userOperationClaimService;
             _userBookService = userBookService;
         }
-        
+
         public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetUserClaims(user),
@@ -63,7 +63,7 @@ namespace Business.Concrete
         {
             var userDetailWithoutRoleList = UserToUserWithDetailsAndRolesDto(userId).Single();
             var userRoleNameList = GetClaims(new User { Id = userId }).Data;
-            
+
             foreach (var roleNames in userRoleNameList)
             {
                 userDetailWithoutRoleList.UserRoleNames.Add(roleNames.Name);
@@ -76,7 +76,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.GetAllUsersSuccessfully);
         }
-        
+
         public IDataResult<User> GetByMail(string email)
         {
             var currentMail = _userDal.Get(u => u.Email == email);
@@ -209,9 +209,12 @@ namespace Business.Concrete
         private IResult DeleteUserBooks(int userId)
         {
             var usersBookList = _userBookService.GetAllUserBooks(userId).Data;
-            foreach (var userBook in usersBookList)
+            if (usersBookList.Count != 0)
             {
-                _userBookService.Delete(userBook);
+                foreach (var userBook in usersBookList)
+                {
+                    _userBookService.Delete(userBook);
+                }
             }
 
             return new SuccessResult(Messages.AllUserBookDeletedSuccessfully);

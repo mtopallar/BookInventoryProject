@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Entities.Concrete;
 using Entities.Concrete;
+using Entities.DTOs;
 
 namespace Business.Constants
 {
@@ -96,6 +97,14 @@ namespace Business.Constants
         public static string GetAllUserBookEntitiesSuccessfully="Kullanıcı kitapları başarıyla listelenmiştir.";
         public static string AllUserBookDeletedSuccessfully="Kullanıcının kütüphanesi başarıyla silinmiştir.";
         public static string UserBookAddedAlready="Kitap kütüphanenize daha önce eklenmiş.";
+        public static string NoBookHasNote="Kütüphanenizde not içeren kitabınız bulunmamaktadır.";
+        public static string UserBookConflict="Güncellemek bilgileriniz kütüphanenizde zaten ekli bir kitabı işaret ediyor. Lütfen ilgili kitap üzerinden güncelleme yapınız.";
+        public static string ThereAreNoUserBooks="Kütüphanenizde hiç kitap bulunmmaktadır.";
+        public static string NoUserBookFoundByThisPublisherId="Kütüphanenizde bu yayınevine ait kitap bulunmamaktadır.";
+        public static string NoUserBookFoundByThisAuthorId="Kütüphanenizde bu yazara ait kitap bulunmamaktadır.";
+        public static string NoUserBookFoundByThisNativeStatue="Kütüphanenizde yerli/yabancı seçiminize uygun kitap bulunmamaktadır.";
+        public static string NoUserBookFoundByThisGenreId="Kütüphanenizde bu türe ait kitap bulunmamaktadır.";
+        public static string NoUserBookFoundByThisReadStatue="Kütüphanenizde belirttiğiniz okuma durumuna göre kitap bulunmamaktadır.";
 
         //UserOperationClaims
         public static string GetAllUserOperaitonClaimsSuccessfully="Tüm kullanıcı yetkileri başarıyla listelendi.";
@@ -125,5 +134,6 @@ namespace Business.Constants
         
         //BookValidator
         public static string IsbnNotValid = "ISBN numarası 13 karakter olmalı ve sadece rakamdan oluşmalıdır.";
+        
     }
 }

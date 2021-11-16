@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
+using Core.Utilities.StringEditor;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
@@ -34,13 +37,31 @@ namespace Business.Concrete
         public IDataResult<List<BookForUserDto>> GetAll(int userId)
         {
             var result = GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId));
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForUserDto>>(Messages.ThereAreNoUserBooks);
+            }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBooksSuccessfully);
         }
         [SecuredOperation("user")]
-        public IDataResult<List<BookForUserDto>> GetByNoteIncluded(int userId)
+        public IDataResult<List<BookForUserDto>> GetByNoteIncluded(int userId)  ////////////////////////////////////////////////////
         {
-            var result = GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.NoteDetail != null));
-            return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBooksWichHasNoteSuccessfully);
+            List<BookForUserDto> dtoHasNote = new List<BookForUserDto>();
+            var bookDtos = GetAll(userId);
+            foreach (var bookForUserDto in bookDtos.Data)
+            {
+                if (bookForUserDto.NoteDetail != null)
+                {
+                    dtoHasNote.Add(bookForUserDto);
+                }
+            }
+
+            if (dtoHasNote.Count == 0)
+            {
+                return new ErrorDataResult<List<BookForUserDto>>(Messages.NoBookHasNote);
+            }
+
+            return new SuccessDataResult<List<BookForUserDto>>(dtoHasNote, Messages.GetUsersAllBooksWichHasNoteSuccessfully);
         }
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetByPublisherId(int userId, int publisherId)
@@ -49,6 +70,10 @@ namespace Business.Concrete
             var result =
                 GetBookNotes(_userBookDal.GetBookWithDetails(b =>
                     b.UserId == userId && b.PublisherName == getPublisher.Name));
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForUserDto>>(Messages.NoUserBookFoundByThisPublisherId);
+            }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBooksByPublisherId);
         }
         [SecuredOperation("user")]
@@ -57,13 +82,21 @@ namespace Business.Concrete
             var getAuthor = _authorService.GetById(authorId).Data;
             var result = GetBookNotes(_userBookDal.GetBookWithDetails(b =>
                 b.UserId == userId && b.AuthorFullName == $"{getAuthor.FirstName} {getAuthor.LastName}"));
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForUserDto>>(Messages.NoUserBookFoundByThisAuthorId);
+            }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBooksByAuthorId);
         }
 
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetByAuthorNativeStatue(int userId, bool native)
         {
-            var result = GetBookNotes(_userBookDal.GetBookWithDetails(b => b.Native == native));
+            var result = GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.Native == native));
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForUserDto>>(Messages.NoUserBookFoundByThisNativeStatue);
+            }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUserBooksByNativeStatueSuccessfully);
         }
 
@@ -73,6 +106,10 @@ namespace Business.Concrete
             var getGenre = _genreService.GetById(genreId).Data;
             var result =
                 GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.GenreName == getGenre.Name));
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForUserDto>>(Messages.NoUserBookFoundByThisGenreId);
+            }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBookByGenreIdSuccessfully);
         }
         [SecuredOperation("user")]
@@ -80,9 +117,13 @@ namespace Business.Concrete
         {
             var result =
                 GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.ReadStatue == readStatue));
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForUserDto>>(Messages.NoUserBookFoundByThisReadStatue);
+            }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBookByReadStatueSuccessfully);
         }
-        [SecuredOperation("user,admin")]
+        [SecuredOperation("user")]
         public IDataResult<List<UserBook>> GetAllUserBooks(int userId)
         {
             return new SuccessDataResult<List<UserBook>>(_userBookDal.GetAll(u => u.UserId == userId),
@@ -90,6 +131,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperation("user")]
+        [ValidationAspect(typeof(UserBookValidator))]
         public IResult Add(UserBook userBook)
         {
             var result = BusinessRules.Run(CheckThisBookAddedUserLibraryBefore(userBook));
@@ -98,24 +140,50 @@ namespace Business.Concrete
             {
                 return result;
             }
+
+            if (userBook.Note != null)
+            {
+                userBook.Note = StringEditorHelper.TrimStartAndFinish(userBook.Note);
+                if (userBook.Note == string.Empty)
+                {
+                    userBook.Note = null;
+                }
+            }
             _userBookDal.Add(userBook);
             return new SuccessResult(Messages.UserBookAddedSuccessfully);
         }
         [SecuredOperation("user")]
         public IResult Update(UserBook userBook)
         {
-            var result = BusinessRules.Run(CheckThisBookAddedUserLibraryBefore(userBook));
+            //ID yi kullan
+            var result = BusinessRules.Run(CheckUserBookUpdatable(userBook));
 
             if (result != null)
             {
                 return result;
             }
-            _userBookDal.Update(userBook);
+
+            var tryToGetUserBook = _userBookDal.Get(u => u.Id == userBook.Id);
+            tryToGetUserBook.UserId = userBook.UserId;
+            tryToGetUserBook.BookId = userBook.BookId;
+            tryToGetUserBook.ReadStatue = userBook.ReadStatue;
+            if (userBook.Note != null)
+            {
+                userBook.Note = StringEditorHelper.TrimStartAndFinish(userBook.Note);
+                if (userBook.Note == string.Empty)
+                {
+                    userBook.Note = null;
+                }
+            }
+
+            tryToGetUserBook.Note = userBook.Note;
+            _userBookDal.Update(tryToGetUserBook);
             return new SuccessResult(Messages.UserBookUpdatedSuccessfully);
         }
-        [SecuredOperation("admin,user")]
+        [SecuredOperation("user")]
         public IResult Delete(UserBook userBook)
         {
+            //EF otomatik primarykey e göre çalışıyor.
             _userBookDal.Delete(userBook);
             return new SuccessResult(Messages.UserBookDeletedSuccessfully);
         }
@@ -135,6 +203,7 @@ namespace Business.Concrete
 
         private IResult CheckThisBookAddedUserLibraryBefore(UserBook userBook)
         {
+            //userId ve bookId uk olduğu için ister id den ister userid&&book id den update yapılabilir. ID yi kullan
             var tryGetUserBook = _userBookDal.Get(u => u.UserId == userBook.UserId && u.BookId == userBook.BookId);
 
             if (tryGetUserBook != null)
@@ -145,5 +214,17 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
+        private IResult CheckUserBookUpdatable(UserBook userBook)
+        {
+            var getBookToUpdate = _userBookDal.Get(u => u.Id == userBook.Id);
+            var tryUserBookAddedBefore = _userBookDal.Get(u => u.UserId == userBook.UserId && u.BookId == userBook.BookId);
+
+            if (getBookToUpdate.Id != tryUserBookAddedBefore.Id)
+            {
+                return new ErrorResult(Messages.UserBookConflict);
+            }
+
+            return new SuccessResult();
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace Business.ValidationRules.FluentValidation
             RuleFor(b => b.AuthorId).NotEmpty();
             RuleFor(b => b.GenreId).NotEmpty();
             RuleFor(b => b.Isbn).NotEmpty();
+            RuleFor(b => b.Isbn).NotNull();
             RuleFor(b => b.Isbn).Must(i => i.Length == 13).WithMessage(Messages.IsbnNotValid);
         }
     }
