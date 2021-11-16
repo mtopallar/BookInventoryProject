@@ -128,6 +128,11 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Update(Book book)
         {
+            var checkNewBookBeforeUpdateIsBookAddedBefore = BusinessRules.Run(IsBookAddedAlreadyBefore(book));
+            if (checkNewBookBeforeUpdateIsBookAddedBefore!=null)
+            {
+                return checkNewBookBeforeUpdateIsBookAddedBefore;
+            }
             var tryToGetBook = _bookDal.Get(b => b.Id == book.Id);
             tryToGetBook.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
             tryToGetBook.Isbn = book.Isbn;
@@ -140,6 +145,8 @@ namespace Business.Concrete
 
         private IResult IsBookAddedAlreadyBefore(Book book)
         {
+            // Bir kitabın aynı isbn numarasını kullnabilmesi için şartları araştırıp metodu ona göre yazdım. (Name, ISNB, Publisher bağlı)
+
             var bookNameTryToFind =
                 StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
             var tryGetBook = _bookDal.Get(b =>

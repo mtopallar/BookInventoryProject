@@ -30,6 +30,7 @@ namespace Business.Constants
         public static string AuthorAlreadyAdded="Yazar sistemde zaten mevcut.";
         public static string NoActiveAuthorsFound="Sistemde kullanılabilecek yazar bulunmamaktadır.Sistem yöneticinize danışınız.";
         public static string CanNotFindActiveAuthor="Belirtilen yazara erişilemiyor.Sistem yöneticinize danışınız.";
+        public static string AuthorActivatedNotUpdated="Güncelleme için girdiğiniz bilgiler sistemden daha önce silinmiş bir yazara ait. Güncelleme işlemi yerine silinen yazar tekrar sisteme dahil edildi ve artık sistemde kullanılabilir.";
         
         //Books
         public static string GetAllBooksSuccessfully="Tüm kitaplar başarıyla listelendi.";
@@ -55,6 +56,7 @@ namespace Business.Constants
         public static string GenreAlreadyAdded="Tür sistemde zaten mevcut.";
         public static string GenreWrongIdOrClaimNotActive = "Tür detaylarına ulaşılamıyor. Hatalı id ya da tür aktif değil.";
         public static string NoActiveGenreFound="Sistemde kullanılabilecek tür bulunmamaktadır.Sistem yöneticinize danışınız.";
+        public static string GenreActivatedNotUpdated="Güncelleme için girdiğiniz bilgiler sistemden daha önce silinmiş bir türe ait. Güncelleme işlemi yerine silinen tür tekrar sisteme dahil edildi ve artık sistemde kullanılabilir.";
         
 
         //Operation Claims
@@ -78,6 +80,7 @@ namespace Business.Constants
         public static string PublisherAlreadyAdded="Yayınevi sistemde zaten mevcut.";
         public static string NoActivePubliserFound="Sistemde kullanılabilecek yayınevi bulunmamaktadır.Sistem yöneticinize danışınız.";
         public static string PublisherWrongIdOrPublisherNotActive="Yayınevi detaylarına ulaşılamıyor. Hatalı id ya da yayınevi aktif değil.";
+        public static string PublisherActivatedNotUpdated="Güncelleme için girdiğiniz bilgiler sistemden daha önce silinmiş bir yayınevine ait. Güncelleme işlemi yerine silinen yayınevi tekrar sisteme dahil edildi ve artık sistemde kullanılabilir.";
         
         //UserBooks
         public static string GetUsersAllBooksSuccessfully="Tüm kitaplarınız başarıyla listelendi.";
@@ -119,5 +122,8 @@ namespace Business.Constants
         public static string UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser="Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
         public static string UserNotFoundByThisMail="Girilen mail ile kayıtlı kullanıcı bulunmamaktadır.";
         
+        
+        //BookValidator
+        public static string IsbnNotValid = "ISBN numarası 13 karakter olmalı ve sadece rakamdan oluşmalıdır.";
     }
 }

@@ -79,6 +79,18 @@ namespace Business.Concrete
         [ValidationAspect(typeof(GenreValidator))]
         public IResult Update(Genre genre)
         {
+            var checkNewGenreBeforeUpdateIsGenreAddedBeforeAndActive = BusinessRules.Run(IsGenreAlreadyExistAndActive(genre));
+            if (checkNewGenreBeforeUpdateIsGenreAddedBeforeAndActive!=null)
+            {
+                return checkNewGenreBeforeUpdateIsGenreAddedBeforeAndActive;
+            }
+
+            var checkNewGenreBeforeUpdateIsGenreAddedBeforeAndNotActive = IsGenreAddedBeforeAndNotActiveNow(genre);
+            if (checkNewGenreBeforeUpdateIsGenreAddedBeforeAndNotActive!=null)
+            {
+                _genreDal.Update(checkNewGenreBeforeUpdateIsGenreAddedBeforeAndNotActive);
+                return new SuccessResult(Messages.GenreActivatedNotUpdated);
+            }
             var tryToGetGenre = _genreDal.Get(g => g.Id == genre.Id);
             tryToGetGenre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
             _genreDal.Update(tryToGetGenre);

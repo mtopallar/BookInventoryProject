@@ -31,7 +31,7 @@ namespace Business.Concrete
         public IDataResult<List<Author>> GetAll()
         {
             var checkIfNoActiveAuthors = _authorDal.GetAll(a => a.Active);
-            if (checkIfNoActiveAuthors.Count==0)
+            if (checkIfNoActiveAuthors.Count == 0)
             {
                 return new ErrorDataResult<List<Author>>(Messages.NoActiveAuthorsFound);
             }
@@ -41,7 +41,7 @@ namespace Business.Concrete
         public IDataResult<Author> GetById(int id)
         {
             var tryGetAuthorByIdIfAuthorActive = _authorDal.Get(a => a.Id == id && a.Active);
-            if (tryGetAuthorByIdIfAuthorActive==null)
+            if (tryGetAuthorByIdIfAuthorActive == null)
             {
                 return new ErrorDataResult<Author>(Messages.CanNotFindActiveAuthor);
             }
@@ -55,13 +55,13 @@ namespace Business.Concrete
         {
             var authorExistsAndActiveAlready = BusinessRules.Run(IsAuthorAlreadyExistAndActive(author));
 
-            if (authorExistsAndActiveAlready!=null)
+            if (authorExistsAndActiveAlready != null)
             {
                 return authorExistsAndActiveAlready;
             }
 
             var result = IsAuthorAddedBeforeAndNotActiveNow(author);
-            if (result==null)
+            if (result == null)
             {
                 author.FirstName = AuthorNameEditorByAuthorNativeStatue(author).FirstName;
                 author.LastName = AuthorNameEditorByAuthorNativeStatue(author).LastName;
@@ -72,7 +72,7 @@ namespace Business.Concrete
             {
                 _authorDal.Update(result);
             }
-            
+
             return new SuccessResult(Messages.AuthorAddedSuccessfully);
         }
         [SecuredOperation("admin,author.admin")]
@@ -81,9 +81,21 @@ namespace Business.Concrete
         [ValidationAspect(typeof(AuthorValidator))]
         public IResult Update(Author author)
         {
+            var checkNewAuthorBeforeUpdateIsAuthorAddedBeforeAndActive = BusinessRules.Run(IsAuthorAlreadyExistAndActive(author));
+            if (checkNewAuthorBeforeUpdateIsAuthorAddedBeforeAndActive != null)
+            {
+                return checkNewAuthorBeforeUpdateIsAuthorAddedBeforeAndActive; //BusinessRules dan ErrorResult dönmüş demektir.
+            }
+
+            var checkNewAuthorBeforeUpdateIsAuthorAddedBeforeAndNotActive = IsAuthorAddedBeforeAndNotActiveNow(author);
+            if (checkNewAuthorBeforeUpdateIsAuthorAddedBeforeAndNotActive!=null)
+            {
+                _authorDal.Update(checkNewAuthorBeforeUpdateIsAuthorAddedBeforeAndNotActive);
+                return new SuccessResult(Messages.AuthorActivatedNotUpdated);
+            }
             var tryToGetAuthor = _authorDal.Get(a => a.Id == author.Id);
             tryToGetAuthor.FirstName = AuthorNameEditorByAuthorNativeStatue(author).FirstName;
-            tryToGetAuthor.LastName =  AuthorNameEditorByAuthorNativeStatue(author).LastName;
+            tryToGetAuthor.LastName = AuthorNameEditorByAuthorNativeStatue(author).LastName;
             tryToGetAuthor.Native = author.Native;
             _authorDal.Update(tryToGetAuthor);
             return new SuccessResult(Messages.AuthorUpdatedSuccessfully);
@@ -127,13 +139,13 @@ namespace Business.Concrete
             //author un  id değerine göre author getirilip active değeri false ise kontrolü de yapılabilir.
             var nameEditedAuthor = AuthorNameEditorByAuthorNativeStatue(author);
 
-            var authorMakeActiveAgain = _authorDal.Get(a => a.FirstName == nameEditedAuthor.FirstName && a.LastName == nameEditedAuthor.LastName && a.Native==author.Native && a.Active==false);
+            var authorMakeActiveAgain = _authorDal.Get(a => a.FirstName == nameEditedAuthor.FirstName && a.LastName == nameEditedAuthor.LastName && a.Native == author.Native && a.Active == false);
             if (authorMakeActiveAgain != null)
             {
                 authorMakeActiveAgain.Active = true;
                 return authorMakeActiveAgain;
             }
-            
+
             return null;
 
         }
@@ -145,7 +157,7 @@ namespace Business.Concrete
             var tryToFindAuthor = _authorDal.Get(a =>
                 a.FirstName == nameEditedAuthor.FirstName && a.LastName == nameEditedAuthor.LastName &&
                 a.Native == author.Native && a.Active);
-            if (tryToFindAuthor!=null)
+            if (tryToFindAuthor != null)
             {
                 return new ErrorResult(Messages.AuthorAlreadyAdded);
             }

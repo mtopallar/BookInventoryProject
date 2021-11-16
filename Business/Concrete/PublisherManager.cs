@@ -54,7 +54,7 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Add(Publisher publisher)
         {
-            var isPublisherAlreadyExistAndActive = BusinessRules.Run(IsPublisherAlreadyExistAndActive(publisher.Name));
+            var isPublisherAlreadyExistAndActive = BusinessRules.Run(IsPublisherAlreadyExistAndActive(publisher));
             if (isPublisherAlreadyExistAndActive != null)
             {
                 return isPublisherAlreadyExistAndActive;
@@ -81,6 +81,19 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Update(Publisher publisher)
         {
+            var checkNewPublisherBeforeUpdateIsPublisherAddedBeforeAndActive = BusinessRules.Run(IsPublisherAlreadyExistAndActive(publisher));
+            if (checkNewPublisherBeforeUpdateIsPublisherAddedBeforeAndActive!=null)
+            {
+                return checkNewPublisherBeforeUpdateIsPublisherAddedBeforeAndActive;
+            }
+
+            var checkNewPublisherBeforeUpdateIsPublisherAddedBeforeAndNotActive = IsPublisherAddedBeforeAndNotActiveNow(publisher);
+            if (checkNewPublisherBeforeUpdateIsPublisherAddedBeforeAndNotActive!=null)
+            {
+                _publisherDal.Update(checkNewPublisherBeforeUpdateIsPublisherAddedBeforeAndNotActive);
+                return new SuccessResult(Messages.PublisherActivatedNotUpdated);
+            }
+
             var tryToGetPublisher = _publisherDal.Get(p => p.Id == publisher.Id);
             tryToGetPublisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
             _publisherDal.Update(tryToGetPublisher);
@@ -113,10 +126,10 @@ namespace Business.Concrete
             return null;
         }
 
-        private IResult IsPublisherAlreadyExistAndActive(string publisherName)
+        private IResult IsPublisherAlreadyExistAndActive(Publisher publisher)
         {
             var nameEditedPublisher =
-                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisherName));
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
             var tryToGetPublisher = _publisherDal.Get(p => p.Name == nameEditedPublisher && p.Active);
 
             if (tryToGetPublisher != null)
