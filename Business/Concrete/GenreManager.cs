@@ -26,7 +26,7 @@ namespace Business.Concrete
         {
             _genreDal = genreDal;
         }
-        [SecuredOperation("admin,genre.admin,user")]
+        [SecuredOperation("user")]
         [CacheAspect()]
         public IDataResult<List<Genre>> GetAll()
         {
@@ -37,13 +37,13 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Genre>>(result, Messages.GetAllGenresSuccessfully);
         }
-        [SecuredOperation("admin,genre.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<Genre> GetById(int id)
         {
             var result = _genreDal.Get(g => g.Id == id && g.Active);
             if (result==null)
             {
-                return new ErrorDataResult<Genre>(Messages.GenreWrongIdOrClaimNotActive);
+                return new ErrorDataResult<Genre>(Messages.WrongGenreIdOrClaimNotActive);
             }
             return new SuccessDataResult<Genre>(result, Messages.GetGenreByIdSuccessfully);
         }
@@ -101,9 +101,13 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult Delete(Genre genre)
         {
-            var genreToDelete = GetById(genre.Id).Data;
-            genreToDelete.Active = false;
-            _genreDal.Update(genreToDelete);
+            var genreToDelete = GetById(genre.Id);
+            if (!genreToDelete.Success)
+            {
+                return new ErrorResult(genreToDelete.Message);
+            }
+            genreToDelete.Data.Active = false;
+            _genreDal.Update(genreToDelete.Data);
             return new SuccessResult(Messages.GenreDeletedSuccessfully);
         }
 

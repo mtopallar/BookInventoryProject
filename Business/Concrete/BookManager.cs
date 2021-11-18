@@ -37,72 +37,127 @@ namespace Business.Concrete
         [CacheAspect()]
         public IDataResult<List<Book>> GetAll()
         {
-            return new SuccessDataResult<List<Book>>(_bookDal.GetAll(), Messages.GetAllBooksSuccessfully);
+            var result = _bookDal.GetAll();
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<Book>>(Messages.CanNotFindAnyBook);
+            }
+            return new SuccessDataResult<List<Book>>(result, Messages.GetAllBooksSuccessfully);
         }
         [SecuredOperation("admin,book.admin")]
         public IDataResult<Book> GetById(int id)
         {
-            return new SuccessDataResult<Book>(_bookDal.Get(b => b.Id == id), Messages.GetBookByIdSuccessfully);
+            var result = _bookDal.Get(b => b.Id == id);
+            if (result==null)
+            {
+                return new ErrorDataResult<Book>(Messages.WrongBookId);
+            }
+            return new SuccessDataResult<Book>(result, Messages.GetBookByIdSuccessfully);
         }
-        [SecuredOperation("admin,book.admin,user")]
+        [SecuredOperation("user")]
         [CacheAspect()]
         public IDataResult<List<BookForAddToLibraryDto>> GetAllForAddToLibrary()
         {
-            return new SuccessDataResult<List<BookForAddToLibraryDto>>(_bookDal.GetBooksForAddToLibrary(),
-                Messages.GetAllBooksForAddToLibrarySuccessfully);
+            var result = _bookDal.GetBooksForAddToLibrary();
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.CanNotFindAnyBook);
+            }
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetAllBooksForAddToLibrarySuccessfully);
         }
-        [SecuredOperation("admin,book.admin,user")]
-        public IDataResult<List<BookForAddToLibraryDto>> GetByIdForAddToLibrary(int id)
+        [SecuredOperation("user")]
+        public IDataResult<BookForAddToLibraryDto> GetByIdForAddToLibrary(int id)
         {
-            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
-                _bookDal.GetBooksForAddToLibrary(b => b.BookId == id), Messages.GetBookByIdForAddToLibrarySuccessfully);
+            var result = _bookDal.GetBooksForAddToLibrary(b => b.BookId == id);
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<BookForAddToLibraryDto>(Messages.WrongBookId);
+            }
+            return new SuccessDataResult<BookForAddToLibraryDto>(result.Single(), Messages.GetBookByIdForAddToLibrarySuccessfully);
         }
 
-        [SecuredOperation("admin,book.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<BookForAddToLibraryDto> GetByIsbnForAddToLibrary(string isbn)
         {
-            return new SuccessDataResult<BookForAddToLibraryDto>(_bookDal.GetBooksForAddToLibrary(b => b.Isbn == isbn).FirstOrDefault(),
-                Messages.GetBookForAddToLibraryByIsbnSuccessfully);
+            var result = _bookDal.GetBooksForAddToLibrary(b => b.Isbn == isbn);
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<BookForAddToLibraryDto>(Messages.WrongIsbnNumber);
+            }
+            return new SuccessDataResult<BookForAddToLibraryDto>(result.Single(), Messages.GetBookForAddToLibraryByIsbnSuccessfully);
         }
-        [SecuredOperation("admin,book.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByBookNameForAddToLibrary(string bookName)
         {
-            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
-                _bookDal.GetBooksForAddToLibrary(b => b.Name == bookName),
-                Messages.GetBookForAddToLibraryByBookNameSuccessfully);
+            var result = _bookDal.GetBooksForAddToLibrary(b => b.Name == bookName);
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongBookName);
+            }
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByBookNameSuccessfully);
         }
-        [SecuredOperation("admin,book.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByPublisherIdForAddToLibrary(int publisherId)
         {
-            var publisher = _publisherService.GetById(publisherId).Data;
-            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
-                _bookDal.GetBooksForAddToLibrary(b => b.PublisherName == publisher.Name),
-                Messages.GetBookForAddToLibraryByPublisherIdSuccessfully);
+            var publisher = _publisherService.GetById(publisherId);
+            if (!publisher.Success)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(publisher.Message);
+            }
+            var result = _bookDal.GetBooksForAddToLibrary(b => b.PublisherName == publisher.Data.Name);
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongPublisher);
+            }
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByPublisherIdSuccessfully);
         }
-        [SecuredOperation("admin,book.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByAuthorIdForAddToLibrary(int authorId)
         {
-           var author = _authorService.GetById(authorId).Data;
-           return new SuccessDataResult<List<BookForAddToLibraryDto>>(
-                _bookDal.GetBooksForAddToLibrary(b => b.AuthorFullName == $"{author.FirstName} {author.LastName}"),
-                Messages.GetBookForAddToLibraryByAuthorIdSuccessfully);
+           var author = _authorService.GetById(authorId);
+           if (!author.Success)
+           {
+               return new ErrorDataResult<List<BookForAddToLibraryDto>>(author.Message);
+           }
+
+           var result = _bookDal.GetBooksForAddToLibrary(b => b.AuthorFullName == $"{author.Data.FirstName} {author.Data.LastName}");
+
+           if (result.Count==0)
+           {
+               return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongAuthor);
+           }
+
+           return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByAuthorIdSuccessfully);
         }
-        [SecuredOperation("admin,book.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByNativeStatueForAddToLibrary(bool native)
         {
-            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
-                _bookDal.GetBooksForAddToLibrary(b => b.Native == native),
-                Messages.GetBooksForAddToLibraryListByNativeStatueSuccessfully);
+            var result = _bookDal.GetBooksForAddToLibrary(b => b.Native == native);
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.NoBookByThisNativeSelection);
+            }
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBooksForAddToLibraryListByNativeStatueSuccessfully);
         }
 
 
-        [SecuredOperation("admin,book.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByGenreIdForAddToLibrary(int genreId)
         {
-            var genre = _genreService.GetById(genreId).Data;
-            return new SuccessDataResult<List<BookForAddToLibraryDto>>(
-                _bookDal.GetBooksForAddToLibrary(b => b.GenreName == genre.Name),
-                Messages.GetBookForAddToLibraryByGenreIdSuccessfully);
+            var genre = _genreService.GetById(genreId);
+
+            if (!genre.Success)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(genre.Message);
+            }
+
+            var result = _bookDal.GetBooksForAddToLibrary(b => b.GenreName == genre.Data.Name);
+
+            if (result.Count==0)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongGenre);
+            }
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByGenreIdSuccessfully);
         }
 
         [SecuredOperation("admin,book.admin")]

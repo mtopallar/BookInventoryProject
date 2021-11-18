@@ -81,7 +81,6 @@ namespace Business.Concrete
             var result = IsOperationClaimAddedBeforeAndNotActiveNow(operationClaim);
             if (result == null)
             {
-                /*operaitonClaim.Name = StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name)); */
                 operationClaim.Active = true;
                 _operationClaimDal.Add(operationClaim);
             }
@@ -95,16 +94,18 @@ namespace Business.Concrete
         [SecuredOperation("admin")]
         public IResult Delete(OperationClaim operationClaim)
         {
-            var operationClaimToDelete = GetById(operationClaim.Id).Data;
-            operationClaimToDelete.Active = false;
-            _operationClaimDal.Update(operationClaimToDelete);
+            var operationClaimToDelete = GetById(operationClaim.Id);
+            if (!operationClaimToDelete.Success)
+            {
+                return new ErrorResult(operationClaimToDelete.Message);
+            }
+            operationClaimToDelete.Data.Active = false;
+            _operationClaimDal.Update(operationClaimToDelete.Data);
             return new SuccessResult(Messages.ClaimDeletedSuccessfully);
         }
 
         private OperationClaim IsOperationClaimAddedBeforeAndNotActiveNow(OperationClaim operationClaim)
         {
-            /*var nameEditedClaim =
-            StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name)); */
             var tryToFindOperationClaim = _operationClaimDal.Get(o => o.Name == operationClaim.Name && o.Active == false);
             if (tryToFindOperationClaim != null)
             {
@@ -117,8 +118,6 @@ namespace Business.Concrete
 
         private IResult IsOperationClaimAlreadyExistAndActive(OperationClaim operationClaim)
         {
-            /*var nameEditedClaim =
-            StringEditorHelper.ToTrLocaleCamelCase(StringEditorHelper.ToTrLocaleLowerCase(operationClaim.Name)); */
             var tryToFindOperationClaim = _operationClaimDal.Get(o => o.Name == operationClaim.Name && o.Active);
             if (tryToFindOperationClaim != null)
             {

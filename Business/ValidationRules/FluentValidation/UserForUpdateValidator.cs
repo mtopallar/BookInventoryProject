@@ -12,12 +12,13 @@ namespace Business.ValidationRules.FluentValidation
     {
         public UserForUpdateValidator()
         {
+            RuleFor(u => u.UserId).NotEmpty();
             RuleFor(u => u.FirstName).NotEmpty();
             RuleFor(u => u.FirstName).MinimumLength(3);
             RuleFor(u => u.LastName).NotEmpty();
             RuleFor(u => u.LastName).MinimumLength(2);
-            RuleFor(u => u.Email).NotEmpty();
-            RuleFor(u => u.Email).EmailAddress();
+            RuleFor(u => u.NewEmail).NotEmpty();
+            RuleFor(u => u.NewEmail).EmailAddress();
             RuleFor(u => u.CurrentPassword).NotEmpty();
             RuleFor(u => u.NewPassword).NotEmpty();
         }

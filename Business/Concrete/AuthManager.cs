@@ -9,6 +9,7 @@ using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
+using Core.Utilities.StringEditor;
 using Entities.DTOs;
 
 namespace Business.Concrete
@@ -31,11 +32,11 @@ namespace Business.Concrete
             HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
             var user = new User
             {
-                Email = userForRegisterDto.Email,
-                FirstName = userForRegisterDto.FirstName,
-                LastName = userForRegisterDto.LastName,
+                Email = StringEditorHelper.TrimStartAndFinish(userForRegisterDto.Email),
+                FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(userForRegisterDto.FirstName)),
+                LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(userForRegisterDto.LastName)),
                 PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
+                PasswordSalt = passwordSalt
             };
             if (_userService.Add(user).Success)
             {
@@ -48,7 +49,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(UserForLoginValidator))]
         public IDataResult<User> Login(UserForLoginDto userForLoginDto)
         {
-            var userToCheck = _userService.GetByMail(userForLoginDto.Email).Data;
+            var userToCheck = _userService.GetByMail(StringEditorHelper.TrimStartAndFinish(userForLoginDto.Email)).Data;
             if (userToCheck == null)
             {
                 return new ErrorDataResult<User>(Messages.UserNotFound);
@@ -72,6 +73,7 @@ namespace Business.Concrete
 
         public IDataResult<AccessToken> CreateAccessToken(User user)
         {
+            //Burada error kontrolüne grek yok çünkü rol yoksa rolsüz token oluşur. Token her türlü oluşur içinde rol olmaz.
             var claims = _userService.GetClaims(user).Data;
             var accessToken = _tokenHelper.CreateToken(user, claims);
             return new SuccessDataResult<AccessToken>(accessToken,Messages.AccessTokenCreated);

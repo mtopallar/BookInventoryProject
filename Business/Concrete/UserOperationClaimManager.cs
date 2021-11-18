@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -16,8 +18,6 @@ namespace Business.Concrete
     public class UserOperationClaimManager:IUserOperationClaimService
     {
         private readonly IUserOperationClaimDal _userOperationClaimDal;
-        //private readonly IOperationClaimService _operationClaimService;
-        
 
         public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal)
         {
@@ -29,13 +29,14 @@ namespace Business.Concrete
             return new SuccessDataResult<List<UserOperationClaim>>(_userOperationClaimDal.GetAll(),
                 Messages.GetAllUserOperaitonClaimsSuccessfully);
         }
-        [SecuredOperation("admin,user.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<List<UserOperationClaim>> GetByUserId(int userId)
         {
             return new SuccessDataResult<List<UserOperationClaim>>(
                 _userOperationClaimDal.GetAll(u => u.UserId == userId), Messages.GetUserOperationClaimByIdSuccessfully);
         }
         [SecuredOperation("admin,user.admin")]
+        [ValidationAspect(typeof(UserOperationClaimValidator))]
         public IResult Add(UserOperationClaim userOperationClaim)
         {
             _userOperationClaimDal.Add(userOperationClaim);
@@ -48,6 +49,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserRoleSuccessfullyAddedToUser);
         }
         [SecuredOperation("admin,user.admin")]
+        [ValidationAspect(typeof(UserOperationClaimValidator))]
         public IResult Update(UserOperationClaim userOperationClaim)
         {
             _userOperationClaimDal.Update(userOperationClaim);
@@ -62,6 +64,7 @@ namespace Business.Concrete
         [SecuredOperation("user")]
         public IResult DeleteForUsersOwnClaim(int userId)
         {
+            //error kontrolüne gerek yok en az 1 user rolü sisteme otomatik eklenmiş olacak.
             var userRoles = GetByUserId(userId).Data;
             foreach (UserOperationClaim userOperationClaim in userRoles)
             {

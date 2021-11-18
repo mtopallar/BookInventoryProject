@@ -26,7 +26,7 @@ namespace Business.Concrete
         {
             _authorDal = authorDal;
         }
-        [SecuredOperation("admin,author.admin,user")]
+        [SecuredOperation("user")]
         [CacheAspect()]
         public IDataResult<List<Author>> GetAll()
         {
@@ -37,7 +37,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Author>>(checkIfNoActiveAuthors, Messages.GetAllAuthorsSuccessfully);
         }
-        [SecuredOperation("admin,author.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<Author> GetById(int id)
         {
             var tryGetAuthorByIdIfAuthorActive = _authorDal.Get(a => a.Id == id && a.Active);
@@ -105,9 +105,13 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult Delete(Author author)
         {
-            var authorToDelete = GetById(author.Id).Data;
-            authorToDelete.Active = false;
-            _authorDal.Update(authorToDelete);
+            var authorToDelete = GetById(author.Id);
+            if (!authorToDelete.Success)
+            {
+                return new ErrorResult(authorToDelete.Message);
+            }
+            authorToDelete.Data.Active = false;
+            _authorDal.Update(authorToDelete.Data);
             return new SuccessResult(Messages.AuthorDeletedSuccessfully);
         }
 

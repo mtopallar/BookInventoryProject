@@ -33,6 +33,7 @@ namespace Business.Concrete
             _authorService = authorService;
             _genreService = genreService;
         }
+        
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetAll(int userId)
         {
@@ -44,7 +45,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBooksSuccessfully);
         }
         [SecuredOperation("user")]
-        public IDataResult<List<BookForUserDto>> GetByNoteIncluded(int userId)  ////////////////////////////////////////////////////
+        public IDataResult<List<BookForUserDto>> GetByNoteIncluded(int userId)
         {
             List<BookForUserDto> dtoHasNote = new List<BookForUserDto>();
             var bookDtos = GetAll(userId);
@@ -67,9 +68,7 @@ namespace Business.Concrete
         public IDataResult<List<BookForUserDto>> GetByPublisherId(int userId, int publisherId)
         {
             var getPublisher = _publisherService.GetById(publisherId).Data;
-            var result =
-                GetBookNotes(_userBookDal.GetBookWithDetails(b =>
-                    b.UserId == userId && b.PublisherName == getPublisher.Name));
+            var result = GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.PublisherName == getPublisher.Name));
             if (result.Count==0)
             {
                 return new ErrorDataResult<List<BookForUserDto>>(Messages.NoUserBookFoundByThisPublisherId);
@@ -104,8 +103,7 @@ namespace Business.Concrete
         public IDataResult<List<BookForUserDto>> GetByGenreId(int userId, int genreId)
         {
             var getGenre = _genreService.GetById(genreId).Data;
-            var result =
-                GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.GenreName == getGenre.Name));
+            var result = GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.GenreName == getGenre.Name));
             if (result.Count==0)
             {
                 return new ErrorDataResult<List<BookForUserDto>>(Messages.NoUserBookFoundByThisGenreId);
@@ -115,8 +113,7 @@ namespace Business.Concrete
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetByReadStatue(int userId, bool readStatue)
         {
-            var result =
-                GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.ReadStatue == readStatue));
+            var result = GetBookNotes(_userBookDal.GetBookWithDetails(b => b.UserId == userId && b.ReadStatue == readStatue));
             if (result.Count==0)
             {
                 return new ErrorDataResult<List<BookForUserDto>>(Messages.NoUserBookFoundByThisReadStatue);
@@ -126,6 +123,7 @@ namespace Business.Concrete
         [SecuredOperation("user")]
         public IDataResult<List<UserBook>> GetAllUserBooks(int userId)
         {
+            // error kontrole gerek yok, kullanılan yerde data ya göre kontrol edildi.
             return new SuccessDataResult<List<UserBook>>(_userBookDal.GetAll(u => u.UserId == userId),
                 Messages.GetAllUserBookEntitiesSuccessfully);
         }
@@ -140,22 +138,14 @@ namespace Business.Concrete
             {
                 return result;
             }
-
-            if (userBook.Note != null)
-            {
-                userBook.Note = StringEditorHelper.TrimStartAndFinish(userBook.Note);
-                if (userBook.Note == string.Empty)
-                {
-                    userBook.Note = null;
-                }
-            }
+            userBook.Note = CheckNotesForWhiteSpace(userBook.Note);
             _userBookDal.Add(userBook);
             return new SuccessResult(Messages.UserBookAddedSuccessfully);
         }
         [SecuredOperation("user")]
+        [ValidationAspect(typeof(UserBookValidator))]
         public IResult Update(UserBook userBook)
         {
-            //ID yi kullan
             var result = BusinessRules.Run(CheckUserBookUpdatable(userBook));
 
             if (result != null)
@@ -167,24 +157,19 @@ namespace Business.Concrete
             tryToGetUserBook.UserId = userBook.UserId;
             tryToGetUserBook.BookId = userBook.BookId;
             tryToGetUserBook.ReadStatue = userBook.ReadStatue;
-            if (userBook.Note != null)
-            {
-                userBook.Note = StringEditorHelper.TrimStartAndFinish(userBook.Note);
-                if (userBook.Note == string.Empty)
-                {
-                    userBook.Note = null;
-                }
-            }
-
-            tryToGetUserBook.Note = userBook.Note;
+            tryToGetUserBook.Note = CheckNotesForWhiteSpace(userBook.Note);
             _userBookDal.Update(tryToGetUserBook);
             return new SuccessResult(Messages.UserBookUpdatedSuccessfully);
         }
         [SecuredOperation("user")]
         public IResult Delete(UserBook userBook)
         {
-            //EF otomatik primarykey e göre çalışıyor.
-            _userBookDal.Delete(userBook);
+            var userBookToDelete = _userBookDal.Get(u => u.Id == userBook.Id);
+            if (userBookToDelete==null)
+            {
+                return new ErrorResult(Messages.CanNotFindUserBook);
+            }
+            _userBookDal.Delete(userBookToDelete);
             return new SuccessResult(Messages.UserBookDeletedSuccessfully);
         }
 
@@ -203,7 +188,6 @@ namespace Business.Concrete
 
         private IResult CheckThisBookAddedUserLibraryBefore(UserBook userBook)
         {
-            //userId ve bookId uk olduğu için ister id den ister userid&&book id den update yapılabilir. ID yi kullan
             var tryGetUserBook = _userBookDal.Get(u => u.UserId == userBook.UserId && u.BookId == userBook.BookId);
 
             if (tryGetUserBook != null)
@@ -226,5 +210,21 @@ namespace Business.Concrete
 
             return new SuccessResult();
         }
+
+        private string CheckNotesForWhiteSpace(string userBookNote)
+        {
+            if (userBookNote != null)
+            {
+                userBookNote = StringEditorHelper.TrimStartAndFinish(userBookNote);
+                if (userBookNote == string.Empty)
+                {
+                    userBookNote = null;
+                }
+            }
+
+            return userBookNote;
+        }
+
+        
     }
 }

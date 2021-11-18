@@ -39,41 +39,30 @@ namespace Business.Concrete
 
         public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
-            return new SuccessDataResult<List<OperationClaim>>(_userDal.GetUserClaims(user),
-                Messages.GetUsersAllClaimsSuccessfully);
+            //error kontrole gerek yok her kullanıcı en az user rolüne sahip olmak zorunda.(sistem tarafından otomatik atanıyor)
+            return new SuccessDataResult<List<OperationClaim>>(_userDal.GetUserClaims(user), Messages.GetUsersAllClaimsSuccessfully);
         }
         [SecuredOperation("admin,user.admin")]
         [CacheAspect()]
         public IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles()
         {
-            var usersDetailsWithoutRoleList = UserToUserWithDetailsAndRolesDto();
-            foreach (var userWithDetailsAndRolesDto in usersDetailsWithoutRoleList)
-            {
-                var usersRoles = GetClaims(new User { Id = userWithDetailsAndRolesDto.UserId }).Data;
-                foreach (var userOperationClaim in usersRoles)
-                {
-                    userWithDetailsAndRolesDto.UserRoleNames.Add(userOperationClaim.Name);
-                }
-            }
-
-            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(usersDetailsWithoutRoleList, Messages.GetAllUserDetailsWitrRolesSuccessfully);
+            //error kontrole gerek yok. user yoksa metod kullanılamaz.
+            var usersDetailsWithoutRoleList = ConvertUserToUserWithDetailsAndRolesDto();
+            var addRolesToDtos = InsertRolesToUserDetailDto(usersDetailsWithoutRoleList);
+            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(addRolesToDtos, Messages.GetAllUserDetailsWitrRolesSuccessfully);
         }
         [SecuredOperation("user")]
         public IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsWithRolesByUserId(int userId)
         {
-            var userDetailWithoutRoleList = UserToUserWithDetailsAndRolesDto(userId).Single();
-            var userRoleNameList = GetClaims(new User { Id = userId }).Data;
-
-            foreach (var roleNames in userRoleNameList)
-            {
-                userDetailWithoutRoleList.UserRoleNames.Add(roleNames.Name);
-            }
-            return new SuccessDataResult<UserWithDetailsAndRolesDto>(userDetailWithoutRoleList, Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
+            var userDetailWithoutRoleList = ConvertUserToUserWithDetailsAndRolesDto(userId);
+            var addRolesToDto = InsertRolesToUserDetailDto(userDetailWithoutRoleList).Single();
+            return new SuccessDataResult<UserWithDetailsAndRolesDto>(addRolesToDto, Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
         }
         [SecuredOperation("admin,user.admin")]
         [CacheAspect()]
         public IDataResult<List<User>> GetAll()
         {
+            //error a gerek yok. kullanıcı yoksa metod kullanılamaz.
             return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.GetAllUsersSuccessfully);
         }
 
@@ -86,23 +75,29 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<User>(currentMail, Messages.GetUserByEmailSuccessfully);
         }
-        [SecuredOperation("admin,user.admin")]
+        //[SecuredOperation("admin,user.admin")] api de yok.
         public IDataResult<User> GetById(int id)
         {
-            return new SuccessDataResult<User>(_userDal.Get(u => u.Id == id), Messages.GetUserByIdSuccessfully);
+            var result = _userDal.Get(u => u.Id == id);
+            if (result==null)
+            {
+                return new ErrorDataResult<User>(Messages.WrongUserId);
+            }
+            return new SuccessDataResult<User>(result, Messages.GetUserByIdSuccessfully);
         }
         [ValidationAspect(typeof(UserValidator))]
         [CacheRemoveAspect("IUserService.Get")]
         [TransactionScopeAspect]
         public IResult Add(User user)
         {
-            var userRoleName = "user";
+            //user authmanager'dan geliyor.
+            const string userRoleName = "user";
             var checkUserRoleBeforeUserAdded = _operationClaimService.GetByClaimNameIfClaimActive(userRoleName);
-            user.FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.FirstName));
-            user.LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.LastName));
+            
             if (checkUserRoleBeforeUserAdded.Success)
             {
-                _userDal.Add(user);
+                // userAdd olduktan sonra id yi otomatik alıyor. AddUserRoleIfNotExist'a giderken id de gitmiş oluyor.
+                _userDal.Add(user); 
                 AddUserRoleIfNotExist(user);
                 return new SuccessResult(Messages.UserAddedSuccessfully);
             }
@@ -115,14 +110,12 @@ namespace Business.Concrete
         public IResult Update(UserForUpdateDto userForUpdateDto)
         {
             User user = null;
-            var checkNewMailIsExists = CheckIfNewMailExists(userForUpdateDto.Email);
+            var checkNewMailIsExists = CheckIfNewMailExists(StringEditorHelper.TrimStartAndFinish(userForUpdateDto.NewEmail));
             var isItOk = UpdateUserWithPasswordSaltAndHash(userForUpdateDto, ref user);
             if (checkNewMailIsExists.Success)
             {
                 if (isItOk.Success)
                 {
-                    user.FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.FirstName));
-                    user.LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(user.LastName));
                     _userDal.Update(user);
                     return new SuccessResult(Messages.UserUpdatedSuccessfully);
                 }
@@ -137,12 +130,16 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForAdmin(int userId)
         {
-            var userToDelete = GetById(userId).Data;
+            var userToDelete = GetById(userId);
+            if (!userToDelete.Success)
+            {
+                return new ErrorResult(Messages.WrongUserId);
+            }
             if (DeleteUserBooks(userId).Success)
             {
                 if (DeleteUserFromUserOperationClaims(userId).Success)
                 {
-                    _userDal.Delete(userToDelete);
+                    _userDal.Delete(userToDelete.Data);
                 }
             }
             return new SuccessResult(Messages.UserAndUsersBooksDeletedSuccessfullyByAdmin);
@@ -169,7 +166,7 @@ namespace Business.Concrete
 
         private void AddUserRoleIfNotExist(User user)
         {
-            var claimName = "user";
+            const string claimName = "user";
             var getClaimUser = _operationClaimService.GetByClaimNameIfClaimActive(claimName).Data;
             _userOperationClaimService.AddUserRoleForUsers(new UserOperationClaim { UserId = user.Id, OperationClaimId = getClaimUser.Id });
         }
@@ -182,9 +179,9 @@ namespace Business.Concrete
                 user = new User
                 {
                     Id = existUser.Id,
-                    FirstName = updateUserDto.FirstName,
-                    LastName = updateUserDto.LastName,
-                    Email = updateUserDto.Email,
+                    FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(updateUserDto.FirstName)),
+                    LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(updateUserDto.LastName)),
+                    Email = StringEditorHelper.TrimStartAndFinish(updateUserDto.NewEmail),
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt
                 };
@@ -208,6 +205,7 @@ namespace Business.Concrete
 
         private IResult DeleteUserBooks(int userId)
         {
+            //Kitap yoksa count 0 olduğu için direk success dönüyor. Null hatası söz konusu değil.
             var usersBookList = _userBookService.GetAllUserBooks(userId).Data;
             if (usersBookList.Count != 0)
             {
@@ -234,7 +232,7 @@ namespace Business.Concrete
             return existUsersCurrentPasswordChecker;
         }
 
-        private List<UserWithDetailsAndRolesDto> UserToUserWithDetailsAndRolesDto(int userId = 0)
+        private List<UserWithDetailsAndRolesDto> ConvertUserToUserWithDetailsAndRolesDto(int userId = 0)
         {
             List<UserWithDetailsAndRolesDto> userWithDetailsAndRolesDtos = new List<UserWithDetailsAndRolesDto>();
             var users = new List<User>();
@@ -261,6 +259,21 @@ namespace Business.Concrete
             }
 
             return userWithDetailsAndRolesDtos;
+        }
+
+        private List<UserWithDetailsAndRolesDto> InsertRolesToUserDetailDto(List<UserWithDetailsAndRolesDto> dtos)
+        {
+            foreach (var userWithDetailsAndRolesDto in dtos)
+            {
+                var usersRoles = GetClaims(new User { Id = userWithDetailsAndRolesDto.UserId });
+
+                foreach (var userOperationClaim in usersRoles.Data)
+                {
+                    userWithDetailsAndRolesDto.UserRoleNames.Add(userOperationClaim.Name);
+                }
+            }
+
+            return dtos;
         }
     }
 }

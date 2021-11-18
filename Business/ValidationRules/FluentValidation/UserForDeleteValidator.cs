@@ -22,7 +22,6 @@ namespace Business.ValidationRules.FluentValidation
         public UserForDeleteValidator() {
 
             RuleFor(u => u.UserId).NotEmpty();
-            RuleFor(u => u.UserId).GreaterThan(0);
             RuleFor(u => u.CurrentPassword).NotEmpty();
             RuleFor(u => u.CurrentPassword).NotNull();
         }

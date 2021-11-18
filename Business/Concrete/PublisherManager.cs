@@ -27,7 +27,7 @@ namespace Business.Concrete
         {
             _publisherDal = publisherDal;
         }
-        [SecuredOperation("admin,publisher.admin,user")]
+        [SecuredOperation("user")]
         [CacheAspect()]
         public IDataResult<List<Publisher>> GetAll()
         {
@@ -38,7 +38,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Publisher>>(result, Messages.GetAllPublishersSuccessfully);
         }
-        [SecuredOperation("admin,publisher.admin,user")]
+        [SecuredOperation("user")]
         public IDataResult<Publisher> GetById(int id)
         {
             var result = _publisherDal.Get(p => p.Id == id && p.Active);
@@ -105,9 +105,13 @@ namespace Business.Concrete
         [CacheRemoveAspect("IPublisherService.Get")]
         public IResult Delete(Publisher publisher)
         {
-            var publishertoDelete = GetById(publisher.Id).Data;
-            publishertoDelete.Active = false;
-            _publisherDal.Update(publishertoDelete);
+            var publishertoDelete = GetById(publisher.Id);
+            if (!publishertoDelete.Success)
+            {
+                return new ErrorResult(publishertoDelete.Message);
+            }
+            publishertoDelete.Data.Active = false;
+            _publisherDal.Update(publishertoDelete.Data);
             return new SuccessResult(Messages.DeletePublisherSuccessfully);
         }
 
