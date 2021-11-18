@@ -12,8 +12,8 @@ namespace Business.Abstract
    public interface IUserOperationClaimService
     {
         
-        IDataResult<List<UserOperationClaim>> GetAll();
-        IDataResult<List<UserOperationClaim>> GetByUserId(int userId);
+        //IDataResult<List<UserOperationClaim>> GetAll(); //apiden sil. user managerdan dto olarak geliyor.
+        //IDataResult<List<UserOperationClaim>> GetByUserId(int userId); //apiden sil. user managerdan dto olarak geliyor.
         IResult Add(UserOperationClaim userOperationClaim);
         IResult AddUserRoleForUsers(UserOperationClaim userClaim); //apide görünmesi gerekmez.
         IResult Update(UserOperationClaim userOperationClaim);

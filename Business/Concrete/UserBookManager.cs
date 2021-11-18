@@ -146,7 +146,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(UserBookValidator))]
         public IResult Update(UserBook userBook)
         {
-            var result = BusinessRules.Run(CheckUserBookUpdatable(userBook));
+            var result = BusinessRules.Run(CheckThisBookAddedUserLibraryBefore(userBook));
 
             if (result != null)
             {
@@ -197,19 +197,7 @@ namespace Business.Concrete
 
             return new SuccessResult();
         }
-
-        private IResult CheckUserBookUpdatable(UserBook userBook)
-        {
-            var getBookToUpdate = _userBookDal.Get(u => u.Id == userBook.Id);
-            var tryUserBookAddedBefore = _userBookDal.Get(u => u.UserId == userBook.UserId && u.BookId == userBook.BookId);
-
-            if (getBookToUpdate.Id != tryUserBookAddedBefore.Id)
-            {
-                return new ErrorResult(Messages.UserBookConflict);
-            }
-
-            return new SuccessResult();
-        }
+        
 
         private string CheckNotesForWhiteSpace(string userBookNote)
         {

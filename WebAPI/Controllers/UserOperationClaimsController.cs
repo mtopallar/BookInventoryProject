@@ -20,30 +20,6 @@ namespace WebAPI.Controllers
             _operationClaimService = operationClaimService;
         }
 
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _operationClaimService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
-
-        [HttpGet("getbyuserid")]
-        public IActionResult GetByUserId(int userId)
-        {
-            var result = _operationClaimService.GetByUserId(userId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
-
         [HttpPost("add")]
         public IActionResult Add(UserOperationClaim userOperationClaim)
         {
