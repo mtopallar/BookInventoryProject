@@ -91,14 +91,19 @@ namespace Business.Concrete
                 _genreDal.Update(checkNewGenreBeforeUpdateIsGenreAddedBeforeAndNotActive);
                 return new SuccessResult(Messages.GenreActivatedNotUpdated);
             }
-            var tryToGetGenre = _genreDal.Get(g => g.Id == genre.Id);
-            tryToGetGenre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
-            _genreDal.Update(tryToGetGenre);
+            var tryToGetGenre = GetById(genre.Id);
+            if (!tryToGetGenre.Success)
+            {
+                return new ErrorResult(tryToGetGenre.Message);
+            }
+            tryToGetGenre.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+            _genreDal.Update(tryToGetGenre.Data);
             return new SuccessResult(Messages.GenreUpdatedSuccessfully);
         }
         [SecuredOperation("admin,genre.admin")]
         [CacheRemoveAspect("IGenreService.Get")]
         [TransactionScopeAspect]
+        [ValidationAspect(typeof(GenreValidator))]
         public IResult Delete(Genre genre)
         {
             var genreToDelete = GetById(genre.Id);

@@ -93,11 +93,15 @@ namespace Business.Concrete
                 _authorDal.Update(checkNewAuthorBeforeUpdateIsAuthorAddedBeforeAndNotActive);
                 return new SuccessResult(Messages.AuthorActivatedNotUpdated);
             }
-            var tryToGetAuthor = _authorDal.Get(a => a.Id == author.Id);
-            tryToGetAuthor.FirstName = AuthorNameEditorByAuthorNativeStatue(author).FirstName;
-            tryToGetAuthor.LastName = AuthorNameEditorByAuthorNativeStatue(author).LastName;
-            tryToGetAuthor.Native = author.Native;
-            _authorDal.Update(tryToGetAuthor);
+            var tryToGetAuthor = GetById(author.Id);
+            if (!tryToGetAuthor.Success)
+            {
+                return new ErrorResult(tryToGetAuthor.Message);
+            }
+            tryToGetAuthor.Data.FirstName = AuthorNameEditorByAuthorNativeStatue(author).FirstName;
+            tryToGetAuthor.Data.LastName = AuthorNameEditorByAuthorNativeStatue(author).LastName;
+            tryToGetAuthor.Data.Native = author.Native;
+            _authorDal.Update(tryToGetAuthor.Data);
             return new SuccessResult(Messages.AuthorUpdatedSuccessfully);
         }
         [SecuredOperation("admin,author.admin")]

@@ -104,7 +104,7 @@ namespace Business.Concrete
 
             return new ErrorResult(checkUserRoleBeforeUserAdded.Message);
         }
-        [SecuredOperation("admin,user.admin,user")]
+        [SecuredOperation("user")]
         [ValidationAspect(typeof(UserForUpdateValidator))]
         [CacheRemoveAspect("IUserService.Get")]
         public IResult Update(UserForUpdateDto userForUpdateDto)
@@ -112,6 +112,12 @@ namespace Business.Concrete
             User user = null;
             var checkNewMailIsExists = CheckIfNewMailExists(StringEditorHelper.TrimStartAndFinish(userForUpdateDto.NewEmail));
             var isItOk = UpdateUserWithPasswordSaltAndHash(userForUpdateDto, ref user);
+
+            if (!GetById(userForUpdateDto.UserId).Success)
+            {
+                return new ErrorResult(Messages.WrongUserId);
+            }
+
             if (checkNewMailIsExists.Success)
             {
                 if (isItOk.Success)
@@ -150,6 +156,10 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForUser(UserForDeleteDto userForDeleteDto)
         {
+            if (!GetById(userForDeleteDto.UserId).Success)
+            {
+                return new ErrorResult(Messages.WrongUserId);
+            }
             if (UserCurrentPasswordChecker(userForDeleteDto.CurrentPassword, userForDeleteDto.UserId, out var existUser))
             {
                 if (DeleteUserBooks(userForDeleteDto.UserId).Success)

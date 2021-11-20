@@ -188,13 +188,17 @@ namespace Business.Concrete
             {
                 return checkNewBookBeforeUpdateIsBookAddedBefore;
             }
-            var tryToGetBook = _bookDal.Get(b => b.Id == book.Id);
-            tryToGetBook.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
-            tryToGetBook.Isbn = book.Isbn;
-            tryToGetBook.PublisherId = book.PublisherId;
-            tryToGetBook.AuthorId = book.AuthorId;
-            tryToGetBook.GenreId = book.GenreId;
-            _bookDal.Update(tryToGetBook);
+            var tryToGetBook = GetById(book.Id);
+            if (!tryToGetBook.Success)
+            {
+                return new ErrorResult(tryToGetBook.Message);
+            }
+            tryToGetBook.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
+            tryToGetBook.Data.Isbn = book.Isbn;
+            tryToGetBook.Data.PublisherId = book.PublisherId;
+            tryToGetBook.Data.AuthorId = book.AuthorId;
+            tryToGetBook.Data.GenreId = book.GenreId;
+            _bookDal.Update(tryToGetBook.Data);
             return new SuccessResult(Messages.BookUpdatedSuccessfully);
         }
 

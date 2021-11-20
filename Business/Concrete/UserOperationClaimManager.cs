@@ -54,6 +54,10 @@ namespace Business.Concrete
             }
 
             var tryToGetUserOperationClaim = _userOperationClaimDal.Get(u => u.Id == userOperationClaim.Id);
+            if (tryToGetUserOperationClaim==null)
+            {
+                return new ErrorResult(Messages.UserOperationClaimNotFoundById);
+            }
             tryToGetUserOperationClaim.OperationClaimId = userOperationClaim.OperationClaimId;
             tryToGetUserOperationClaim.UserId = userOperationClaim.UserId;
             _userOperationClaimDal.Update(tryToGetUserOperationClaim);
@@ -65,7 +69,7 @@ namespace Business.Concrete
             var result = _userOperationClaimDal.Get(u => u.Id == userOperationClaim.Id);
             if (result==null)
             {
-                return new ErrorResult(Messages.UserOperationClaimNotFoundByIdForDelete);
+                return new ErrorResult(Messages.UserOperationClaimNotFoundById);
             }
             _userOperationClaimDal.Delete(result);
             return new SuccessResult(Messages.UserOperationClaimDeletedSuccessfully);
@@ -93,5 +97,6 @@ namespace Business.Concrete
 
             return new SuccessResult();
         }
+        
     }
 }

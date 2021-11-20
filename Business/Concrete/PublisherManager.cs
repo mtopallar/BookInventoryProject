@@ -94,9 +94,13 @@ namespace Business.Concrete
                 return new SuccessResult(Messages.PublisherActivatedNotUpdated);
             }
 
-            var tryToGetPublisher = _publisherDal.Get(p => p.Id == publisher.Id);
-            tryToGetPublisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
-            _publisherDal.Update(tryToGetPublisher);
+            var tryToGetPublisher = GetById(publisher.Id);
+            if (!tryToGetPublisher.Success)
+            {
+                return new ErrorResult(tryToGetPublisher.Message);
+            }
+            tryToGetPublisher.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+            _publisherDal.Update(tryToGetPublisher.Data);
             return new SuccessResult(Messages.UpdatedPublisherSuccessfully);
         }
 

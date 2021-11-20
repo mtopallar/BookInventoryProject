@@ -154,6 +154,10 @@ namespace Business.Concrete
             }
 
             var tryToGetUserBook = _userBookDal.Get(u => u.Id == userBook.Id);
+            if (tryToGetUserBook==null)
+            {
+                return new ErrorResult(Messages.CanNotFindUserBook);
+            }
             tryToGetUserBook.UserId = userBook.UserId;
             tryToGetUserBook.BookId = userBook.BookId;
             tryToGetUserBook.ReadStatue = userBook.ReadStatue;

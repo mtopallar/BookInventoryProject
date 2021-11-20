@@ -112,7 +112,7 @@ namespace Business.Constants
         public static string NoUserBookFoundByThisNativeStatue = "Kütüphanenizde yerli/yabancı seçiminize uygun kitap bulunmamaktadır.";
         public static string NoUserBookFoundByThisGenreId = "Kütüphanenizde bu türe ait kitap bulunmamaktadır.";
         public static string NoUserBookFoundByThisReadStatue = "Kütüphanenizde belirttiğiniz okuma durumuna göre kitap bulunmamaktadır.";
-        public static string CanNotFindUserBook = "Silmeye çalıştığınız kitap kütüphanenizde mevcut değil.";
+        public static string CanNotFindUserBook = "Kütüphanenizdeki kitap detaylarına erişilemiyor.";
 
         //UserOperationClaims
         public static string UserRoleSuccessfullyAddedToUser = "Yeni kullanıcıya yetkisi başarıyla eklendi.";
@@ -120,7 +120,7 @@ namespace Business.Constants
         public static string UserOperationClaimUpdatedSuccessfully = "Kullanıcını yetkisi başarıyla güncellenmiştir.";
         public static string UserOperationClaimDeletedSuccessfully = "Kullanıcı yetkisi başarıyla silinmiştir.";
         public static string UserOperationClaimDeletedSuccessfullyByUser = "Kullanıcının yetkileri kullanıcı isteğiyle başarıyla silinmiştir.";
-        public static string UserOperationClaimNotFoundByIdForDelete = "Silmek istediğiniz rol detaylarına ulaşılamıyor.";
+        public static string UserOperationClaimNotFoundById = "Belirtilen rol detaylarına ulaşılamıyor.";
         public static string UserHasTheRoleAlready = "Kullanıcı zaten bu role sahip.";
 
         //UserManager
