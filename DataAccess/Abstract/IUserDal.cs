@@ -12,6 +12,7 @@ namespace DataAccess.Abstract
 {
     public interface IUserDal:IEntityRepository<User>
     {
+        //public List<OperationClaim> GetUsersAllActiveClaims(User user); bunda claim in aktif olma kontrolü var ancak operationclaim den silinen bir rolü useroperationclaimsden de sildiğim için gerek kalmadı.
         List<OperationClaim> GetUserClaims(User user);
         //List<UserWithDetailsAndRolesDto> GetRolesWithUserDetails(Expression<Func<UserWithDetailsAndRolesDto, bool>> filter=null);
     }

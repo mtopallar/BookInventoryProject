@@ -24,7 +24,19 @@ namespace Business.Concrete
         {
             _userOperationClaimDal = userOperationClaimDal;
         }
-        
+
+        [SecuredOperation("admin")] // apide yer almayacak. Operation Claim Manager Delete için kullanacak. Çağırılacağı yer sadece admin yetkisinde.
+        public IDataResult<List<UserOperationClaim>> GetByClaimId(int operationClaimId)
+        {
+            var result = _userOperationClaimDal.GetAll(u => u.OperationClaimId == operationClaimId);
+            if (result==null)
+            {
+                return new ErrorDataResult<List<UserOperationClaim>>(Messages.NotFindAnyClaimByThisId);
+            }
+
+            return new SuccessDataResult<List<UserOperationClaim>>(result, Messages.ClaimsListedByClaimId);
+        }
+
         [SecuredOperation("admin,user.admin")]
         [ValidationAspect(typeof(UserOperationClaimValidator))]
         public IResult Add(UserOperationClaim userOperationClaim)

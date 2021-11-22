@@ -6,6 +6,7 @@ using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
@@ -18,11 +19,13 @@ namespace Business.Concrete
     {
         private readonly IUserService _userService;
         private readonly ITokenHelper _tokenHelper;
+        private IOperationClaimService _operationClaimService;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper)
+        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IOperationClaimService operationClaimService)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
+            _operationClaimService = operationClaimService;
         }
 
         [ValidationAspect(typeof(UserForRegisterValidator))]
@@ -73,10 +76,41 @@ namespace Business.Concrete
 
         public IDataResult<AccessToken> CreateAccessToken(User user)
         {
-            //Burada error kontrolüne grek yok çünkü rol yoksa rolsüz token oluşur. Token her türlü oluşur içinde rol olmaz.
-            var claims = _userService.GetClaims(user).Data;
-            var accessToken = _tokenHelper.CreateToken(user, claims);
+            //rol yoksa rolsüz token oluşur. Token her türlü oluşur içinde rol olmaz. Ancak rolsüz sistem kullanılamayacağı için error kontrolü yaptım. Rol yoksa token da yok.
+            var claims = BeforeGettingAllRolesCheckUserHasAnyRoleAndCheckUserHasUserRoleInOwnRoleList(user);
+            if (!claims.Success)
+            {
+                return new ErrorDataResult<AccessToken>(claims.Message);
+            }
+            var accessToken = _tokenHelper.CreateToken(user, claims.Data);
             return new SuccessDataResult<AccessToken>(accessToken,Messages.AccessTokenCreated);
+        }
+
+        private IDataResult<List<OperationClaim>> BeforeGettingAllRolesCheckUserHasAnyRoleAndCheckUserHasUserRoleInOwnRoleList(User user)
+        {
+            var claims = _userService.GetClaims(user);
+            if (!claims.Success)
+            {
+                return new ErrorDataResult<List<OperationClaim>>(Messages.UserHasNoActiveRoleToCreateAccessToken);
+            }
+
+            const string userRoleName = "user";
+            var userHasUserRole = false;
+            foreach (var operationClaim in claims.Data)
+            {
+                if (operationClaim.Name==userRoleName)
+                {
+                    userHasUserRole = true;
+                    break;
+                }
+            }
+
+            if (!userHasUserRole)
+            {
+                return new ErrorDataResult<List<OperationClaim>>(Messages.CanNotReachedUserRoleToCheckRoleBeforeCreateAccessToken);
+            }
+
+            return claims;
         }
     }
 }

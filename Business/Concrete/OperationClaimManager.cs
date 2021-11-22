@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Core.Aspects.Autofac.Transaction;
 using Core.Entities.Concrete;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -17,6 +18,7 @@ namespace Business.Concrete
     public class OperationClaimManager : IOperationClaimService
     {
         private readonly IOperationClaimDal _operationClaimDal;
+        private readonly IUserOperationClaimService _userOperationClaimService;
         private readonly List<OperationClaim> _predefinedClaims = new()
         {
             new OperationClaim {Name = "admin"},
@@ -29,9 +31,10 @@ namespace Business.Concrete
 
         };
 
-        public OperationClaimManager(IOperationClaimDal operationClaimDal)
+        public OperationClaimManager(IOperationClaimDal operationClaimDal, IUserOperationClaimService userOperationClaimService)
         {
             _operationClaimDal = operationClaimDal;
+            _userOperationClaimService = userOperationClaimService;
         }
         [SecuredOperation("admin")]
         public IDataResult<List<OperationClaim>> GetAll()
@@ -54,8 +57,7 @@ namespace Business.Concrete
             {
                 return new ErrorDataResult<OperationClaim>(Messages.OperationClaimWrongIdOrClaimNotActive);
             }
-            return new SuccessDataResult<OperationClaim>(_operationClaimDal.Get(c => c.Id == id && c.Active),
-                Messages.GetClaimByIdSuccessfully);
+            return new SuccessDataResult<OperationClaim>(result, Messages.GetClaimByIdSuccessfully);
         }
         //[SecuredOperation("admin,user")] sil ya da user rolü için s ecured olmayan bir metod yaz. ama apide olmayacağı için karşılığı yok zaten silinebilir.
         public IDataResult<OperationClaim> GetByClaimNameIfClaimActive(string claimName)
@@ -92,6 +94,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ClaimAddedSuccessfully);
         }
         [SecuredOperation("admin")]
+        [TransactionScopeAspect]
         public IResult Delete(OperationClaim operationClaim)
         {
             var operationClaimToDelete = GetById(operationClaim.Id);
@@ -99,8 +102,22 @@ namespace Business.Concrete
             {
                 return new ErrorResult(operationClaimToDelete.Message);
             }
+
+            var isTheRoleUserOrAdmin = BusinessRules.Run(CanNotDeleteAdminOrUserRole(operationClaimToDelete.Data));
+            if (isTheRoleUserOrAdmin!=null)
+            {
+                return isTheRoleUserOrAdmin;
+            }
+
             operationClaimToDelete.Data.Active = false;
             _operationClaimDal.Update(operationClaimToDelete.Data);
+
+            var deleteClaimFromUsers = DeleteClaimFromAllUsers(operationClaimToDelete.Data);
+            if (!deleteClaimFromUsers.Success)
+            {
+                return new ErrorResult(deleteClaimFromUsers.Message);
+            }
+
             return new SuccessResult(Messages.ClaimDeletedSuccessfully);
         }
 
@@ -125,6 +142,36 @@ namespace Business.Concrete
             }
 
             return new SuccessResult();
+        }
+
+        private IResult CanNotDeleteAdminOrUserRole(OperationClaim operationClaim)
+        {
+            const string userRoleName = "user";
+            const string adminRoleName = "admin";
+            if (operationClaim.Name==userRoleName || operationClaim.Name == adminRoleName)
+            {
+                return new ErrorResult(Messages.CanNotDeleteUserOrAdminRole);
+            }
+
+            return new SuccessResult();
+        }
+
+        private IResult DeleteClaimFromAllUsers(OperationClaim operationClaim)
+        {
+            var findDeletedClaimFromUserOperationClaims = _userOperationClaimService.GetByClaimId(operationClaim.Id);
+            if (findDeletedClaimFromUserOperationClaims.Success)
+            {
+                foreach (var userOperationClaim in findDeletedClaimFromUserOperationClaims.Data)
+                {
+                   var result = _userOperationClaimService.Delete(userOperationClaim);
+                   if (!result.Success)
+                   {
+                       return result;
+                   }
+                }
+            }
+
+            return new SuccessResult(Messages.DeletedRoleDeletedByUserAtTheSameTime);
         }
 
     }

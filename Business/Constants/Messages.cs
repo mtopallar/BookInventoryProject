@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Entities.Concrete;
+using Core.Utilities.Security.Jwt;
 using Entities.Concrete;
 using Entities.DTOs;
 
@@ -21,6 +22,8 @@ namespace Business.Constants
         public static string LoginSuccessfull = "Giriş başarılı.";
         public static string UserAlreadyExists = "Bu mail adresi daha önce kullanılmış.";
         public static string AccessTokenCreated = "Yetkilendirme başarılı.";
+        public static string UserHasNoActiveRoleToCreateAccessToken="Kullanıcının sistemde aktif rolü bulunmadığı için erişim yetkisi oluşturulamıyor.";
+        public static string CanNotReachedUserRoleToCheckRoleBeforeCreateAccessToken= "Sistemi kullanabilmeniz için gerekli olan kullanıcı rolü size tanımlı olmadığından erişim yetkisi oluşturulamıyor.Sistem yöneticinizi bilgilendiriniz.";
 
         //Authors
         public static string GetAllAuthorsSuccessfully = "Tüm yazarlar başarıyla listelendi.";
@@ -74,10 +77,12 @@ namespace Business.Constants
         public static string GetOperationClaimByNameSuccessfully = "Ada göre yetki detayları başarıyla getirildi.";
         public static string PredefinedClaimsListedSuccessfully = "Öntanımlı yetkiler başarıyla listelendi.";
         public static string GetClaimByIdSuccessfully = "Yetki detayları başarıyla getirildi.";
-        public static string ClaimDeletedSuccessfully = "Yetki başarıyla silindi.";
+        public static string ClaimDeletedSuccessfully = "Yetki hem yetkiler tablosundan hem de tüm kullanıcılardan başarıyla silindi.";
         public static string OperationClaimAlreadyAdded = "Yetki sistemde zaten mevcut.";
         public static string ClaimNotFoundOrNotActive = "Yetki sistemde yok ya da aktif değil.";
         public static string OperationClaimWrongIdOrClaimNotActive = "Rol detaylarına ulaşılamıyor. Hatalı id ya da rol kullanımda değil.";
+        public static string CanNotDeleteUserOrAdminRole = " Sistemin kullanılması için gerekli olan user veya admin rollerini sistemden silemezsiniz.";
+        public static string DeletedRoleDeletedByUserAtTheSameTime="Silinen rol tüm kullanıcılardan da başarıyla silinmiştir.";
 
 
         //Publishers
@@ -122,6 +127,8 @@ namespace Business.Constants
         public static string UserOperationClaimDeletedSuccessfullyByUser = "Kullanıcının yetkileri kullanıcı isteğiyle başarıyla silinmiştir.";
         public static string UserOperationClaimNotFoundById = "Belirtilen rol detaylarına ulaşılamıyor.";
         public static string UserHasTheRoleAlready = "Kullanıcı zaten bu role sahip.";
+        public static string NotFindAnyClaimByThisId = "Belirtilen rol kullanıcı rolleri listesinde bulunmuyor. Id hatalı ya da hiç bir kullanıcı bu role sahip değil.";
+        public static string ClaimsListedByClaimId = "Rol detayına göre kullanıcı rolleri başarıyla listelendi.";
 
         //UserManager
         public static string GetUsersAllClaimsSuccessfully = "Kullanıcının tüm rolleri rol formatında getirildi.";
@@ -138,10 +145,12 @@ namespace Business.Constants
         public static string UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser = "Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";
         public static string UserNotFoundByThisMail = "Girilen mail ile kayıtlı kullanıcı bulunmamaktadır.";
         public static string WrongUserId = "Kullanıcı detaylarına ulaşılamıyor.";
+        public static string UserRoleMustBeAddedAndActive = "Sistemi kullanabilmeniz için gerekli olan kullanıcı yetkisi yönetici tarafından sisteme tanımlanmadığından işlem gerçekleştirilemiyor. Sistem yöneticisini bilgilendiriniz.";
+        public static string UserHasNoActiveRole = "Kullanıcının aktif herhangi bir rolü bulunmamaktadır.";
 
 
         //BookValidator
         public static string IsbnNotValid = "ISBN numarası 13 karakter olmalı ve sadece rakamdan oluşmalıdır.";
-
+        
     }
 }

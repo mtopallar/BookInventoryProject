@@ -37,10 +37,15 @@ namespace Business.Concrete
             _userBookService = userBookService;
         }
 
-        public IDataResult<List<OperationClaim>> GetClaims(User user)
+        public IDataResult<List<OperationClaim>> GetClaims(User user) ///////////////////////////////////////////
         {
-            //error kontrole gerek yok her kullanıcı en az user rolüne sahip olmak zorunda.(sistem tarafından otomatik atanıyor)
-            return new SuccessDataResult<List<OperationClaim>>(_userDal.GetUserClaims(user), Messages.GetUsersAllClaimsSuccessfully);
+            //error kontrole aslında gerek yok her kullanıcı en az user rolüne sahip olmak zorunda.(sistem tarafından otomatik atanıyor) ama bu projede rol yoksa token oluşmasını istemiyorum onun için buradaki error kontrolü authmanager da access CreateAccessToken içinde kullanıyor olacağım.
+            var usersClaims = _userDal.GetUserClaims(user);
+            if (usersClaims.Count==0)
+            {
+                return new ErrorDataResult<List<OperationClaim>>(Messages.UserHasNoActiveRole);
+            }
+            return new SuccessDataResult<List<OperationClaim>>(usersClaims, Messages.GetUsersAllClaimsSuccessfully);
         }
         [SecuredOperation("admin,user.admin")]
         [CacheAspect()]
@@ -102,7 +107,7 @@ namespace Business.Concrete
                 return new SuccessResult(Messages.UserAddedSuccessfully);
             }
 
-            return new ErrorResult(checkUserRoleBeforeUserAdded.Message);
+            return new ErrorResult(Messages.UserRoleMustBeAddedAndActive);
         }
         [SecuredOperation("user")]
         [ValidationAspect(typeof(UserForUpdateValidator))]
