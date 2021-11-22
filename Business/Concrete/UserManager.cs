@@ -103,7 +103,7 @@ namespace Business.Concrete
             {
                 // userAdd olduktan sonra id yi otomatik alıyor. AddUserRoleIfNotExist'a giderken id de gitmiş oluyor.
                 _userDal.Add(user); 
-                AddUserRoleIfNotExist(user);
+                AddUserRoleIfNotExist(user,checkUserRoleBeforeUserAdded.Data);
                 return new SuccessResult(Messages.UserAddedSuccessfully);
             }
 
@@ -179,11 +179,9 @@ namespace Business.Concrete
             return new ErrorResult(Messages.CurrentUserPasswordError);
         }
 
-        private void AddUserRoleIfNotExist(User user)
+        private void AddUserRoleIfNotExist(User user, OperationClaim operationClaim)
         {
-            const string claimName = "user";
-            var getClaimUser = _operationClaimService.GetByClaimNameIfClaimActive(claimName).Data;
-            _userOperationClaimService.AddUserRoleForUsers(new UserOperationClaim { UserId = user.Id, OperationClaimId = getClaimUser.Id });
+            _userOperationClaimService.AddUserRoleForUsers(new UserOperationClaim { UserId = user.Id, OperationClaimId = operationClaim.Id });
         }
 
         private IResult UpdateUserWithPasswordSaltAndHash(UserForUpdateDto updateUserDto, ref User user)

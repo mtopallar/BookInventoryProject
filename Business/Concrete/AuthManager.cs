@@ -19,13 +19,11 @@ namespace Business.Concrete
     {
         private readonly IUserService _userService;
         private readonly ITokenHelper _tokenHelper;
-        private IOperationClaimService _operationClaimService;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IOperationClaimService operationClaimService)
+        public AuthManager(IUserService userService, ITokenHelper tokenHelper)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
-            _operationClaimService = operationClaimService;
         }
 
         [ValidationAspect(typeof(UserForRegisterValidator))]
