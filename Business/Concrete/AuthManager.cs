@@ -39,12 +39,13 @@ namespace Business.Concrete
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt
             };
-            if (_userService.Add(user).Success)
+            var addUser = _userService.Add(user);
+            if (addUser.Success)
             {
                 return new SuccessDataResult<User>(user, Messages.UserRegistered);
             }
 
-            return new ErrorDataResult<User>(_userService.Add(user).Message);
+            return new ErrorDataResult<User>(addUser.Message);
 
         }
         [ValidationAspect(typeof(UserForLoginValidator))]
@@ -75,7 +76,7 @@ namespace Business.Concrete
         public IDataResult<AccessToken> CreateAccessToken(User user)
         {
             //rol yoksa rolsüz token oluşur. Token her türlü oluşur içinde rol olmaz. Ancak rolsüz sistem kullanılamayacağı için error kontrolü yaptım. Rol yoksa token da yok.
-            var claims = BeforeGettingAllRolesCheckUserHasAnyRoleAndCheckUserHasUserRoleInOwnRoleList(user);
+            var claims = GetUsersAllRolesIfUserHasUserRoleInOwnRoleList(user);
             if (!claims.Success)
             {
                 return new ErrorDataResult<AccessToken>(claims.Message);
@@ -84,7 +85,7 @@ namespace Business.Concrete
             return new SuccessDataResult<AccessToken>(accessToken,Messages.AccessTokenCreated);
         }
 
-        private IDataResult<List<OperationClaim>> BeforeGettingAllRolesCheckUserHasAnyRoleAndCheckUserHasUserRoleInOwnRoleList(User user)
+        private IDataResult<List<OperationClaim>> GetUsersAllRolesIfUserHasUserRoleInOwnRoleList(User user)
         {
             var claims = _userService.GetClaims(user);
             if (!claims.Success)
