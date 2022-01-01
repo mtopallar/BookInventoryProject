@@ -43,10 +43,10 @@ namespace Core.Extensions
                 errors = ((ValidationException) e).Errors;
                 httpContext.Response.StatusCode = 400;
 
-                return httpContext.Response.WriteAsync(new ValidationErrorDetailss
+                return httpContext.Response.WriteAsync(new ValidationErrorDetails
                 {
                     StatusCode = 400,
-                    Message = message,
+                    Message = message, //veya sabit bir değer örn "Doğrulama Hatası" gibi sistem bilgisi içermeyen e.Message'dan gelen mesajda sistemle ilgili bilgiler olabilir, olmasa daha iyi olur. Bir alttaki ValidationErrors'un içinde zaten hata ile ilgili bilinmesi gerekli tüm bilgiler [{PropertyName : "Hatalı olan properynin adı", ErrorMessage : "Hata bilgileri"}] formatında var.
                     ValidationErrors = errors
                 }.ToString());
             }

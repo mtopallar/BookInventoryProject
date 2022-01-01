@@ -17,7 +17,7 @@ namespace Core.Extensions
         }
 
     }
-    public class ValidationErrorDetailss : ErrorDetails
+    public class ValidationErrorDetails : ErrorDetails
     {
         public IEnumerable<ValidationFailure> ValidationErrors { get; set; }
     }
