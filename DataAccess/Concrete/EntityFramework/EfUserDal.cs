@@ -35,7 +35,8 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = from operationClaim in context.OperationClaims
                              join userOperationClaim in context.UserOperationClaims
                                  on operationClaim.Id equals userOperationClaim.OperationClaimId
-                             where userOperationClaim.UserId == user.Id
+                             where userOperationClaim.UserId == user.Id //&& operationClaim.Active
+                    // && operationClaim.Active aslında gereksiz roller userdan hard siliniyor. user ve admin rolleri ise silinemez durumda. kullanıcının tüm rolleri arasında user yoksa claim oluşmayacak şekilde ayarlandı.
                              select new OperationClaim { Id = operationClaim.Id, Name = operationClaim.Name, Active = operationClaim.Active };
                 return result.ToList();
             }
