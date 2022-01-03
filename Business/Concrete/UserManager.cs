@@ -43,7 +43,7 @@ namespace Business.Concrete
             var usersClaims = _userDal.GetUserClaims(user);
             if (usersClaims.Count==0)
             {
-                return new ErrorDataResult<List<OperationClaim>>(Messages.UserHasNoActiveRole);
+                return new ErrorDataResult<List<OperationClaim>>(Messages.UserHasNoActiveRole); //mesaj silinebilir. mesajı kullanılmıyor. error dönmesi yeterli.
             }
             return new SuccessDataResult<List<OperationClaim>>(usersClaims, Messages.GetUsersAllClaimsSuccessfully);
         }
@@ -51,7 +51,7 @@ namespace Business.Concrete
         [CacheAspect()]
         public IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles()
         {
-            //error kontrole gerek yok. user yoksa metod kullanılamaz.
+            
             var usersDetailsWithoutRoleList = ConvertUserToUserWithDetailsAndRolesDto();
             var addRolesToDtos = InsertRolesToUserDetailDto(usersDetailsWithoutRoleList);
             return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(addRolesToDtos, Messages.GetAllUserDetailsWitrRolesSuccessfully);
@@ -59,6 +59,7 @@ namespace Business.Concrete
         [SecuredOperation("user")]
         public IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsWithRolesByUserId(int userId)
         {
+            //error kontrole gerek yok. user yoksa metod kullanılamaz.
             var userDetailWithoutRoleList = ConvertUserToUserWithDetailsAndRolesDto(userId);
             var addRolesToDto = InsertRolesToUserDetailDto(userDetailWithoutRoleList).Single();
             return new SuccessDataResult<UserWithDetailsAndRolesDto>(addRolesToDto, Messages.GetUserDetailsWithRolesByUserIdSuccessfully);

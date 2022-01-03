@@ -11,7 +11,7 @@ namespace Business.Abstract
 {
     public interface IUserService
     {
-        IDataResult<List<OperationClaim>> GetClaims(User user); //For auth. (aktif claimleri getiriyor)
+        IDataResult<List<OperationClaim>> GetClaims(User user); //For auth. (UserOperationClaims den silinmemiş rolleri getiriyor. user - admin silinemiyor. diğerleri hard delete.)
         IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles();
         IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsWithRolesByUserId(int userId);//list ten teke çektim
         IDataResult<List<User>> GetAll(); //api ye yazmadım.
