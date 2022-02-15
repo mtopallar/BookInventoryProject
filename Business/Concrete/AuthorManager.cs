@@ -37,6 +37,20 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Author>>(checkIfNoActiveAuthors, Messages.GetAllAuthorsSuccessfully);
         }
+
+        [SecuredOperation("user")]
+        [CacheAspect()]
+        public IDataResult<List<Author>> GetAllRegardlessOfActiveStatue()
+        {
+            var getAuthors = _authorDal.GetAll();
+            if (getAuthors.Count ==0)
+            {
+                return new ErrorDataResult<List<Author>>(Messages.NoAnyAuthorRegardlessofActiveStatue);
+            }
+
+            return new SuccessDataResult<List<Author>>(getAuthors, Messages.GetAuthorRegardlessofActiveStatueSuccessfully);
+        }
+
         [SecuredOperation("user")]
         public IDataResult<Author> GetById(int id)
         {

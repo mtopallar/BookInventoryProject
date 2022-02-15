@@ -38,6 +38,20 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Publisher>>(result, Messages.GetAllPublishersSuccessfully);
         }
+
+        [SecuredOperation("user")]
+        [CacheAspect()]
+        public IDataResult<List<Publisher>> GetAllRegardlessOfActiveStatue()
+        {
+            var getPublishers = _publisherDal.GetAll();
+            if (getPublishers.Count == 0)
+            {
+                return new ErrorDataResult<List<Publisher>>(Messages.NoAnyPublisherRegardlessofActiveStatue);
+            }
+
+            return new SuccessDataResult<List<Publisher>>(getPublishers, Messages.GetPublisherRegardlessofActiveStatueSuccessfull);
+        }
+
         [SecuredOperation("user")]
         public IDataResult<Publisher> GetById(int id)
         {

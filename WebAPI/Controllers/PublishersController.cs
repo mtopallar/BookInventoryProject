@@ -32,6 +32,18 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getallregardlessofactivestatue")]
+        public IActionResult GetAllRegardlessOfActiveStatue()
+        {
+            var result = _publisherService.GetAllRegardlessOfActiveStatue();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
         [HttpGet("getbyId")]
         public IActionResult GetById(int id)
         {

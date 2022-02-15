@@ -37,6 +37,20 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Genre>>(result, Messages.GetAllGenresSuccessfully);
         }
+
+        [SecuredOperation("user")]
+        [CacheAspect()]
+        public IDataResult<List<Genre>> GetAllRegardlessOfActiveStatue()
+        {
+            var getGenres = _genreDal.GetAll();
+            if (getGenres.Count == 0)
+            {
+                return new ErrorDataResult<List<Genre>>(Messages.NoAnyGenreRegardlessofActiveStatue);
+            }
+
+            return new SuccessDataResult<List<Genre>>(getGenres,Messages.GetGenreRegardlessofActiveStatueSuccessfully);
+        }
+
         [SecuredOperation("user")]
         public IDataResult<Genre> GetById(int id)
         {

@@ -26,15 +26,17 @@ namespace Business.Constants
         public static string CanNotReachedUserRoleToCheckRoleBeforeCreateAccessToken= "Sistemi kullanabilmeniz için gerekli olan kullanıcı rolü size tanımlı olmadığından erişim yetkisi oluşturulamıyor.Sistem yöneticinizi bilgilendiriniz.";
 
         //Authors
-        public static string GetAllAuthorsSuccessfully = "Tüm yazarlar başarıyla listelendi.";
+        public static string GetAllAuthorsSuccessfully = "Tüm aktif yazarlar başarıyla listelendi.";
         public static string GetAuthorByIdSuccessfully = "Yazar detaylarına başarıyla ulaşıldı.";
         public static string AuthorAddedSuccessfully = "Yazar başarıyla kaydedildi.";
         public static string AuthorUpdatedSuccessfully = "Yazar bilgileri başarıyla güncellendi.";
         public static string AuthorDeletedSuccessfully = "Yazar başarıyla silindi.";
         public static string AuthorAlreadyAdded = "Yazar sistemde zaten mevcut.";
-        public static string NoActiveAuthorsFound = "Sistemde kullanılabilecek yazar bulunmamaktadır.Sistem yöneticinize danışınız.";
+        public static string NoActiveAuthorsFound = "Sistemde kullanılabilecek aktif yazar bulunmamaktadır.Sistem yöneticinize danışınız.";
         public static string CanNotFindActiveAuthor = "Yazar detaylarına erişilemiyor. Hatalı id ya da yazar kullanımda değil.";
         public static string AuthorActivatedNotUpdated = "Güncelleme için girdiğiniz bilgiler sistemden daha önce silinmiş bir yazara ait. Güncelleme işlemi yerine silinen yazar tekrar sisteme dahil edildi ve artık sistemde kullanılabilir.";
+        public static string NoAnyAuthorRegardlessofActiveStatue = "Sisteme daha önce hiç yazar eklenmemiş.";
+        public static string GetAuthorRegardlessofActiveStatueSuccessfully = "Sistemdeki tüm yazarlar aktif durumuna bakılmaksızın listelendi.";
 
         //Books
         public static string GetAllBooksSuccessfully = "Tüm kitaplar başarıyla listelendi.";
@@ -67,8 +69,10 @@ namespace Business.Constants
         public static string GenreDeletedSuccessfully = "Tür başarıyla silindi.";
         public static string GenreAlreadyAdded = "Tür sistemde zaten mevcut.";
         public static string WrongGenreIdOrClaimNotActive = "Tür detaylarına ulaşılamıyor. Hatalı id ya da tür kullanımda değil";
-        public static string NoActiveGenreFound = "Sistemde kullanılabilecek tür bulunmamaktadır.Sistem yöneticinize danışınız.";
+        public static string NoActiveGenreFound = "Sistemde kullanılabilecek aktif tür bulunmamaktadır.Sistem yöneticinize danışınız.";
         public static string GenreActivatedNotUpdated = "Güncelleme için girdiğiniz bilgiler sistemden daha önce silinmiş bir türe ait. Güncelleme işlemi yerine silinen tür tekrar sisteme dahil edildi ve artık sistemde kullanılabilir.";
+        public static string NoAnyGenreRegardlessofActiveStatue = "Sisteme daha önce hiç tür eklenmemiş.";
+        public static string GetGenreRegardlessofActiveStatueSuccessfully = "Sistemdeki tüm yazarlar aktif durumuna bakılmaksızın listelendi.";
 
 
         //Operation Claims
@@ -92,9 +96,11 @@ namespace Business.Constants
         public static string UpdatedPublisherSuccessfully = "Yayınevi bilgileri başarıyla güncellendi.";
         public static string DeletePublisherSuccessfully = "Yayınevi başarıyla silindi.";
         public static string PublisherAlreadyAdded = "Yayınevi sistemde zaten mevcut.";
-        public static string NoActivePubliserFound = "Sistemde kullanılabilecek yayınevi bulunmamaktadır.Sistem yöneticinize danışınız.";
+        public static string NoActivePubliserFound = "Sistemde kullanılabilecek aktif yayınevi bulunmamaktadır.Sistem yöneticinize danışınız.";
         public static string PublisherWrongIdOrPublisherNotActive = "Yayınevi detaylarına ulaşılamıyor. Hatalı id ya da yayınevi kullanımda değil.";
         public static string PublisherActivatedNotUpdated = "Güncelleme için girdiğiniz bilgiler sistemden daha önce silinmiş bir yayınevine ait. Güncelleme işlemi yerine silinen yayınevi tekrar sisteme dahil edildi ve artık sistemde kullanılabilir.";
+        public static string NoAnyPublisherRegardlessofActiveStatue = "Sisteme daha önce hiç tür eklenmemiş.";
+        public static string GetPublisherRegardlessofActiveStatueSuccessfull = "Sistemdeki tüm yazarlar aktif durumuna bakılmaksızın listelendi.";
 
         //UserBooks
         public static string GetUsersAllBooksSuccessfully = "Tüm kitaplarınız başarıyla listelendi.";
