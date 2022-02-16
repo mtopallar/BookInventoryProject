@@ -19,6 +19,18 @@ namespace WebAPI.Controllers
         {
             _bookService = bookService;
         }
+
+        [HttpGet("getbyid")] //book entity getiriyor dto değil
+        public IActionResult GetById(int id)
+        {
+            var result = _bookService.GetById(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
         
 
         [HttpGet("getallview")]

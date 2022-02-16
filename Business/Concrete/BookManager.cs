@@ -209,7 +209,7 @@ namespace Business.Concrete
             var bookNameTryToFind =
                 StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
             var tryGetBook = _bookDal.Get(b =>
-                b.Name == bookNameTryToFind && b.Isbn == book.Isbn && b.PublisherId == book.PublisherId);
+                b.Name == bookNameTryToFind && b.Isbn == book.Isbn && b.PublisherId == book.PublisherId && b.AuthorId == book.AuthorId);
             if (tryGetBook != null)
             {
                 return new ErrorResult(Messages.BookAddedAlreadyBefore);
