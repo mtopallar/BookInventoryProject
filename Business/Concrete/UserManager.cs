@@ -65,23 +65,6 @@ namespace Business.Concrete
             return new SuccessDataResult<UserWithDetailsAndRolesDto>(addRolesToDto, Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
         }
 
-        [SecuredOperation("user")]
-        public IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsIfRegistrationOrLoginSuccess(UserForLoginDto userForLoginDto)
-        {
-            var getUser = GetByMail(userForLoginDto.Email);
-            if (getUser.Success)
-            {
-                if (HashingHelper.VerifyPasswordHash(userForLoginDto.Password,getUser.Data.PasswordHash,getUser.Data.PasswordSalt))
-                { 
-                    //Bir alttaki GetUserDetailsWithRolesByUserId() metodu hep success döndüğü için error kontrolüne gerek yok.
-                    return new SuccessDataResult<UserWithDetailsAndRolesDto>(GetUserDetailsWithRolesByUserId(getUser.Data.Id).Data, Messages.SuccessfullyReachedUserDetailAfterLoginorRegister);
-                }
-                //parola hatalı
-            }
-                //mail hatalı
-            return new ErrorDataResult<UserWithDetailsAndRolesDto>(Messages.CanNotReachedUserDetailAfterLoginorRegister);
-        }
-
         [SecuredOperation("admin,user.admin")]
         [CacheAspect()]
         public IDataResult<List<User>> GetAll()
