@@ -153,6 +153,8 @@ namespace Business.Constants
         public static string WrongUserId = "Kullanıcı detaylarına ulaşılamıyor.";
         public static string UserRoleMustBeAddedAndActive = "Sistemi kullanabilmeniz için gerekli olan kullanıcı yetkisi yönetici tarafından sisteme tanımlanmadığından işlem gerçekleştirilemiyor. Sistem yöneticisini bilgilendiriniz.";
         public static string UserHasNoActiveRole = "Kullanıcının aktif herhangi bir rolü bulunmamaktadır.";
+        public static string CanNotReachedUserDetailAfterLoginorRegister = "Giriş veya kayıt işleminden sonra kullanıcı detaylarına ulaşılamadı.";
+        public static string SuccessfullyReachedUserDetailAfterLoginorRegister = "Giriş veya kayıt işleminden sonra kullanıcı detayları başarıyla listelendi.";
 
 
         //BookValidator

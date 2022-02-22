@@ -14,6 +14,7 @@ namespace Business.Abstract
         IDataResult<List<OperationClaim>> GetClaims(User user); //For auth. (UserOperationClaims den silinmemiş rolleri getiriyor. user - admin silinemiyor. diğerleri hard delete.)
         IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles();
         IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsWithRolesByUserId(int userId);//list ten teke çektim
+        IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsIfRegistrationOrLoginSuccess(UserForLoginDto userForLoginDto); // apiye yazmadım. login şifresi doğru mu kontrolü yapıyor. şu an kullanımda değil.
         IDataResult<List<User>> GetAll(); //api ye yazmadım.
         IDataResult<User> GetByMail(string email); //apiye şimdilik dahil etmedim. Manager lar kullanıyor. Register  ve login için kullanılıyor.
         IDataResult<User> GetById(int id); // apiye yazmadım.

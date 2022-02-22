@@ -32,7 +32,8 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
-
+        
+        
         [HttpGet("getuserdetailswithrolesbyuserid")]
         public IActionResult GetUserDetailsWithRolesByUserId(int userId)
         {

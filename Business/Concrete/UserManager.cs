@@ -41,7 +41,7 @@ namespace Business.Concrete
         {
             //error kontrole aslında gerek yok her kullanıcı en az user rolüne sahip olmak zorunda.(sistem tarafından otomatik atanıyor) ama bu projede rol yoksa token oluşmasını istemiyorum onun için buradaki error kontrolü authmanager da access CreateAccessToken içinde kullanıyor olacağım.
             var usersClaims = _userDal.GetUserClaims(user);
-            if (usersClaims.Count==0)
+            if (usersClaims.Count == 0)
             {
                 return new ErrorDataResult<List<OperationClaim>>(Messages.UserHasNoActiveRole); //mesaj silinebilir. mesajı kullanılmıyor. error dönmesi yeterli.
             }
@@ -51,7 +51,7 @@ namespace Business.Concrete
         [CacheAspect()]
         public IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles()
         {
-            
+
             var usersDetailsWithoutRoleList = ConvertUserToUserWithDetailsAndRolesDto();
             var addRolesToDtos = InsertRolesToUserDetailDto(usersDetailsWithoutRoleList);
             return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(addRolesToDtos, Messages.GetAllUserDetailsWitrRolesSuccessfully);
@@ -64,6 +64,24 @@ namespace Business.Concrete
             var addRolesToDto = InsertRolesToUserDetailDto(userDetailWithoutRoleList).Single();
             return new SuccessDataResult<UserWithDetailsAndRolesDto>(addRolesToDto, Messages.GetUserDetailsWithRolesByUserIdSuccessfully);
         }
+
+        [SecuredOperation("user")]
+        public IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsIfRegistrationOrLoginSuccess(UserForLoginDto userForLoginDto)
+        {
+            var getUser = GetByMail(userForLoginDto.Email);
+            if (getUser.Success)
+            {
+                if (HashingHelper.VerifyPasswordHash(userForLoginDto.Password,getUser.Data.PasswordHash,getUser.Data.PasswordSalt))
+                { 
+                    //Bir alttaki GetUserDetailsWithRolesByUserId() metodu hep success döndüğü için error kontrolüne gerek yok.
+                    return new SuccessDataResult<UserWithDetailsAndRolesDto>(GetUserDetailsWithRolesByUserId(getUser.Data.Id).Data, Messages.SuccessfullyReachedUserDetailAfterLoginorRegister);
+                }
+                //parola hatalı
+            }
+                //mail hatalı
+            return new ErrorDataResult<UserWithDetailsAndRolesDto>(Messages.CanNotReachedUserDetailAfterLoginorRegister);
+        }
+
         [SecuredOperation("admin,user.admin")]
         [CacheAspect()]
         public IDataResult<List<User>> GetAll()
@@ -85,7 +103,7 @@ namespace Business.Concrete
         public IDataResult<User> GetById(int id)
         {
             var result = _userDal.Get(u => u.Id == id);
-            if (result==null)
+            if (result == null)
             {
                 return new ErrorDataResult<User>(Messages.WrongUserId);
             }
@@ -99,12 +117,12 @@ namespace Business.Concrete
             //user authmanager'dan geliyor.
             const string userRoleName = "user";
             var checkUserRoleBeforeUserAdded = _operationClaimService.GetByClaimNameIfClaimActive(userRoleName);
-            
+
             if (checkUserRoleBeforeUserAdded.Success)
             {
                 // userAdd olduktan sonra id yi otomatik alıyor. AddUserRoleIfNotExist'a giderken id de gitmiş oluyor.
-                _userDal.Add(user); 
-                AddUserRoleIfNotExist(user,checkUserRoleBeforeUserAdded.Data);
+                _userDal.Add(user);
+                AddUserRoleIfNotExist(user, checkUserRoleBeforeUserAdded.Data);
                 return new SuccessResult(Messages.UserAddedSuccessfully);
             }
 
