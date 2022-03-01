@@ -12,6 +12,9 @@ namespace Business.Abstract
    public interface IUserBookService
    {
        IDataResult<List<BookForUserDto>> GetAll(int userId);
+       IDataResult<List<Author>> GetAuthorsFromUsersLibrary(int userId); //fe de kullanıcının kütüphanesindeki yazarlara ulaşmak için
+       IDataResult<List<Genre>> GetGenresFromUsersLibrary(int userId); //fe de kullanıcının kütüphanesindeki türlere ulaşmak için
+       IDataResult<List<Publisher>> GetPublishersFromUsersLibrary(int userId); //fe de kullanıcının kütüphanesindeki yayınevlerine ulaşmak için
        IDataResult<List<BookForUserDto>> GetByNoteIncluded(int userId);
        IDataResult<List<BookForUserDto>> GetByPublisherId(int userId,int publisherId); //pipe
        IDataResult<List<BookForUserDto>> GetByAuthorId(int userId, int authorId); //pipe

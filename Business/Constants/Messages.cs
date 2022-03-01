@@ -124,6 +124,9 @@ namespace Business.Constants
         public static string NoUserBookFoundByThisGenreId = "Kütüphanenizde bu türe ait kitap bulunmamaktadır.";
         public static string NoUserBookFoundByThisReadStatue = "Kütüphanenizde belirttiğiniz okuma durumuna göre kitap bulunmamaktadır.";
         public static string CanNotFindUserBook = "Kütüphanenizdeki kitap detaylarına erişilemiyor.";
+        public static string GetAllAuthorsInUserLibrarySuccessfully= "Kütüphanenizdeki tüm yazarlar başarıyla listelendi.";
+        public static string GetAllGenresInUserLibrarySuccessfully = "Kütüphanenizdeki tüm türler başarıyla listelendi.";
+        public static string GetAllPublisherssInUserLibrarySuccessfully = "Kütüphanenizdeki tüm yayınevleri başarıyla listelendi.";
 
         //UserOperationClaims
         public static string UserRoleSuccessfullyAddedToUser = "Yeni kullanıcıya yetkisi başarıyla eklendi.";
@@ -157,6 +160,6 @@ namespace Business.Constants
 
         //BookValidator
         public static string IsbnNotValid = "ISBN numarası 13 karakter olmalı ve sadece rakamdan oluşmalıdır.";
-        
+
     }
 }

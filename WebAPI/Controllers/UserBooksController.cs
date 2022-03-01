@@ -32,6 +32,42 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getauthorsinuserlibrary")]
+        public IActionResult GetAuthorsFromUsersLibrary(int userId)
+        {
+            var result = _userBookService.GetAuthorsFromUsersLibrary(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpGet("getgenresinuserlibrary")]
+        public IActionResult GetGenresFromUsersLibrary(int userId)
+        {
+            var result = _userBookService.GetGenresFromUsersLibrary(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpGet("getpublishersinuserlibrary")]
+        public IActionResult GetPublishersFromUsersLibrary(int userId)
+        {
+            var result = _userBookService.GetPublishersFromUsersLibrary(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
         [HttpGet("getbynoteincluded")]
         public IActionResult GetByNoteIncluded(int userId)
         {
