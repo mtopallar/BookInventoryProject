@@ -44,7 +44,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Book>>(result, Messages.GetAllBooksSuccessfully);
         }
-        [SecuredOperation("admin,book.admin")]
+        [SecuredOperation("user")]
         public IDataResult<Book> GetById(int id)
         {
             var result = _bookDal.Get(b => b.Id == id);

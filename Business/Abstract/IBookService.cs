@@ -12,7 +12,7 @@ namespace Business.Abstract
     public interface IBookService
     {
         IDataResult<List<Book>> GetAll(); // GetAllForAddToLibrary(); yeterli olabilir. apide yok
-        IDataResult<Book> GetById(int id); // apiden sildim GetByIdForAddToLibrary(int id) yi ekledim yerine
+        IDataResult<Book> GetById(int id); // apiden sildim GetByIdForAddToLibrary(int id) yi ekledim yerine yetkiyi user a indirdim apide yok zaten userbookmanager kullanıyor.
         IDataResult<List<BookForAddToLibraryDto>> GetAllForAddToLibrary();
         IDataResult<BookForAddToLibraryDto> GetByIdForAddToLibrary(int id);
         IDataResult<BookForAddToLibraryDto> GetByIsbnForAddToLibrary(string isbn); //pipe ile çözülebilir

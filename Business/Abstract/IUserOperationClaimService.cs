@@ -13,6 +13,7 @@ namespace Business.Abstract
     {
         
         //IDataResult<List<UserOperationClaim>> GetAll(); //apiden sil. user managerdan dto olarak geliyor.
+        IDataResult<List<UserOperationClaimDto>> GetUserClaimDtosByUserId(int userId);
         //IDataResult<List<UserOperationClaim>> GetByUserId(int userId); //apiden sil. user managerdan dto olarak geliyor.
         IDataResult<List<UserOperationClaim>> GetByClaimId(int operationClaimId); //api de olmayacak. OperationClaim manager Delete içinde kullanacak.
         IResult Add(UserOperationClaim userOperationClaim);

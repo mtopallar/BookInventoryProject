@@ -54,7 +54,7 @@ namespace Business.Concrete
 
             var usersDetailsWithoutRoleList = ConvertUserToUserWithDetailsAndRolesDto();
             var addRolesToDtos = InsertRolesToUserDetailDto(usersDetailsWithoutRoleList);
-            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(addRolesToDtos, Messages.GetAllUserDetailsWitrRolesSuccessfully);
+            return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(addRolesToDtos, Messages.GetAllUserDetailsWithRolesSuccessfully);
         }
         [SecuredOperation("user")]
         public IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsWithRolesByUserId(int userId)

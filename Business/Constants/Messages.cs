@@ -85,7 +85,7 @@ namespace Business.Constants
         public static string OperationClaimAlreadyAdded = "Yetki sistemde zaten mevcut.";
         public static string ClaimNotFoundOrNotActive = "Yetki sistemde yok ya da aktif değil.";
         public static string OperationClaimWrongIdOrClaimNotActive = "Rol detaylarına ulaşılamıyor. Hatalı id ya da rol kullanımda değil.";
-        public static string CanNotDeleteUserOrAdminRole = " Sistemin kullanılması için gerekli olan user veya admin rollerini sistemden silemezsiniz.";
+        public static string CanNotDeleteUserOrAdminRole = " Sistemin kullanılması için gerekli olan user ve admin rollerini sistemden silemezsiniz.";
         public static string DeletedRoleDeletedByUserAtTheSameTime="Silinen rol tüm kullanıcılardan da başarıyla silinmiştir.";
 
 
@@ -141,8 +141,8 @@ namespace Business.Constants
 
         //UserManager
         public static string GetUsersAllClaimsSuccessfully = "Kullanıcının tüm rolleri rol formatında getirildi.";
-        public static string GetAllUserDetailsWitrRolesSuccessfully = "Tüm kullanıcıların detayları ve sahip olduğu roller başarıyla listelendi.";
-        public static string GetUserDetailsWithRolesByUserIdSuccessfully = "Kullanıcının detayları ve sahip olduğu roller başarıyla listelendi.";
+        public static string GetAllUserDetailsWithRolesSuccessfully = "Tüm kullanıcıların detayları ve rolleri başarıyla listelendi.";
+        public static string GetUserDetailsWithRolesByUserIdSuccessfully = "Kullanıcının detayları ve rolleri başarıyla listelendi.";
         public static string GetAllUsersSuccessfully = "Tüm kullanıcılar başarıyla listelendi.";
         public static string GetUserByEmailSuccessfully = "Mail adresine göre kullanıcı detayları başarıyla listelendi.";
         public static string GetUserByIdSuccessfully = "Kullanıcı detayları başarıyla getirildi.";
@@ -156,6 +156,7 @@ namespace Business.Constants
         public static string WrongUserId = "Kullanıcı detaylarına ulaşılamıyor.";
         public static string UserRoleMustBeAddedAndActive = "Sistemi kullanabilmeniz için gerekli olan kullanıcı yetkisi yönetici tarafından sisteme tanımlanmadığından işlem gerçekleştirilemiyor. Sistem yöneticisini bilgilendiriniz.";
         public static string UserHasNoActiveRole = "Kullanıcının aktif herhangi bir rolü bulunmamaktadır.";
+        public static string GetUserRoleDtosSuccessfully = "Kullanıcı rolleri başayıyla listelendi.";
 
 
         //BookValidator

@@ -23,7 +23,7 @@ namespace DataAccess.Concrete.EntityFramework
                              join author in context.Authors on book.AuthorId equals author.Id
                              join genre in context.Genres on book.GenreId equals genre.Id
                              select new BookForUserDto
-                             {
+                             {   Id = userbook.Id,
                                  UserId = userbook.UserId,
                                  BookId = book.Id,
                                  Name = book.Name,

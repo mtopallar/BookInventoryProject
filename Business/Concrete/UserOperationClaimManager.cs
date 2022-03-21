@@ -25,6 +25,19 @@ namespace Business.Concrete
             _userOperationClaimDal = userOperationClaimDal;
         }
 
+        [SecuredOperation("admin,user.admin")]
+        public IDataResult<List<UserOperationClaimDto>> GetUserClaimDtosByUserId(int userId)
+        {
+            var result = _userOperationClaimDal.GetUserClaimDtosByUserId(userId);
+            if (result==null)
+            {
+                // Bu kısım aslında sigorta gibi normalde sistemburaya düşmemeli.
+                return new ErrorDataResult<List<UserOperationClaimDto>>(Messages.UserHasNoActiveRole);
+            }
+
+            return new SuccessDataResult<List<UserOperationClaimDto>>(result, Messages.GetUserRoleDtosSuccessfully);
+        }
+
         [SecuredOperation("admin")] // apide yer almayacak. Operation Claim Manager Delete için kullanacak. Çağırılacağı yer sadece admin yetkisinde.
         public IDataResult<List<UserOperationClaim>> GetByClaimId(int operationClaimId)
         {
@@ -109,6 +122,7 @@ namespace Business.Concrete
 
             return new SuccessResult();
         }
+
         
     }
 }

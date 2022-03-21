@@ -7,11 +7,9 @@ using Core.Entities.Abstract;
 
 namespace Entities.DTOs
 {
-    public class BookForUserDto:BookForAddToLibraryDto, IDto
+    public class UserOperationClaimDto:IDto
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
-        public bool ReadStatue { get; set; }
-        public string NoteDetail { get; set; }
+        public string Name { get; set; }
     }
 }

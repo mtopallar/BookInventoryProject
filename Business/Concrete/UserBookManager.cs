@@ -178,6 +178,7 @@ namespace Business.Concrete
 
         [SecuredOperation("user")]
         [ValidationAspect(typeof(UserBookValidator))]
+        [CacheRemoveAspect("IUserBookService.Get")]
         public IResult Add(UserBook userBook)
         {
             var result = BusinessRules.Run(CheckThisBookAddedUserLibraryBefore(userBook));
@@ -192,6 +193,7 @@ namespace Business.Concrete
         }
         [SecuredOperation("user")]
         [ValidationAspect(typeof(UserBookValidator))]
+        [CacheRemoveAspect("IUserBookService.Get")]
         public IResult Update(UserBook userBook)
         {
             var result = BusinessRules.Run(CheckThisBookAddedUserLibraryBefore(userBook));
@@ -214,6 +216,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserBookUpdatedSuccessfully);
         }
         [SecuredOperation("user")]
+        [CacheRemoveAspect("IUserBookService.Get")]
         public IResult Delete(UserBook userBook)
         {
             var userBookToDelete = _userBookDal.Get(u => u.Id == userBook.Id);
@@ -240,7 +243,7 @@ namespace Business.Concrete
 
         private IResult CheckThisBookAddedUserLibraryBefore(UserBook userBook)
         {
-            var tryGetUserBook = _userBookDal.Get(u => u.UserId == userBook.UserId && u.BookId == userBook.BookId);
+            var tryGetUserBook = _userBookDal.Get(u => u.UserId == userBook.UserId && u.BookId == userBook.BookId && u.Id != userBook.Id);
 
             if (tryGetUserBook != null)
             {

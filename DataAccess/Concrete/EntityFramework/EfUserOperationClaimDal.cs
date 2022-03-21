@@ -11,8 +11,22 @@ using Entities.DTOs;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfUserOperationClaimDal:EfEntityRepositoryBase<UserOperationClaim,BookInventoryProjectContext>,IUserOperationClaimDal
+    public class EfUserOperationClaimDal : EfEntityRepositoryBase<UserOperationClaim, BookInventoryProjectContext>, IUserOperationClaimDal
     {
-       
+        public List<UserOperationClaimDto> GetUserClaimDtosByUserId(int userId)
+        {
+            using (var context = new BookInventoryProjectContext())
+            {
+                var result = from operaionClaims in context.OperationClaims
+                    join userOperationClaims in context.UserOperationClaims on operaionClaims.Id equals
+                        userOperationClaims.OperationClaimId where userOperationClaims.UserId == userId
+                    select new UserOperationClaimDto
+                    {
+                        Id = userOperationClaims.Id,
+                        Name = operaionClaims.Name
+                    };
+                return result.ToList();
+            }
+        }
     }
 }

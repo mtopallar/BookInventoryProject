@@ -20,6 +20,18 @@ namespace WebAPI.Controllers
             _operationClaimService = operationClaimService;
         }
 
+        [HttpGet("getauthenticateduserclaims")]
+        public IActionResult GetAuthenticatedUserClaimDtos(int userId)
+        {
+            var result = _operationClaimService.GetUserClaimDtosByUserId(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
         [HttpPost("add")]
         public IActionResult Add(UserOperationClaim userOperationClaim)
         {
