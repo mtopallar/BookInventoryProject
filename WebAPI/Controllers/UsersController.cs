@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
             _userService = userService;
         }
 
-        [HttpGet("getalluserdetailswithrolesview")]
+        [HttpGet("getalluserdetailswithrolesview")] //frontda kullanmıyorum
         public IActionResult GetAllUserDetailsWithRolesView()
         {
             var result = _userService.GetAllUserDetailsWithRoles();
@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
         }
         
         
-        [HttpGet("getuserdetailswithrolesbyuserid")]
+        [HttpGet("getuserdetailswithrolesbyuserid")] //frontda kullanmıyorum
         public IActionResult GetUserDetailsWithRolesByUserId(int userId)
         {
             var result = _userService.GetUserDetailsWithRolesByUserId(userId);
