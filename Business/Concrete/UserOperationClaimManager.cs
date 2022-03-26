@@ -7,11 +7,13 @@ using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.DTOs;
 
 namespace Business.Concrete
@@ -19,10 +21,12 @@ namespace Business.Concrete
     public class UserOperationClaimManager:IUserOperationClaimService
     {
         private readonly IUserOperationClaimDal _userOperationClaimDal;
+        private readonly Lazy<IOperationClaimService> _operationClaimService;
 
-        public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal)
+        public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal, Lazy<IOperationClaimService> operationClaimService)
         {
             _userOperationClaimDal = userOperationClaimDal;
+            _operationClaimService = operationClaimService;
         }
 
         [SecuredOperation("admin,user.admin")]
@@ -52,6 +56,8 @@ namespace Business.Concrete
 
         [SecuredOperation("admin,user.admin")]
         [ValidationAspect(typeof(UserOperationClaimValidator))]
+        [CacheRemoveAspect("IUserOperationClaimService.Get")]
+        [CacheRemoveAspect("IUserService.Get")]
         public IResult Add(UserOperationClaim userOperationClaim)
         {
             var checkIfRoleAddedBefore = BusinessRules.Run(CheckIfRoleAddedToUserAlready(userOperationClaim));
@@ -70,9 +76,11 @@ namespace Business.Concrete
         }
         [SecuredOperation("admin,user.admin")]
         [ValidationAspect(typeof(UserOperationClaimValidator))]
+        [CacheRemoveAspect("IUserOperationClaimService.Get")]
+        [CacheRemoveAspect("IUserService.Get")]
         public IResult Update(UserOperationClaim userOperationClaim)
         {
-            var checkIfRoleAddedBefore = BusinessRules.Run(CheckIfRoleAddedToUserAlready(userOperationClaim));
+            var checkIfRoleAddedBefore = BusinessRules.Run(CheckIfRoleAddedToUserAlready(userOperationClaim),CanNotDeleteOrUpdateUserRole(userOperationClaim));
             if (checkIfRoleAddedBefore!=null)
             {
                 return checkIfRoleAddedBefore;
@@ -89,13 +97,22 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserOperationClaimUpdatedSuccessfully);
         }
         [SecuredOperation("admin,user.admin")]
+        [CacheRemoveAspect("IUserOperationClaimService.Get")]
+        [CacheRemoveAspect("IUserService.Get")]
         public IResult Delete(UserOperationClaim userOperationClaim)
         {
+            var checkRoleSuitableForDelete = BusinessRules.Run(CanNotDeleteOrUpdateUserRole(userOperationClaim),
+                CheckIfRoleAdminAndSystemHasAnotherAdmin(userOperationClaim));
+            if (checkRoleSuitableForDelete!=null)
+            {
+                return checkRoleSuitableForDelete;
+            }
             var result = _userOperationClaimDal.Get(u => u.Id == userOperationClaim.Id);
             if (result==null)
             {
                 return new ErrorResult(Messages.UserOperationClaimNotFoundById);
             }
+            //buraya user rolünün silinmesini engelleyen ve sistemde başka bir admin yoksa admin rolünün silinmesini engelleyen bir metod yaz.
             _userOperationClaimDal.Delete(result);
             return new SuccessResult(Messages.UserOperationClaimDeletedSuccessfully);
         }
@@ -118,6 +135,36 @@ namespace Business.Concrete
             if (tryToFindClaim!=null)
             {
                 return new ErrorResult(Messages.UserHasTheRoleAlready);
+            }
+
+            return new SuccessResult();
+        }
+
+        private IResult CanNotDeleteOrUpdateUserRole(UserOperationClaim userOperationClaim)
+        {
+            var getUserOperaitonClaimFirst = _userOperationClaimDal.Get(u => u.Id == userOperationClaim.Id);
+            var getRoleTryToDelete = _operationClaimService.Value.GetById(getUserOperaitonClaimFirst.OperationClaimId).Data;
+            if (getRoleTryToDelete.Name == "user")
+            { 
+                return new ErrorResult(Messages.TheRoleUserCanNotDeleteOrUpdate);
+            }
+
+            return new SuccessResult();
+
+        }
+
+        private IResult CheckIfRoleAdminAndSystemHasAnotherAdmin(UserOperationClaim userOperationClaim)
+        {
+            var getUserOperaitonClaimFirst = _userOperationClaimDal.Get(u => u.Id == userOperationClaim.Id);
+            var getRoleTryToDelete = _operationClaimService.Value.GetById(getUserOperaitonClaimFirst.OperationClaimId).Data;
+            if (getRoleTryToDelete.Name == "admin")
+            {
+                var systemHasAnotherAdmin = _userOperationClaimDal.Get(u =>
+                    u.OperationClaimId == getUserOperaitonClaimFirst.OperationClaimId && u.UserId != getUserOperaitonClaimFirst.UserId);
+                if (systemHasAnotherAdmin==null)
+                {
+                    return new ErrorResult(Messages.SystemHasNoAnyOtherAdmin);
+                }
             }
 
             return new SuccessResult();

@@ -138,6 +138,8 @@ namespace Business.Constants
         public static string UserHasTheRoleAlready = "Kullanıcı zaten bu role sahip.";
         public static string NotFindAnyClaimByThisId = "Belirtilen rol kullanıcı rolleri listesinde bulunmuyor. Id hatalı ya da hiç bir kullanıcı bu role sahip değil.";
         public static string ClaimsListedByClaimId = "Rol detayına göre kullanıcı rolleri başarıyla listelendi.";
+        public static string TheRoleUserCanNotDeleteOrUpdate = "Kullanıcı rolü sistemin kullanılması için gereklidir ve kullanıcı sistemden silinmeden rol silinemez. ";
+        public static string SystemHasNoAnyOtherAdmin = "Sistemde başka yönetici yetkili kullanıcı olmadığı için yönetici rolü kullanıcıdan silinemez. Yetkiyi kullanıcıdan silmek için önce başka bir kullanıcıya yönetici yetkisi vermelisiniz.";
 
         //UserManager
         public static string GetUsersAllClaimsSuccessfully = "Kullanıcının tüm rolleri rol formatında getirildi.";
@@ -161,6 +163,6 @@ namespace Business.Constants
 
         //BookValidator
         public static string IsbnNotValid = "ISBN numarası 13 karakter olmalı ve sadece rakamdan oluşmalıdır.";
-
+        
     }
 }

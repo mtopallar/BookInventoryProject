@@ -13,17 +13,17 @@ namespace WebAPI.Controllers
     [ApiController]
     public class UserOperationClaimsController : ControllerBase
     {
-        private IUserOperationClaimService _operationClaimService;
+        private readonly IUserOperationClaimService _userOperationClaimService;
 
-        public UserOperationClaimsController(IUserOperationClaimService operationClaimService)
+        public UserOperationClaimsController(IUserOperationClaimService userOperationClaimService)
         {
-            _operationClaimService = operationClaimService;
+            _userOperationClaimService = userOperationClaimService;
         }
 
         [HttpGet("getauthenticateduserclaims")]
         public IActionResult GetAuthenticatedUserClaimDtos(int userId)
         {
-            var result = _operationClaimService.GetUserClaimDtosByUserId(userId);
+            var result = _userOperationClaimService.GetUserClaimDtosByUserId(userId);
             if (result.Success)
             {
                 return Ok(result);
@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
         [HttpPost("add")]
         public IActionResult Add(UserOperationClaim userOperationClaim)
         {
-            var result = _operationClaimService.Add(userOperationClaim);
+            var result = _userOperationClaimService.Add(userOperationClaim);
             if (result.Success)
             {
                 return Ok(result);
@@ -47,7 +47,7 @@ namespace WebAPI.Controllers
         [HttpPost("update")]
         public IActionResult Update(UserOperationClaim userOperationClaim)
         {
-            var result = _operationClaimService.Update(userOperationClaim);
+            var result = _userOperationClaimService.Update(userOperationClaim);
             if (result.Success)
             {
                 return Ok(result);
@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
         [HttpPost("delete")]
         public IActionResult Delete(UserOperationClaim userOperationClaim)
         {
-            var result = _operationClaimService.Delete(userOperationClaim);
+            var result = _userOperationClaimService.Delete(userOperationClaim);
             if (result.Success)
             {
                 return Ok(result);

@@ -36,7 +36,7 @@ namespace Business.Concrete
             _operationClaimDal = operationClaimDal;
             _userOperationClaimService = userOperationClaimService;
         }
-        [SecuredOperation("admin")]
+        [SecuredOperation("admin,user.admin")]
         public IDataResult<List<OperationClaim>> GetAll()
         {
             //Aktif rol yoksa error dön kontrolü yapmadım zira aktif rol yoksa sistem zaten çalışmaz. en az user rolü ekli ve aktif olmalıdır. üstelik bu metodu admin rolüne sahip kullanıcılar kullanabilir :)
@@ -49,7 +49,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OperationClaim>>(_predefinedClaims,
                 Messages.PredefinedClaimsListedSuccessfully);
         }
-        [SecuredOperation("admin")]
+        [SecuredOperation("admin,user.admin")]
         public IDataResult<OperationClaim> GetById(int id)
         {
             var result = _operationClaimDal.Get(c => c.Id == id && c.Active);
@@ -163,11 +163,11 @@ namespace Business.Concrete
             {
                 foreach (var userOperationClaim in findDeletedClaimFromUserOperationClaims.Data)
                 {
-                   var result = _userOperationClaimService.Delete(userOperationClaim);
-                   if (!result.Success)
-                   {
-                       return result;
-                   }
+                    var result = _userOperationClaimService.Delete(userOperationClaim);
+                    if (!result.Success)
+                    {
+                        return result;
+                    }
                 }
             }
 
