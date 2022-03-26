@@ -159,9 +159,9 @@ namespace Business.Concrete
             var getRoleTryToDelete = _operationClaimService.Value.GetById(getUserOperaitonClaimFirst.OperationClaimId).Data;
             if (getRoleTryToDelete.Name == "admin")
             {
-                var systemHasAnotherAdmin = _userOperationClaimDal.Get(u =>
+                var systemHasAnotherAdmin = _userOperationClaimDal.GetAll(u =>
                     u.OperationClaimId == getUserOperaitonClaimFirst.OperationClaimId && u.UserId != getUserOperaitonClaimFirst.UserId);
-                if (systemHasAnotherAdmin==null)
+                if (systemHasAnotherAdmin.Count == 0)
                 {
                     return new ErrorResult(Messages.SystemHasNoAnyOtherAdmin);
                 }
