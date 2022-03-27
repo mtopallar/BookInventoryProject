@@ -165,7 +165,7 @@ namespace Business.Constants
         public static string UserRoleMustBeAddedAndActive = "Sistemi kullanabilmeniz için gerekli olan kullanıcı yetkisi yönetici tarafından sisteme tanımlanmadığından işlem gerçekleştirilemiyor. Sistem yöneticisini bilgilendiriniz.";
         public static string UserHasNoActiveRole = "Kullanıcının aktif herhangi bir rolü bulunmamaktadır.";
         public static string GetUserRoleDtosSuccessfully = "Kullanıcı rolleri başayıyla listelendi.";
-        public static string NoAnyOtherAdminOrUserAdminInSystem = "Sistemde bu kullanıcıdan başka admin veya user.admin yetkisinde kullanıcı bulunmamaktadır. Silme işleminin devam edebilmesi için öncelikle başka bir kullanıcıya admin veya user.admin rolü tanımlanmalıdır.";
+        public static string NoAnyOtherAdminOrUserAdminInSystem = "Sistemde silmek istediğiniz kullanıcıdan başka admin veya user.admin yetkisinde kullanıcı bulunmamaktadır. Silme işleminin devam edebilmesi için öncelikle başka bir kullanıcıya admin veya user.admin rolü tanımlanmalıdır.";
         
 
         //BookValidator

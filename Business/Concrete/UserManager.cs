@@ -143,7 +143,7 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForAdmin(int userId)
         {
-            var result = BusinessRules.Run(CheckAnyOtherAdminOrUserAdminInSystemBeforeDeleteUser(userId));
+            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userId),CheckAnyOtherUserAdminInSystemBeforeDeleteUser(userId));
             if (result != null)
             {
                 return result;
@@ -168,7 +168,7 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForUser(UserForDeleteDto userForDeleteDto)
         {
-            var result = BusinessRules.Run(CheckAnyOtherAdminOrUserAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId));
+            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId),CheckAnyOtherUserAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId));
             if (result != null)
             {
                 return result;
@@ -301,7 +301,7 @@ namespace Business.Concrete
             return dtos;
         }
 
-        private IResult CheckAnyOtherAdminOrUserAdminInSystemBeforeDeleteUser(int userId)
+        private IResult CheckAnyOtherAdminInSystemBeforeDeleteUser(int userId)
         {
             var getDeletedUsersRole = _userOperationClaimService.GetByUserId(userId).Data;
             var getAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("admin").Data;
@@ -330,6 +330,16 @@ namespace Business.Concrete
                     return new ErrorResult(Messages.NoAnyOtherAdminOrUserAdminInSystem);
                 }
             }
+
+            return new SuccessResult();
+        }
+
+        private IResult CheckAnyOtherUserAdminInSystemBeforeDeleteUser(int userId)
+        {
+            var getDeletedUsersRole = _userOperationClaimService.GetByUserId(userId).Data;
+            var getAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("admin").Data;
+            var getUserAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("user.admin").Data;
+            var getOtherUsersRoles = _userOperationClaimService.GetAll().Data;
 
             if (getUserAdminRole != null)
             {
