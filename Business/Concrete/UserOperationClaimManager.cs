@@ -29,6 +29,29 @@ namespace Business.Concrete
             _operationClaimService = operationClaimService;
         }
 
+        public IDataResult<List<UserOperationClaim>> GetAll() // iç metod olacak. secured operations a gerek yok.
+        {
+            var result = _userOperationClaimDal.GetAll();
+            if (result.Count == 0)
+            {
+                // buraya düşmemeli, önlem amaçlı.
+                return new ErrorDataResult<List<UserOperationClaim>>(Messages.NoAnyUserOperationCalimsInSystem);
+            }
+
+            return new SuccessDataResult<List<UserOperationClaim>>(result,Messages.GetAllUserOperationClaimsSuccessfully);
+        }
+
+        public IDataResult<List<UserOperationClaim>> GetByUserId(int userId) // iç metod olacak. secured operations a gerek yok.
+        {
+            var result = _userOperationClaimDal.GetAll(u => u.UserId == userId);
+            if (result.Count == 0)
+            {
+                return new ErrorDataResult<List<UserOperationClaim>>(Messages.GetUserOperaitonClaimsByUserIdError);
+            }
+
+            return new SuccessDataResult<List<UserOperationClaim>>(result, Messages.GetUserOperaitonClaimsByIdSuccessfully);
+        }
+
         [SecuredOperation("admin,user.admin")]
         public IDataResult<List<UserOperationClaimDto>> GetUserClaimDtosByUserId(int userId)
         {
@@ -41,6 +64,7 @@ namespace Business.Concrete
 
             return new SuccessDataResult<List<UserOperationClaimDto>>(result, Messages.GetUserRoleDtosSuccessfully);
         }
+        
 
         [SecuredOperation("admin")] // apide yer almayacak. Operation Claim Manager Delete için kullanacak. Çağırılacağı yer sadece admin yetkisinde.
         public IDataResult<List<UserOperationClaim>> GetByClaimId(int operationClaimId)

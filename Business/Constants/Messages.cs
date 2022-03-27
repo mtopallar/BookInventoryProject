@@ -138,8 +138,12 @@ namespace Business.Constants
         public static string UserHasTheRoleAlready = "Kullanıcı zaten bu role sahip.";
         public static string NotFindAnyClaimByThisId = "Belirtilen rol kullanıcı rolleri listesinde bulunmuyor. Id hatalı ya da hiç bir kullanıcı bu role sahip değil.";
         public static string ClaimsListedByClaimId = "Rol detayına göre kullanıcı rolleri başarıyla listelendi.";
-        public static string TheRoleUserCanNotDeleteOrUpdate = "Kullanıcı rolü sistemin kullanılması için gereklidir ve kullanıcı sistemden silinmeden rol silinemez. ";
+        public static string TheRoleUserCanNotDeleteOrUpdate = "Kullanıcı rolü sistemin kullanılması için gereklidir ve kullanıcı sistemden silinmeden bu rol silinemez. ";
         public static string SystemHasNoAnyOtherAdmin = "Sistemde başka yönetici yetkili kullanıcı olmadığı için yönetici rolü kullanıcıdan silinemez. Yetkiyi kullanıcıdan silmek için önce başka bir kullanıcıya yönetici yetkisi vermelisiniz.";
+        public static string NoAnyUserOperationCalimsInSystem = "Sistemde herhangi bir kullanıcıda herhangi bir rol bulunmamaktadır.";
+        public static string GetAllUserOperationClaimsSuccessfully = "Tüm kullanıcı rolleri başarıyla listelendi.";
+        public static string GetUserOperaitonClaimsByUserIdError = "Belirtilen kullanıcının sistemde rolü bulunmamaktadır.";
+        public static string GetUserOperaitonClaimsByIdSuccessfully = "Belirtilen kullanıcının rolleri başarıyla listelenmiştir.";
 
         //UserManager
         public static string GetUsersAllClaimsSuccessfully = "Kullanıcının tüm rolleri rol formatında getirildi.";
@@ -159,6 +163,7 @@ namespace Business.Constants
         public static string UserRoleMustBeAddedAndActive = "Sistemi kullanabilmeniz için gerekli olan kullanıcı yetkisi yönetici tarafından sisteme tanımlanmadığından işlem gerçekleştirilemiyor. Sistem yöneticisini bilgilendiriniz.";
         public static string UserHasNoActiveRole = "Kullanıcının aktif herhangi bir rolü bulunmamaktadır.";
         public static string GetUserRoleDtosSuccessfully = "Kullanıcı rolleri başayıyla listelendi.";
+        public static string NoAnyOtherAdminInSystem = "Sistemde bu kullanıcıdan başka 'admin' yetkisinde kullanıcı bulunmamaktadır. Silme işleminin devam edebilmesi için öncelikle sisteme başka bir yönetici tanımlanmalıdır.";
 
 
         //BookValidator

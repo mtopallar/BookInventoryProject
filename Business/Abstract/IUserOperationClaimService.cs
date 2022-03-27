@@ -12,9 +12,9 @@ namespace Business.Abstract
    public interface IUserOperationClaimService
     {
         
-        //IDataResult<List<UserOperationClaim>> GetAll(); //apiden sil. user managerdan dto olarak geliyor.
+        IDataResult<List<UserOperationClaim>> GetAll(); //iç metod olarak kullanılacak. SecuredOperation a da grek yok.
+        IDataResult<List<UserOperationClaim>> GetByUserId(int userId); //iç metod olarak kullanılacak. SecuredOperation a da grek yok.
         IDataResult<List<UserOperationClaimDto>> GetUserClaimDtosByUserId(int userId);
-        //IDataResult<List<UserOperationClaim>> GetByUserId(int userId); //apiden sil. user managerdan dto olarak geliyor.
         IDataResult<List<UserOperationClaim>> GetByClaimId(int operationClaimId); //api de olmayacak. OperationClaim manager Delete içinde kullanacak.
         IResult Add(UserOperationClaim userOperationClaim);
         IResult AddUserRoleForUsers(UserOperationClaim userClaim); //apide görünmesi gerekmez.

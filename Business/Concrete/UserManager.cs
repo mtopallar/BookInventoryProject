@@ -143,6 +143,11 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForAdmin(int userId)
         {
+            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userId));
+            if (result != null)
+            {
+                return result;
+            }
             var userToDelete = GetById(userId);
             if (!userToDelete.Success)
             {
@@ -163,6 +168,11 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForUser(UserForDeleteDto userForDeleteDto)
         {
+            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId));
+            if (result != null)
+            {
+                return result;
+            }
             if (!GetById(userForDeleteDto.UserId).Success)
             {
                 return new ErrorResult(Messages.WrongUserId);
@@ -289,6 +299,27 @@ namespace Business.Concrete
             }
 
             return dtos;
+        }
+
+        private IResult CheckAnyOtherAdminInSystemBeforeDeleteUser(int userId)
+        {
+            var getDeletedUsersRole = _userOperationClaimService.GetByUserId(userId).Data;
+            var getAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("admin").Data;
+            var getSystemHasAnotherAdmin = _userOperationClaimService.GetAll().Data;
+            if (getDeletedUsersRole.Any(u => u.OperationClaimId == getAdminRole.Id))
+            {
+                foreach (var userOperationClaim in getSystemHasAnotherAdmin)
+                {
+                    if (userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId)
+                    {
+                        return new SuccessResult();
+                    }
+                }
+
+                return new ErrorResult(Messages.NoAnyOtherAdminInSystem);
+            }
+
+            return new SuccessResult();
         }
     }
 }
