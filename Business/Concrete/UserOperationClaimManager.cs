@@ -84,10 +84,10 @@ namespace Business.Concrete
         [CacheRemoveAspect("IUserService.Get")]
         public IResult Add(UserOperationClaim userOperationClaim)
         {
-            var checkIfRoleAddedBefore = BusinessRules.Run(CheckIfRoleAddedToUserAlready(userOperationClaim));
-            if (checkIfRoleAddedBefore != null)
+            var checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin = BusinessRules.Run(CheckIfRoleAddedToUserAlready(userOperationClaim),ThisUserHasAdminRoleAlready(userOperationClaim),ThisUserHasAdminRoleNow(userOperationClaim));
+            if (checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin != null)
             {
-                return checkIfRoleAddedBefore;
+                return checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin;
             }
             _userOperationClaimDal.Add(userOperationClaim);
             return new SuccessResult(Messages.UserOperationClaimAddedSuccessfully);
@@ -217,7 +217,7 @@ namespace Business.Concrete
             {
                 if (getAdminRole != null)
                 {
-                    var systemHasAnotherAdminOrUserAdmin = _userOperationClaimDal.GetAll(u=>u.OperationClaimId == getUserOperaitonClaimFirst.OperationClaimId && u.UserId != getUserOperaitonClaimFirst.UserId || u.OperationClaimId == getAdminRole.Id && u.UserId != getUserOperaitonClaimFirst.UserId);
+                    var systemHasAnotherAdminOrUserAdmin = _userOperationClaimDal.GetAll(u => u.OperationClaimId == getUserOperaitonClaimFirst.OperationClaimId && u.UserId != getUserOperaitonClaimFirst.UserId || u.OperationClaimId == getAdminRole.Id && u.UserId != getUserOperaitonClaimFirst.UserId);
                     if (systemHasAnotherAdminOrUserAdmin.Count == 0)
                     {
                         return new ErrorResult(Messages.SystemHasNoAnyOtherAdminOrUserAdmin);
@@ -234,6 +234,40 @@ namespace Business.Concrete
                 }
             }
             return new SuccessResult();
+        }
+
+        private IResult ThisUserHasAdminRoleAlready(UserOperationClaim userOperationClaim)
+        {
+            var getAdminRoleFirst = _operationClaimService.Value.GetByClaimNameIfClaimActive("admin").Data;
+            var getUsersOperationClaimsByUserId = _userOperationClaimDal.GetAll(u => u.UserId == userOperationClaim.UserId);
+            var getUserRole = _operationClaimService.Value.GetByClaimNameIfClaimActive("user").Data;
+            if (getAdminRoleFirst != null && getUsersOperationClaimsByUserId.Any(u => u.OperationClaimId == getAdminRoleFirst.Id) && userOperationClaim.OperationClaimId != getUserRole.Id)
+            {
+                return new ErrorResult(Messages.ThisUserHasAdminRoleAlready);
+            }
+
+            return new SuccessResult();
+        }
+
+        private IResult ThisUserHasAdminRoleNow(UserOperationClaim userOperationClaim)
+        {
+            var getUsersOperationClaimsByUserId = _userOperationClaimDal.GetAll(u => u.UserId == userOperationClaim.UserId);
+            var getAdminRole = _operationClaimService.Value.GetByClaimNameIfClaimActive("admin").Data; //kullanıcıya admin rolü ekleneceği için null check gerekmez.
+            var getUserRole = _operationClaimService.Value.GetByClaimNameIfClaimActive("user").Data;
+
+            if (userOperationClaim.OperationClaimId == getAdminRole.Id)
+            {
+                foreach (var usersOperationClaim in getUsersOperationClaimsByUserId)
+                {
+                    if (usersOperationClaim.OperationClaimId!=getUserRole.Id)
+                    {
+                        _userOperationClaimDal.Delete(usersOperationClaim);
+                    }
+                }
+            }
+
+            return new SuccessResult();
+
         }
 
 

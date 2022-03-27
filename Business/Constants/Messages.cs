@@ -144,8 +144,9 @@ namespace Business.Constants
         public static string GetAllUserOperationClaimsSuccessfully = "Tüm kullanıcı rolleri başarıyla listelendi.";
         public static string GetUserOperaitonClaimsByUserIdError = "Belirtilen kullanıcının sistemde rolü bulunmamaktadır.";
         public static string GetUserOperaitonClaimsByIdSuccessfully = "Belirtilen kullanıcının rolleri başarıyla listelenmiştir.";
-        public static string SystemHasNoAnyOtherAdminOrUserAdmin = "Sistemde başka admin veya user.admin yetkili kullanıcı olmadığı için admin rolü kullanıcıdan silinemez. Yetkiyi kullanıcıdan silmek için önce başka bir kullanıcıya admin veya user.admin yetkisi vermelisiniz.";
+        public static string SystemHasNoAnyOtherAdminOrUserAdmin = "Sistemde başka admin veya user.admin yetkili kullanıcı olmadığı için bu rol kullanıcıdan silinemez. Yetkiyi kullanıcıdan silmek için önce başka bir kullanıcıya admin veya user.admin yetkisi vermelisiniz.";
         public static string SystemHasNoAnyOtherUserAdmin = "Sistemde başka user.admin yetkili kullanıcı olmadığı için user.admin rolü kullanıcıdan silinemez. Yetkiyi kullanıcıdan silmek için önce başka bir kullanıcıya user.admin yetkisi vermelisiniz.";
+        public static string ThisUserHasAdminRoleAlready = "Bu kullanıcı zaten admin yetkisine sahip.";
 
         //UserManager
         public static string GetUsersAllClaimsSuccessfully = "Kullanıcının tüm rolleri rol formatında getirildi.";
