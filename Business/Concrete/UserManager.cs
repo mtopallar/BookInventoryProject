@@ -143,7 +143,7 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForAdmin(int userId)
         {
-            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userId));
+            var result = BusinessRules.Run(CheckAnyOtherAdminOrUserAdminInSystemBeforeDeleteUser(userId));
             if (result != null)
             {
                 return result;
@@ -168,7 +168,7 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForUser(UserForDeleteDto userForDeleteDto)
         {
-            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId));
+            var result = BusinessRules.Run(CheckAnyOtherAdminOrUserAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId));
             if (result != null)
             {
                 return result;
@@ -301,25 +301,61 @@ namespace Business.Concrete
             return dtos;
         }
 
-        private IResult CheckAnyOtherAdminInSystemBeforeDeleteUser(int userId)
+        private IResult CheckAnyOtherAdminOrUserAdminInSystemBeforeDeleteUser(int userId)
         {
             var getDeletedUsersRole = _userOperationClaimService.GetByUserId(userId).Data;
             var getAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("admin").Data;
-            var getSystemHasAnotherAdmin = _userOperationClaimService.GetAll().Data;
-            if (getDeletedUsersRole.Any(u => u.OperationClaimId == getAdminRole.Id))
-            {
-                foreach (var userOperationClaim in getSystemHasAnotherAdmin)
-                {
-                    if (userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId)
-                    {
-                        return new SuccessResult();
-                    }
-                }
+            var getUserAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("user.admin").Data;
+            var getOtherUsersRoles = _userOperationClaimService.GetAll().Data;
 
-                return new ErrorResult(Messages.NoAnyOtherAdminInSystem);
+            if (getAdminRole != null)
+            {
+                if (getDeletedUsersRole.Any(u => u.OperationClaimId == getAdminRole.Id))
+                {
+                    if (getUserAdminRole != null)
+                    {
+                        if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId || userOperationClaim.OperationClaimId == getUserAdminRole.Id && userOperationClaim.UserId != userId))
+                        {
+                            return new SuccessResult();
+                        }
+                    }
+                    else
+                    {
+                        if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId))
+                        {
+                            return new SuccessResult();
+                        }
+                    }
+
+                    return new ErrorResult(Messages.NoAnyOtherAdminOrUserAdminInSystem);
+                }
             }
 
+            if (getUserAdminRole != null)
+            {
+                if (getDeletedUsersRole.Any(u => u.OperationClaimId == getUserAdminRole.Id))
+                {
+                    if (getAdminRole != null)
+                    {
+                        if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId || userOperationClaim.OperationClaimId == getUserAdminRole.Id && userOperationClaim.UserId != userId))
+                        {
+                            return new SuccessResult();
+                        }
+                    }
+                    else
+                    {
+                        if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getUserAdminRole.Id && userOperationClaim.UserId != userId))
+                        {
+                            return new SuccessResult();
+                        }
+                    }
+
+                    return new ErrorResult(Messages.NoAnyOtherAdminOrUserAdminInSystem);
+                }
+            }
             return new SuccessResult();
         }
+
     }
 }
+
