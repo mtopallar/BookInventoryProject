@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Entities.Concrete;
 using Core.Utilities.Business;
@@ -70,6 +71,7 @@ namespace Business.Concrete
             return new SuccessDataResult<OperationClaim>(result, Messages.GetOperationClaimByNameSuccessfully);
         }
         [SecuredOperation("admin")]
+        [CacheRemoveAspect("IUserService.Get")]
         public IResult Add(OperationClaim operationClaim)
         {
             var isOperationClaimAlreadyExistAndActive =
@@ -94,6 +96,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ClaimAddedSuccessfully);
         }
         [SecuredOperation("admin")]
+        [CacheRemoveAspect("IUserService.Get")]
         [TransactionScopeAspect]
         public IResult Delete(OperationClaim operationClaim)
         {

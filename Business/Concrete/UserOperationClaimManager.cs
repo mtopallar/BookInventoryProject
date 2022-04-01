@@ -80,13 +80,11 @@ namespace Business.Concrete
 
         [SecuredOperation("admin,user.admin")]
         [ValidationAspect(typeof(UserOperationClaimValidator))]
-        [CacheRemoveAspect("IUserOperationClaimService.Get")]
         [CacheRemoveAspect("IUserService.Get")]
         public IResult Add(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto)
         {
             UserOperationClaim userOperationClaim = new UserOperationClaim
             {
-                Id = userOperationClaimWithAttemptingUserIdDto.Id,
                 UserId = userOperationClaimWithAttemptingUserIdDto.UserId,
                 OperationClaimId = userOperationClaimWithAttemptingUserIdDto.OperationClaimId
             };
@@ -118,7 +116,6 @@ namespace Business.Concrete
         }
         [SecuredOperation("admin,user.admin")]
         [ValidationAspect(typeof(UserOperationClaimValidator))]
-        [CacheRemoveAspect("IUserOperationClaimService.Get")]
         [CacheRemoveAspect("IUserService.Get")]
         public IResult Update(UserOperationClaim userOperationClaim)
         {
@@ -139,7 +136,6 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserOperationClaimUpdatedSuccessfully);
         }
         [SecuredOperation("admin,user.admin")]
-        [CacheRemoveAspect("IUserOperationClaimService.Get")]
         [CacheRemoveAspect("IUserService.Get")]
         public IResult Delete(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto)
         {
@@ -178,7 +174,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperation("admin")]
-        [CacheRemoveAspect("IUserOperationClaimService.Get")]
+        [CacheRemoveAspect("IUserService.Get")]
         public IResult DeleteClaimFromAllUsersWhenClaimDeleted(UserOperationClaim userOperationClaim)
         {
             _userOperationClaimDal.Delete(userOperationClaim);
