@@ -157,7 +157,7 @@ namespace Business.Constants
         public static string GetUserByIdSuccessfully = "Kullanıcı detayları başarıyla getirildi.";
         public static string UserAddedSuccessfully = "Kaydınız başarıyla yapılmıştır.";
         public static string CurrentUserPasswordError = "Mevcut şifrenizi hatalı girdiniz.";
-        public static string UserUpdatedSuccessfully = "Kullanıcı bilgileriniz başarıyla güncellendi.";
+        public static string UserUpdatedSuccessfully = "Kullanıcı bilgileriniz başarıyla güncellendi. Lütfen yeni bilgileriniz ile tekrar giriş yapınız.";
         public static string NewEmailAlreadyExists = "Kullanmak istediğiniz Email başka kullanıcı tarafından kullanılıyor.";
         public static string UserAndUsersBooksDeletedSuccessfullyByAdmin = "Kullanıcı, kullanıcının tüm yetkileri ve kütüphanesi yönetici tarafından başarıyla silinmiştir.";
         public static string UserAndUsersBooksAndUserClaimsDeletedSuccessfullyByUser = "Kullanıcıya ait tüm kayıtlar kullanıcı isteği ile silinmiştir.";

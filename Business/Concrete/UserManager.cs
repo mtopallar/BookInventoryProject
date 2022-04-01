@@ -116,28 +116,25 @@ namespace Business.Concrete
         [CacheRemoveAspect("IUserService.Get")]
         public IResult Update(UserForUpdateDto userForUpdateDto)
         {
-            User user = null;
-            var checkNewMailIsExists = CheckIfNewMailExists(StringEditorHelper.TrimStartAndFinish(userForUpdateDto.NewEmail));
-            var isItOk = UpdateUserWithPasswordSaltAndHash(userForUpdateDto, ref user);
-
             if (!GetById(userForUpdateDto.UserId).Success)
             {
                 return new ErrorResult(Messages.WrongUserId);
             }
 
-            if (checkNewMailIsExists.Success)
-            {
-                if (isItOk.Success)
-                {
-                    _userDal.Update(user);
-                    return new SuccessResult(Messages.UserUpdatedSuccessfully);
-                }
+            User user = null;
 
-                return new ErrorResult(isItOk.Message);
+            var result = BusinessRules.Run(CheckIfNewMailExists(userForUpdateDto.UserId,StringEditorHelper.TrimStartAndFinish(userForUpdateDto.NewEmail)),UpdateUserWithPasswordSaltAndHash(userForUpdateDto, ref user));
+
+            if (result != null)
+            {
+                return result;
             }
 
-            return checkNewMailIsExists;
+            _userDal.Update(user);
+            return new SuccessResult(Messages.UserUpdatedSuccessfully);
         }
+
+
         [SecuredOperation("admin,user.admin")]
         [CacheRemoveAspect("IUserService.Get")]
         [TransactionScopeAspect]
@@ -217,10 +214,10 @@ namespace Business.Concrete
             return new ErrorResult(Messages.CurrentUserPasswordError);
         }
 
-        private IResult CheckIfNewMailExists(string email)
+        private IResult CheckIfNewMailExists(int userId,string email)
         {
             var checkNewMailExists = GetByMail(email);
-            if (checkNewMailExists.Success)
+            if (checkNewMailExists.Success && checkNewMailExists.Data.Id != userId)
             {
                 return new ErrorResult(Messages.NewEmailAlreadyExists);
             }
