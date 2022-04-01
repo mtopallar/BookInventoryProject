@@ -59,8 +59,8 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<OperationClaim>(result, Messages.GetClaimByIdSuccessfully);
         }
-        //[SecuredOperation("admin,user")] sil ya da user rolü için s ecured olmayan bir metod yaz. ama apide olmayacağı için karşılığı yok zaten silinebilir.
-        public IDataResult<OperationClaim> GetByClaimNameIfClaimActive(string claimName)
+        
+        public IDataResult<OperationClaim> GetByClaimNameIfClaimActive(string claimName) // apide yok
         {
             var result = _operationClaimDal.Get(o => o.Name == claimName && o.Active);
             if (result==null)
@@ -163,15 +163,14 @@ namespace Business.Concrete
             {
                 foreach (var userOperationClaim in findDeletedClaimFromUserOperationClaims.Data)
                 {
-                    var result = _userOperationClaimService.Delete(userOperationClaim);
-                    if (!result.Success)
-                    {
-                        return result;
-                    }
+                    _userOperationClaimService.DeleteClaimFromAllUsersWhenClaimDeleted(userOperationClaim);
+                    
                 }
+                return new SuccessResult(Messages.DeletedRoleDeletedByUserAtTheSameTime);
             }
 
-            return new SuccessResult(Messages.DeletedRoleDeletedByUserAtTheSameTime);
+            return new ErrorResult(findDeletedClaimFromUserOperationClaims.Message);
+
         }
 
     }

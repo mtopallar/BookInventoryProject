@@ -144,9 +144,8 @@ namespace Business.Constants
         public static string GetAllUserOperationClaimsSuccessfully = "Tüm kullanıcı rolleri başarıyla listelendi.";
         public static string GetUserOperaitonClaimsByUserIdError = "Belirtilen kullanıcının sistemde rolü bulunmamaktadır.";
         public static string GetUserOperaitonClaimsByIdSuccessfully = "Belirtilen kullanıcının rolleri başarıyla listelenmiştir.";
-        public static string SystemHasNoAnyOtherAdminOrUserAdmin = "Sistemde başka admin veya user.admin yetkili kullanıcı olmadığı için bu rol kullanıcıdan silinemez. Yetkiyi kullanıcıdan silmek için önce başka bir kullanıcıya admin veya user.admin yetkisi vermelisiniz.";
-        public static string SystemHasNoAnyOtherUserAdmin = "Sistemde başka user.admin yetkili kullanıcı olmadığı için user.admin rolü kullanıcıdan silinemez. Yetkiyi kullanıcıdan silmek için önce başka bir kullanıcıya user.admin yetkisi vermelisiniz.";
         public static string ThisUserHasAdminRoleAlready = "Bu kullanıcı zaten admin yetkisine sahip.";
+        public static string AdminRoleCanAddOrDeleteAnotherAdminOnly = "admin rolü sadece başka bir admin tarafından atanabilir veya silinebilir.";
 
         //UserManager
         public static string GetUsersAllClaimsSuccessfully = "Kullanıcının tüm rolleri rol formatında getirildi.";
@@ -166,7 +165,7 @@ namespace Business.Constants
         public static string UserRoleMustBeAddedAndActive = "Sistemi kullanabilmeniz için gerekli olan kullanıcı yetkisi yönetici tarafından sisteme tanımlanmadığından işlem gerçekleştirilemiyor. Sistem yöneticisini bilgilendiriniz.";
         public static string UserHasNoActiveRole = "Kullanıcının aktif herhangi bir rolü bulunmamaktadır.";
         public static string GetUserRoleDtosSuccessfully = "Kullanıcı rolleri başayıyla listelendi.";
-        public static string NoAnyOtherAdminOrUserAdminInSystem = "Sistemde silmek istediğiniz kullanıcıdan başka admin veya user.admin yetkisinde kullanıcı bulunmamaktadır. Silme işleminin devam edebilmesi için öncelikle başka bir kullanıcıya admin veya user.admin rolü tanımlanmalıdır.";
+        public static string NoAnyOtherAdminInSystem = "Sistemde silmek istediğiniz kullanıcıdan başka admin veya user.admin yetkisinde kullanıcı bulunmamaktadır. Silme işleminin devam edebilmesi için öncelikle başka bir kullanıcıya admin veya user.admin rolü tanımlanmalıdır.";
         
 
         //BookValidator

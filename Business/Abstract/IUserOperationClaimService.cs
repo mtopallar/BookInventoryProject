@@ -16,10 +16,11 @@ namespace Business.Abstract
         IDataResult<List<UserOperationClaim>> GetByUserId(int userId); //iç metod olarak kullanılacak. SecuredOperation a da grek yok.
         IDataResult<List<UserOperationClaimDto>> GetUserClaimDtosByUserId(int userId);
         IDataResult<List<UserOperationClaim>> GetByClaimId(int operationClaimId); //api de olmayacak. OperationClaim manager Delete içinde kullanacak.
-        IResult Add(UserOperationClaim userOperationClaim);
+        IResult Add(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto);
         IResult AddUserRoleForUsers(UserOperationClaim userClaim); //apide görünmesi gerekmez.
         IResult Update(UserOperationClaim userOperationClaim);
-        IResult Delete(UserOperationClaim userOperationClaim);
+        IResult Delete(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto);
+        IResult DeleteClaimFromAllUsersWhenClaimDeleted(UserOperationClaim userOperationClaim); //apide olmayacak iç metod olacak.
         IResult DeleteForUsersOwnClaim(int userId); //apide olması gerekmez.
 
         // Gerekirse bir DTO ekleyip rol adını kullanıcı adı ile çekebilirim.

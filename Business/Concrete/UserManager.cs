@@ -37,7 +37,7 @@ namespace Business.Concrete
             _userBookService = userBookService;
         }
 
-        public IDataResult<List<OperationClaim>> GetClaims(User user) ///////////////////////////////////////////
+        public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
             //error kontrole aslında gerek yok her kullanıcı en az user rolüne sahip olmak zorunda.(sistem tarafından otomatik atanıyor) ama bu projede rol yoksa token oluşmasını istemiyorum onun için buradaki error kontrolü authmanager da access CreateAccessToken içinde kullanıyor olacağım.
             var usersClaims = _userDal.GetUserClaims(user);
@@ -123,7 +123,7 @@ namespace Business.Concrete
 
             User user = null;
 
-            var result = BusinessRules.Run(CheckIfNewMailExists(userForUpdateDto.UserId,StringEditorHelper.TrimStartAndFinish(userForUpdateDto.NewEmail)),UpdateUserWithPasswordSaltAndHash(userForUpdateDto, ref user));
+            var result = BusinessRules.Run(CheckIfNewMailExists(userForUpdateDto.UserId, StringEditorHelper.TrimStartAndFinish(userForUpdateDto.NewEmail)), UpdateUserWithPasswordSaltAndHash(userForUpdateDto, ref user));
 
             if (result != null)
             {
@@ -140,7 +140,7 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForAdmin(int userId)
         {
-            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userId),CheckAnyOtherUserAdminInSystemBeforeDeleteUser(userId));
+            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userId));
             if (result != null)
             {
                 return result;
@@ -165,7 +165,7 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         public IResult DeleteForUser(UserForDeleteDto userForDeleteDto)
         {
-            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId),CheckAnyOtherUserAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId));
+            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userForDeleteDto.UserId));
             if (result != null)
             {
                 return result;
@@ -214,7 +214,7 @@ namespace Business.Concrete
             return new ErrorResult(Messages.CurrentUserPasswordError);
         }
 
-        private IResult CheckIfNewMailExists(int userId,string email)
+        private IResult CheckIfNewMailExists(int userId, string email)
         {
             var checkNewMailExists = GetByMail(email);
             if (checkNewMailExists.Success && checkNewMailExists.Data.Id != userId)
@@ -300,68 +300,29 @@ namespace Business.Concrete
 
         private IResult CheckAnyOtherAdminInSystemBeforeDeleteUser(int userId)
         {
-            var getDeletedUsersRole = _userOperationClaimService.GetByUserId(userId).Data;
+            var getDeletedUsersRoles = _userOperationClaimService.GetByUserId(userId).Data;
             var getAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("admin").Data;
-            var getUserAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("user.admin").Data;
             var getOtherUsersRoles = _userOperationClaimService.GetAll().Data;
 
             if (getAdminRole != null)
             {
-                if (getDeletedUsersRole.Any(u => u.OperationClaimId == getAdminRole.Id))
+                if (getDeletedUsersRoles.Any(u => u.OperationClaimId == getAdminRole.Id))
                 {
-                    if (getUserAdminRole != null)
+
+                    if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId))
                     {
-                        if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId || userOperationClaim.OperationClaimId == getUserAdminRole.Id && userOperationClaim.UserId != userId))
-                        {
-                            return new SuccessResult();
-                        }
-                    }
-                    else
-                    {
-                        if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId))
-                        {
-                            return new SuccessResult();
-                        }
+                        return new SuccessResult();
                     }
 
-                    return new ErrorResult(Messages.NoAnyOtherAdminOrUserAdminInSystem);
+
+                    return new ErrorResult(Messages.NoAnyOtherAdminInSystem);
                 }
             }
 
             return new SuccessResult();
         }
 
-        private IResult CheckAnyOtherUserAdminInSystemBeforeDeleteUser(int userId)
-        {
-            var getDeletedUsersRole = _userOperationClaimService.GetByUserId(userId).Data;
-            var getAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("admin").Data;
-            var getUserAdminRole = _operationClaimService.GetByClaimNameIfClaimActive("user.admin").Data;
-            var getOtherUsersRoles = _userOperationClaimService.GetAll().Data;
-
-            if (getUserAdminRole != null)
-            {
-                if (getDeletedUsersRole.Any(u => u.OperationClaimId == getUserAdminRole.Id))
-                {
-                    if (getAdminRole != null)
-                    {
-                        if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getAdminRole.Id && userOperationClaim.UserId != userId || userOperationClaim.OperationClaimId == getUserAdminRole.Id && userOperationClaim.UserId != userId))
-                        {
-                            return new SuccessResult();
-                        }
-                    }
-                    else
-                    {
-                        if (getOtherUsersRoles.Any(userOperationClaim => userOperationClaim.OperationClaimId == getUserAdminRole.Id && userOperationClaim.UserId != userId))
-                        {
-                            return new SuccessResult();
-                        }
-                    }
-
-                    return new ErrorResult(Messages.NoAnyOtherAdminOrUserAdminInSystem);
-                }
-            }
-            return new SuccessResult();
-        }
+        
 
     }
 }

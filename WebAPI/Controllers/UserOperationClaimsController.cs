@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Business.Abstract;
 using Core.Entities.Concrete;
+using Entities.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -33,9 +34,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult Add(UserOperationClaim userOperationClaim)
+        public IActionResult Add(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto)
         {
-            var result = _userOperationClaimService.Add(userOperationClaim);
+            var result = _userOperationClaimService.Add(userOperationClaimWithAttemptingUserIdDto);
             if (result.Success)
             {
                 return Ok(result);
@@ -44,7 +45,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("update")]
+        [HttpPost("update")] //angular fe de kullanmadım.
         public IActionResult Update(UserOperationClaim userOperationClaim)
         {
             var result = _userOperationClaimService.Update(userOperationClaim);
@@ -58,9 +59,9 @@ namespace WebAPI.Controllers
 
 
         [HttpPost("delete")]
-        public IActionResult Delete(UserOperationClaim userOperationClaim)
+        public IActionResult Delete(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto)
         {
-            var result = _userOperationClaimService.Delete(userOperationClaim);
+            var result = _userOperationClaimService.Delete(userOperationClaimWithAttemptingUserIdDto);
             if (result.Success)
             {
                 return Ok(result);
