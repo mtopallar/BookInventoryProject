@@ -138,21 +138,22 @@ namespace Business.Concrete
         [SecuredOperation("admin,user.admin")]
         [CacheRemoveAspect("IUserService.Get")]
         [TransactionScopeAspect]
-        public IResult DeleteForAdmin(int userId)
+        public IResult DeleteForAdmin(DeleteForAdminWithAttemptingUserIdDto deleteForAdminWithAttemptingUserIdDto)
         {
-            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(userId));
+            
+            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(deleteForAdminWithAttemptingUserIdDto.UserId), HasDeletedUserAdminRoleAndAttemptingUserAdminRole(deleteForAdminWithAttemptingUserIdDto));
             if (result != null)
             {
                 return result;
             }
-            var userToDelete = GetById(userId);
+            var userToDelete = GetById(deleteForAdminWithAttemptingUserIdDto.UserId);
             if (!userToDelete.Success)
             {
                 return new ErrorResult(Messages.WrongUserId);
             }
-            if (DeleteUserBooks(userId).Success)
+            if (DeleteUserBooks(deleteForAdminWithAttemptingUserIdDto.UserId).Success)
             {
-                if (DeleteUserFromUserOperationClaims(userId).Success)
+                if (DeleteUserFromUserOperationClaims(deleteForAdminWithAttemptingUserIdDto.UserId).Success)
                 {
                     _userDal.Delete(userToDelete.Data);
                 }
@@ -322,7 +323,21 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        
+        private IResult HasDeletedUserAdminRoleAndAttemptingUserAdminRole(DeleteForAdminWithAttemptingUserIdDto deleteForAdminWithAttemptingUserIdDto)
+        {
+            var getDeletedUserRoles = _userOperationClaimService.GetUserClaimDtosByUserId(deleteForAdminWithAttemptingUserIdDto.UserId);
+            if (getDeletedUserRoles.Data.Any(u => u.Name == "admin"))
+            {
+                if (_userOperationClaimService.GetUserClaimDtosByUserId(deleteForAdminWithAttemptingUserIdDto.AttemptingUserId).Data.Any(u => u.Name == "admin"))
+                {
+                    return new SuccessResult();
+                }
+
+                return new ErrorResult(Messages.AdminCanDeleteAnotherAdminOnly);
+            }
+
+            return new SuccessResult();
+        }
 
     }
 }

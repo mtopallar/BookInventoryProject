@@ -166,10 +166,10 @@ namespace Business.Constants
         public static string UserHasNoActiveRole = "Kullanıcının aktif herhangi bir rolü bulunmamaktadır.";
         public static string GetUserRoleDtosSuccessfully = "Kullanıcı rolleri başayıyla listelendi.";
         public static string NoAnyOtherAdminInSystem = "Sistemde bu kullanıcıdan başka admin yetkisinde kullanıcı bulunmamaktadır. Silme işleminin devam edebilmesi için öncelikle başka bir kullanıcıya admin yetkisi tanımlanmalıdır.";
+        public static string AdminCanDeleteAnotherAdminOnly = "admin rolündeki bir kullanıcıyı sadece admin rolüne sahip bir yönetici silebilir.";
         
 
         //BookValidator
         public static string IsbnNotValid = "ISBN numarası 13 karakter olmalı ve sadece rakamdan oluşmalıdır.";
-        
     }
 }

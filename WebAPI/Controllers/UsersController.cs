@@ -61,9 +61,9 @@ namespace WebAPI.Controllers
 
         //front taraftan kullanıcının rollerine göre yönlendirilme yapılmalı.
         [HttpPost("deleteforadmin")]
-        public IActionResult DeleteForAdmin([FromBody] int userId)
+        public IActionResult DeleteForAdmin(DeleteForAdminWithAttemptingUserIdDto deleteForAdminWithAttemptingUserIdDto)
         {
-            var result = _userService.DeleteForAdmin(userId);
+            var result = _userService.DeleteForAdmin(deleteForAdminWithAttemptingUserIdDto);
             if (result.Success)
             {
                 return Ok(result);

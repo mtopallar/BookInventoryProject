@@ -19,7 +19,7 @@ namespace Business.Abstract
         IDataResult<User> GetById(int id); // apiye yazmadım.
         IResult Add(User user); //managerlar kullanıyor apiye yazmadım.
         IResult Update(UserForUpdateDto userForUpdateDto);
-        IResult DeleteForAdmin(int userId);
+        IResult DeleteForAdmin(DeleteForAdminWithAttemptingUserIdDto deleteForAdminWithAttemptingUserIdDto);
         IResult DeleteForUser(UserForDeleteDto userForDeleteDto);
 
     }
