@@ -236,7 +236,7 @@ namespace Business.Concrete
 
             if (userOperationClaim.OperationClaimId == getAdminRole.Id)
             {
-                if (HasAttemptedUserAdminRole(attemptedUserId))
+                if (HasAttemptingUserAdminRole(attemptedUserId))
                 {
                     foreach (var usersOperationClaim in getUsersOperationClaimsByUserId)
                     {
@@ -266,7 +266,7 @@ namespace Business.Concrete
 
                 if (userOperationClaimWithAttemptingUserIdDto.OperationClaimId == getAdminRole.Data.Id)
                 {
-                    if (HasAttemptedUserAdminRole(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId))
+                    if (HasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId))
                     {
                         return new SuccessResult();
                     }
@@ -279,7 +279,7 @@ namespace Business.Concrete
 
                 if (getUserOperationClaim.OperationClaimId == getAdminRole.Data.Id)
                 {
-                    if (HasAttemptedUserAdminRole(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId))
+                    if (HasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId))
                     {
                         return new SuccessResult();
                     }
@@ -291,7 +291,7 @@ namespace Business.Concrete
 
         }
 
-        private bool HasAttemptedUserAdminRole(int attemptedUserId)
+        private bool HasAttemptingUserAdminRole(int attemptedUserId)
         {
             if (_userOperationClaimDal.GetUserClaimDtosByUserId(attemptedUserId).Any(u => u.Name == "admin"))
             {
