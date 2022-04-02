@@ -141,7 +141,7 @@ namespace Business.Concrete
         public IResult DeleteForAdmin(DeleteForAdminWithAttemptingUserIdDto deleteForAdminWithAttemptingUserIdDto)
         {
             
-            var result = BusinessRules.Run(CheckAnyOtherAdminInSystemBeforeDeleteUser(deleteForAdminWithAttemptingUserIdDto.UserId), HasDeletedUserAdminRoleAndAttemptingUserAdminRole(deleteForAdminWithAttemptingUserIdDto));
+            var result = BusinessRules.Run(HasDeletedUserAdminRoleAndAttemptingUserAdminRole(deleteForAdminWithAttemptingUserIdDto), CheckAnyOtherAdminInSystemBeforeDeleteUser(deleteForAdminWithAttemptingUserIdDto.UserId));
             if (result != null)
             {
                 return result;
