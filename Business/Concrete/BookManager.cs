@@ -38,7 +38,7 @@ namespace Business.Concrete
         public IDataResult<List<Book>> GetAll()
         {
             var result = _bookDal.GetAll();
-            if (result.Count==0)
+            if (result.Count == 0)
             {
                 return new ErrorDataResult<List<Book>>(Messages.CanNotFindAnyBook);
             }
@@ -48,7 +48,7 @@ namespace Business.Concrete
         public IDataResult<Book> GetById(int id)
         {
             var result = _bookDal.Get(b => b.Id == id);
-            if (result==null)
+            if (result == null)
             {
                 return new ErrorDataResult<Book>(Messages.WrongBookId);
             }
@@ -59,7 +59,7 @@ namespace Business.Concrete
         public IDataResult<List<BookForAddToLibraryDto>> GetAllForAddToLibrary()
         {
             var result = _bookDal.GetBooksForAddToLibrary();
-            if (result.Count==0)
+            if (result.Count == 0)
             {
                 return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.CanNotFindAnyBook);
             }
@@ -69,7 +69,7 @@ namespace Business.Concrete
         public IDataResult<BookForAddToLibraryDto> GetByIdForAddToLibrary(int id)
         {
             var result = _bookDal.GetBooksForAddToLibrary(b => b.BookId == id);
-            if (result.Count==0)
+            if (result.Count == 0)
             {
                 return new ErrorDataResult<BookForAddToLibraryDto>(Messages.WrongBookId);
             }
@@ -80,7 +80,7 @@ namespace Business.Concrete
         public IDataResult<BookForAddToLibraryDto> GetByIsbnForAddToLibrary(string isbn)
         {
             var result = _bookDal.GetBooksForAddToLibrary(b => b.Isbn == isbn);
-            if (result.Count==0)
+            if (result.Count == 0)
             {
                 return new ErrorDataResult<BookForAddToLibraryDto>(Messages.WrongIsbnNumber);
             }
@@ -90,7 +90,7 @@ namespace Business.Concrete
         public IDataResult<List<BookForAddToLibraryDto>> GetListByBookNameForAddToLibrary(string bookName)
         {
             var result = _bookDal.GetBooksForAddToLibrary(b => b.Name == bookName);
-            if (result.Count==0)
+            if (result.Count == 0)
             {
                 return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongBookName);
             }
@@ -105,7 +105,7 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<BookForAddToLibraryDto>>(publisher.Message);
             }
             var result = _bookDal.GetBooksForAddToLibrary(b => b.PublisherName == publisher.Data.Name);
-            if (result.Count==0)
+            if (result.Count == 0)
             {
                 return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongPublisher);
             }
@@ -114,26 +114,26 @@ namespace Business.Concrete
         [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByAuthorIdForAddToLibrary(int authorId)
         {
-           var author = _authorService.GetById(authorId);
-           if (!author.Success)
-           {
-               return new ErrorDataResult<List<BookForAddToLibraryDto>>(author.Message);
-           }
+            var author = _authorService.GetById(authorId);
+            if (!author.Success)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(author.Message);
+            }
 
-           var result = _bookDal.GetBooksForAddToLibrary(b => b.AuthorFullName == $"{author.Data.FirstName} {author.Data.LastName}");
+            var result = _bookDal.GetBooksForAddToLibrary(b => b.AuthorFullName == $"{author.Data.FirstName} {author.Data.LastName}");
 
-           if (result.Count==0)
-           {
-               return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongAuthor);
-           }
+            if (result.Count == 0)
+            {
+                return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongAuthor);
+            }
 
-           return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByAuthorIdSuccessfully);
+            return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByAuthorIdSuccessfully);
         }
         [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByNativeStatueForAddToLibrary(bool native)
         {
             var result = _bookDal.GetBooksForAddToLibrary(b => b.Native == native);
-            if (result.Count==0)
+            if (result.Count == 0)
             {
                 return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.NoBookByThisNativeSelection);
             }
@@ -153,7 +153,7 @@ namespace Business.Concrete
 
             var result = _bookDal.GetBooksForAddToLibrary(b => b.GenreName == genre.Data.Name);
 
-            if (result.Count==0)
+            if (result.Count == 0)
             {
                 return new ErrorDataResult<List<BookForAddToLibraryDto>>(Messages.WrongGenre);
             }
@@ -166,11 +166,11 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Add(Book book)
         {
-            var isBookAddedAlreadyBefore = BusinessRules.Run(IsBookAddedAlreadyBefore(book));
+            var isAddedIsbnUsedBefore = BusinessRules.Run(IsIsbnUserdBefore(book));
 
-            if (isBookAddedAlreadyBefore != null)
+            if (isAddedIsbnUsedBefore != null)
             {
-                return isBookAddedAlreadyBefore;
+                return isAddedIsbnUsedBefore;
             }
 
             book.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
@@ -183,10 +183,10 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Update(Book book)
         {
-            var checkNewBookBeforeUpdateIsBookAddedBefore = BusinessRules.Run(IsBookAddedAlreadyBefore(book));
-            if (checkNewBookBeforeUpdateIsBookAddedBefore!=null)
+            var isUpdatedIsbnUsedBefore = BusinessRules.Run(IsIsbnUserdBefore(book));
+            if (isUpdatedIsbnUsedBefore != null)
             {
-                return checkNewBookBeforeUpdateIsBookAddedBefore;
+                return isUpdatedIsbnUsedBefore;
             }
             var tryToGetBook = GetById(book.Id);
             if (!tryToGetBook.Success)
@@ -201,21 +201,30 @@ namespace Business.Concrete
             _bookDal.Update(tryToGetBook.Data);
             return new SuccessResult(Messages.BookUpdatedSuccessfully);
         }
+        
 
-        private IResult IsBookAddedAlreadyBefore(Book book)
+        private IResult IsIsbnUserdBefore(Book book)
         {
-            // Bir kitabın aynı isbn numarasını kullnabilmesi için şartları araştırıp metodu ona göre yazdım. (Name, ISNB, Publisher bağlı)
-
-            var bookNameTryToFind =
-                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
-            var tryGetBook = _bookDal.Get(b =>
-                b.Name == bookNameTryToFind && b.Isbn == book.Isbn && b.PublisherId == book.PublisherId && b.AuthorId == book.AuthorId);
-            if (tryGetBook != null)
+            if (book.Id == 0)
             {
-                return new ErrorResult(Messages.BookAddedAlreadyBefore);
+                var isIsbnUsedBefore = _bookDal.Get(b => b.Isbn == book.Isbn);
+                if (isIsbnUsedBefore == null)
+                {
+                    return new SuccessResult();
+                }
+
+                return new ErrorResult(Messages.AnotherBookHasThisIsbn);
+            }
+            else
+            {
+                var isIsbnUsedBefore = _bookDal.Get(b => b.Isbn == book.Isbn && b.Id != book.Id);
+                if (isIsbnUsedBefore == null)
+                {
+                    return new SuccessResult();
+                }
+                return new ErrorResult(Messages.IsbnTryToUpdateAddedBefore);
             }
 
-            return new SuccessResult();
         }
 
 

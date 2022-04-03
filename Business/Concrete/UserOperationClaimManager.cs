@@ -88,7 +88,7 @@ namespace Business.Concrete
                 UserId = userOperationClaimWithAttemptingUserIdDto.UserId,
                 OperationClaimId = userOperationClaimWithAttemptingUserIdDto.OperationClaimId
             };
-            var checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin = BusinessRules.Run(CheckIfRoleAddedToUserAlready(userOperationClaim), IsTheRoleAdminAndHasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto), ThisUserHasAdminRoleAlready(userOperationClaim), ThisUserHasAdminRoleNow(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId,userOperationClaim));
+            var checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin = BusinessRules.Run(IsTheRoleAdminAndHasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto),CheckIfRoleAddedToUserAlready(userOperationClaim), ThisUserHasAdminRoleAlready(userOperationClaim), ThisUserHasAdminRoleNow(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId,userOperationClaim));
             if (checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin != null)
             {
                 return checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin;

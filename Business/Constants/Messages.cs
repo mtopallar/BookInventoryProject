@@ -51,7 +51,6 @@ namespace Business.Constants
         public static string GetBookForAddToLibraryByAuthorIdSuccessfully = "Yazara göre kitaplar kütüphane formatında başarıyla listelenmiştir.";
         public static string GetBooksForAddToLibraryListByNativeStatueSuccessfully = "Yerli / yabancı seçiminize göre kitap listesi başarıyla listelenmiştir.";
         public static string GetBookForAddToLibraryByGenreIdSuccessfully = "Türe göre kitaplar kütüphane formatında başarıyla listelenmiştir.";
-        public static string BookAddedAlreadyBefore = "Kitap sistemde zaten mevcut.";
         public static string CanNotFindAnyBook = "Sistemde kullanılabilir herhangi bir kitap bulunmamaktadır.";
         public static string WrongBookId = "Kitap detaylarına ulaşılamıyor. Hatalı id.";
         public static string WrongIsbnNumber = "ISBN numarası hatalı ya da belirtilen ISBN numarasına sahip sistemde mevcut değil.";
@@ -60,6 +59,8 @@ namespace Business.Constants
         public static string WrongAuthor = "Sistemde belirtilen yazara ait kitap mevcut değil.";
         public static string NoBookByThisNativeSelection = "Mevcut yerli / yabancı seçiminize göre sistemde kitap mevcut değil.";
         public static string WrongGenre = "Sistemde belirtilen türde kitap mevcut değil.";
+        public static string AnotherBookHasThisIsbn = "Bu ISBN numarası başka bir kitap için kullanılmış. Lütfen kontrol ediniz.";
+        public static string IsbnTryToUpdateAddedBefore = "Güncellemek için kullandığınız ISBN numarası sistemde bulunan başka bir kitaba ait. Lütfen kontrol ediniz.";
 
         //Genres
         public static string GetAllGenresSuccessfully = "Tüm türler başarıyla listelendi.";
@@ -171,5 +172,6 @@ namespace Business.Constants
 
         //BookValidator
         public static string IsbnNotValid = "ISBN numarası 13 karakter olmalı ve sadece rakamdan oluşmalıdır.";
+        
     }
 }
