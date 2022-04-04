@@ -18,7 +18,7 @@ namespace Business.Abstract
         IDataResult<List<UserOperationClaim>> GetByClaimId(int operationClaimId); //api de olmayacak. OperationClaim manager Delete içinde kullanacak.
         IResult Add(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto);
         IResult AddUserRoleForUsers(UserOperationClaim userClaim); //apide görünmesi gerekmez.
-        IResult Update(UserOperationClaim userOperationClaim);
+        IResult Update(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto); //apide var ancak fe de kullanmadım
         IResult Delete(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto);
         IResult DeleteClaimFromAllUsersWhenClaimDeleted(UserOperationClaim userOperationClaim); //apide olmayacak iç metod olacak.
         IResult DeleteForUsersOwnClaim(int userId); //apide olması gerekmez.

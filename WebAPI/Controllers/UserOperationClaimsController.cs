@@ -46,9 +46,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")] //angular fe de kullanmadım.
-        public IActionResult Update(UserOperationClaim userOperationClaim)
+        public IActionResult Update(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto)
         {
-            var result = _userOperationClaimService.Update(userOperationClaim);
+            var result = _userOperationClaimService.Update(userOperationClaimWithAttemptingUserIdDto);
             if (result.Success)
             {
                 return Ok(result);

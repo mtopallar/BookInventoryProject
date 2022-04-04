@@ -106,12 +106,20 @@ namespace Business.Concrete
         [SecuredOperation("admin,user.admin")]
         [ValidationAspect(typeof(UserOperationClaimValidator))]
         [CacheRemoveAspect("IUserService.Get")]
-        public IResult Update(UserOperationClaim userOperationClaim)
+        public IResult Update(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto)
         {
-            var checkIfRoleAddedBefore = BusinessRules.Run(CheckIfRoleAddedToUserAlready(userOperationClaim), CanNotDeleteOrUpdateUserRole(userOperationClaim));
-            if (checkIfRoleAddedBefore != null)
+            UserOperationClaim userOperationClaim = new UserOperationClaim
             {
-                return checkIfRoleAddedBefore;
+                Id = userOperationClaimWithAttemptingUserIdDto.Id,
+                UserId = userOperationClaimWithAttemptingUserIdDto.UserId,
+                OperationClaimId = userOperationClaimWithAttemptingUserIdDto.OperationClaimId
+            };
+
+            var checkIfUpdateSutable = BusinessRules.Run(CanNotDeleteOrUpdateUserRole(userOperationClaim),IsTheRoleAdminAndHasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto),CheckIfRoleAddedToUserAlready(userOperationClaim), ThisUserHasAdminRoleAlready(userOperationClaim), ThisUserHasAdminRoleNow(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId,userOperationClaim));
+
+            if (checkIfUpdateSutable != null)
+            {
+                return checkIfUpdateSutable;
             }
 
             var tryToGetUserOperationClaim = _userOperationClaimDal.Get(u => u.Id == userOperationClaim.Id);
