@@ -166,7 +166,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Add(Book book)
         {
-            var isAddedIsbnUsedBefore = BusinessRules.Run(IsIsbnUserdBefore(book));
+            var isAddedIsbnUsedBefore = BusinessRules.Run(IsBookAddedBefore(book),IsIsbnUserdBefore(book));
 
             if (isAddedIsbnUsedBefore != null)
             {
@@ -183,7 +183,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(BookValidator))]
         public IResult Update(Book book)
         {
-            var isUpdatedIsbnUsedBefore = BusinessRules.Run(IsIsbnUserdBefore(book));
+            var isUpdatedIsbnUsedBefore = BusinessRules.Run(IsBookAddedBefore(book),IsIsbnUserdBefore(book));
             if (isUpdatedIsbnUsedBefore != null)
             {
                 return isUpdatedIsbnUsedBefore;
@@ -200,6 +200,33 @@ namespace Business.Concrete
             tryToGetBook.Data.GenreId = book.GenreId;
             _bookDal.Update(tryToGetBook.Data);
             return new SuccessResult(Messages.BookUpdatedSuccessfully);
+        }
+
+        private IResult IsBookAddedBefore(Book book)
+        {
+            var editedBookName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
+            if (book.Id == 0)
+            {
+                var tryGetBook = _bookDal.Get(b => b.AuthorId == book.AuthorId && b.GenreId == book.GenreId && b.Isbn == book.Isbn &&
+                                                   b.Name == editedBookName && b.PublisherId == book.PublisherId);
+                if (tryGetBook != null)
+                {
+                    return new ErrorResult(Messages.ThisBookAddedAlready);
+                }
+
+                return new SuccessResult();
+            }
+            else
+            {
+                var tryGetBook = _bookDal.Get(b => b.AuthorId == book.AuthorId && b.GenreId == book.GenreId && b.Isbn == book.Isbn &&
+                                                   b.Name == editedBookName && b.PublisherId == book.PublisherId && b.Id != book.Id);
+                if (tryGetBook != null)
+                {
+                    return new ErrorResult(Messages.UpdatedingBookAlreadyInLibrary);
+                }
+
+                return new SuccessResult();
+            }
         }
         
 

@@ -60,7 +60,9 @@ namespace Business.Constants
         public static string NoBookByThisNativeSelection = "Mevcut yerli / yabancı seçiminize göre sistemde kitap mevcut değil.";
         public static string WrongGenre = "Sistemde belirtilen türde kitap mevcut değil.";
         public static string AnotherBookHasThisIsbn = "Bu ISBN numarası başka bir kitap için kullanılmış. Lütfen kontrol ediniz.";
-        public static string IsbnTryToUpdateAddedBefore = "Güncellemek için kullandığınız ISBN numarası sistemde bulunan başka bir kitaba ait. Lütfen kontrol ediniz.";
+        public static string IsbnTryToUpdateAddedBefore = "Güncelleme için kullandığınız ISBN numarası sistemde bulunan başka bir kitaba ait. Lütfen kontrol ediniz.";
+        public static string ThisBookAddedAlready = "Kitap sistemde zaten mevcut.";
+        public static string UpdatedingBookAlreadyInLibrary = "Yapmaya çalıştığınız güncelleme zaten sistemde mevcut olan bir kitaba ait. Lütfen kontrol ediniz.";
 
         //Genres
         public static string GetAllGenresSuccessfully = "Tüm türler başarıyla listelendi.";
