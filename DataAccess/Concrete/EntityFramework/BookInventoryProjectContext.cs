@@ -13,6 +13,7 @@ namespace DataAccess.Concrete.EntityFramework
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //PC
             optionsBuilder.UseSqlServer(
                 @"Server=DESKTOP-AHNUQF4\SQLEXPRESS; Database=BookInventoryProject; Trusted_Connection=true");
             
