@@ -174,6 +174,11 @@ namespace Business.Constants
 
         //BookValidator
         public static string IsbnNotValid = "ISBN numarası 13 karakter olmalı ve sadece rakamdan oluşmalıdır.";
-        
+
+        //UserForLogin / UserForRegister Validator
+        public static string PasswordNeedsCapitalLetter = "Parola büyük harf içermelidir.";
+        public static string PasswordNeedsLowerCase = "Parola küçük harf içermelidir.";
+        public static string PasswordNeedsNumericCharacter = "Parola rakam içermelidir.";
+
     }
 }

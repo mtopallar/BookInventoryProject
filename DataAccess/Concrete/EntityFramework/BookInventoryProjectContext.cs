@@ -15,6 +15,10 @@ namespace DataAccess.Concrete.EntityFramework
         {
             optionsBuilder.UseSqlServer(
                 @"Server=DESKTOP-AHNUQF4\SQLEXPRESS; Database=BookInventoryProject; Trusted_Connection=true");
+            
+            //Notebook
+            //optionsBuilder.UseSqlServer(
+            //    @"Server=DESKTOP-TJTQLM7\SQLEXPRESS; Database=BookInventoryProject; Trusted_Connection=true");
         }
 
         public DbSet<Author> Authors { get; set; }
