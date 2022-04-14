@@ -26,6 +26,7 @@ namespace Business.Concrete
         {
             _authorDal = authorDal;
         }
+
         [SecuredOperation("user")]
         [CacheAspect()]
         public IDataResult<List<Author>> GetAll()
@@ -61,6 +62,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<Author>(_authorDal.Get(a => a.Id == id && a.Active), Messages.GetAuthorByIdSuccessfully);
         }
+
         [SecuredOperation("admin,author.admin")]
         [CacheRemoveAspect("IAuthorService.Get")]
         [TransactionScopeAspect]
@@ -89,6 +91,7 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.AuthorAddedSuccessfully);
         }
+
         [SecuredOperation("admin,author.admin")]
         [CacheRemoveAspect("IAuthorService.Get")]
         [TransactionScopeAspect]
@@ -118,6 +121,7 @@ namespace Business.Concrete
             _authorDal.Update(tryToGetAuthor.Data);
             return new SuccessResult(Messages.AuthorUpdatedSuccessfully);
         }
+
         [SecuredOperation("admin,author.admin")]
         [CacheRemoveAspect("IAuthorService.Get")]
         [TransactionScopeAspect]

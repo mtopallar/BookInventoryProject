@@ -112,6 +112,7 @@ namespace Business.Concrete
 
             return new SuccessDataResult<List<BookForUserDto>>(dtoHasNote, Messages.GetUsersAllBooksWichHasNoteSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetByPublisherId(int userId, int publisherId)
         {
@@ -123,6 +124,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBooksByPublisherId);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetByAuthorId(int userId, int authorId)
         {
@@ -158,6 +160,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBookByGenreIdSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<BookForUserDto>> GetByReadStatue(int userId, bool readStatue)
         {
@@ -168,6 +171,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<BookForUserDto>>(result, Messages.GetUsersAllBookByReadStatueSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<UserBook>> GetAllUserBooks(int userId)
         {
@@ -191,6 +195,7 @@ namespace Business.Concrete
             _userBookDal.Add(userBook);
             return new SuccessResult(Messages.UserBookAddedSuccessfully);
         }
+
         [SecuredOperation("user")]
         [ValidationAspect(typeof(UserBookValidator))]
         [CacheRemoveAspect("IUserBookService.Get")]
@@ -215,6 +220,7 @@ namespace Business.Concrete
             _userBookDal.Update(tryToGetUserBook);
             return new SuccessResult(Messages.UserBookUpdatedSuccessfully);
         }
+
         [SecuredOperation("user")]
         [CacheRemoveAspect("IUserBookService.Get")]
         public IResult Delete(UserBook userBook)

@@ -110,12 +110,16 @@ namespace Business.Concrete
             _userOperationClaimDal.Add(userOperationClaim);
             return new SuccessResult(Messages.UserOperationClaimAddedSuccessfully);
         }
+
+
         // AddUserRoleForUsers SecuredOperation Olamaz. user rolünü burası atayacak.
         public IResult AddUserRoleForUsers(UserOperationClaim userOperationClaim)
         {
             _userOperationClaimDal.Add(userOperationClaim);
             return new SuccessResult(Messages.UserRoleSuccessfullyAddedToUser);
         }
+
+
         [SecuredOperation("admin,user.admin")]
         [ValidationAspect(typeof(UserOperationClaimValidator))]
         [CacheRemoveAspect("IUserService.Get")]
@@ -156,6 +160,8 @@ namespace Business.Concrete
             _userOperationClaimDal.Update(tryToGetUserOperationClaim);
             return new SuccessResult(Messages.UserOperationClaimUpdatedSuccessfully);
         }
+
+
         [SecuredOperation("admin,user.admin")]
         [CacheRemoveAspect("IUserService.Get")]
         public IResult Delete(UserOperationClaimWithAttemptingUserIdDto userOperationClaimWithAttemptingUserIdDto)
@@ -251,7 +257,7 @@ namespace Business.Concrete
             var getAdminRoleFirst = _operationClaimService.Value.GetByClaimNameIfClaimActive("admin").Data;
             var getUsersOperationClaimsByUserId = _userOperationClaimDal.GetAll(u => u.UserId == userOperationClaim.UserId);
             var getUserRole = _operationClaimService.Value.GetByClaimNameIfClaimActive("user").Data;
-
+            // if deki && userOperationClaim.OperationClaimId != getUserRole.Id kısmı admin olan bir kullanıcıdan user rolü yanlışlıkla silinirse onu tekrar ekleyebilmek için. Aksi halde user rolünü eklemeye kalkarken bu kullanıcı zaten admin yetkisine sahip şeklinde hata döndürür.
             if (getUsersOperationClaimsByUserId.Exists(u => u.OperationClaimId == getAdminRoleFirst.Id) && userOperationClaim.OperationClaimId != getUserRole.Id)
             {
                 return new ErrorResult(Messages.ThisUserHasAdminRoleAlready);

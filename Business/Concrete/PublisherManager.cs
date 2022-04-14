@@ -27,6 +27,7 @@ namespace Business.Concrete
         {
             _publisherDal = publisherDal;
         }
+
         [SecuredOperation("user")]
         [CacheAspect()]
         public IDataResult<List<Publisher>> GetAll()
@@ -62,6 +63,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<Publisher>(result, Messages.GetPublisherByIdSuccessfully);
         }
+
         [SecuredOperation("admin,publisher.admin")]
         [TransactionScopeAspect]
         [ValidationAspect(typeof(PublisherValidator))]
@@ -89,6 +91,7 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.PublisherAddedSuccessfully);
         }
+
         [SecuredOperation("admin,publisher.admin")]
         [TransactionScopeAspect]
         [ValidationAspect(typeof(PublisherValidator))]

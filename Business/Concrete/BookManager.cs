@@ -33,6 +33,7 @@ namespace Business.Concrete
             _authorService = authorService;
             _genreService = genreService;
         }
+
         [SecuredOperation("admin,book.admin")]
         [CacheAspect()]
         public IDataResult<List<Book>> GetAll()
@@ -44,6 +45,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Book>>(result, Messages.GetAllBooksSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<Book> GetById(int id)
         {
@@ -54,6 +56,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<Book>(result, Messages.GetBookByIdSuccessfully);
         }
+
         [SecuredOperation("user")]
         [CacheAspect()]
         public IDataResult<List<BookForAddToLibraryDto>> GetAllForAddToLibrary()
@@ -65,6 +68,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetAllBooksForAddToLibrarySuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<BookForAddToLibraryDto> GetByIdForAddToLibrary(int id)
         {
@@ -86,6 +90,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<BookForAddToLibraryDto>(result.Single(), Messages.GetBookForAddToLibraryByIsbnSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByBookNameForAddToLibrary(string bookName)
         {
@@ -96,6 +101,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByBookNameSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByPublisherIdForAddToLibrary(int publisherId)
         {
@@ -111,6 +117,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByPublisherIdSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByAuthorIdForAddToLibrary(int authorId)
         {
@@ -129,6 +136,7 @@ namespace Business.Concrete
 
             return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBookForAddToLibraryByAuthorIdSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByNativeStatueForAddToLibrary(bool native)
         {
@@ -139,8 +147,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<BookForAddToLibraryDto>>(result, Messages.GetBooksForAddToLibraryListByNativeStatueSuccessfully);
         }
-
-
+        
         [SecuredOperation("user")]
         public IDataResult<List<BookForAddToLibraryDto>> GetListByGenreIdForAddToLibrary(int genreId)
         {
@@ -177,6 +184,7 @@ namespace Business.Concrete
             _bookDal.Add(book);
             return new SuccessResult(Messages.BookAddedSuccessfully);
         }
+
         [SecuredOperation("admin,book.admin")]
         [CacheRemoveAspect("IBookService.Get")]
         [TransactionScopeAspect]

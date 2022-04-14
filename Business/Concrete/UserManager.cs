@@ -47,6 +47,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<OperationClaim>>(usersClaims, Messages.GetUsersAllClaimsSuccessfully);
         }
+
         [SecuredOperation("admin,user.admin")]
         [CacheAspect()]
         public IDataResult<List<UserWithDetailsAndRolesDto>> GetAllUserDetailsWithRoles()
@@ -56,6 +57,7 @@ namespace Business.Concrete
             var addRolesToDtos = InsertRolesToUserDetailDto(usersDetailsWithoutRoleList);
             return new SuccessDataResult<List<UserWithDetailsAndRolesDto>>(addRolesToDtos, Messages.GetAllUserDetailsWithRolesSuccessfully);
         }
+
         [SecuredOperation("user")]
         public IDataResult<UserWithDetailsAndRolesDto> GetUserDetailsWithRolesByUserId(int userId)
         {
@@ -82,7 +84,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<User>(currentMail, Messages.GetUserByEmailSuccessfully);
         }
-        //[SecuredOperation("admin,user.admin")] api de yok.
+        
         public IDataResult<User> GetById(int id)
         {
             var result = _userDal.Get(u => u.Id == id);
@@ -92,6 +94,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<User>(result, Messages.GetUserByIdSuccessfully);
         }
+
         [ValidationAspect(typeof(UserValidator))]
         [CacheRemoveAspect("IUserService.Get")]
         [TransactionScopeAspect]
@@ -111,6 +114,7 @@ namespace Business.Concrete
 
             return new ErrorResult(Messages.UserRoleMustBeAddedAndActive);
         }
+
         [SecuredOperation("user")]
         [ValidationAspect(typeof(UserForUpdateValidator))]
         [CacheRemoveAspect("IUserService.Get")]
@@ -160,6 +164,7 @@ namespace Business.Concrete
             }
             return new SuccessResult(Messages.UserAndUsersBooksDeletedSuccessfullyByAdmin);
         }
+
         [SecuredOperation("user")]
         [ValidationAspect(typeof(UserForDeleteValidator))]
         [CacheRemoveAspect("IUserService.Get")]

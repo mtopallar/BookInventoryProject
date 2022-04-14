@@ -48,6 +48,7 @@ namespace Business.Concrete
             return new ErrorDataResult<User>(addUser.Message);
 
         }
+        
         [ValidationAspect(typeof(UserForLoginValidator))]
         public IDataResult<User> Login(UserForLoginDto userForLoginDto)
         {

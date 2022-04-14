@@ -37,6 +37,7 @@ namespace Business.Concrete
             _operationClaimDal = operationClaimDal;
             _userOperationClaimService = userOperationClaimService;
         }
+
         [SecuredOperation("admin,user.admin")]
         public IDataResult<List<OperationClaim>> GetAll()
         {
@@ -44,12 +45,14 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OperationClaim>>(_operationClaimDal.GetAll(o=>o.Active),
                 Messages.GetAllOperationClaimsSuccessfully);
         }
+
         [SecuredOperation("admin")]
         public IDataResult<List<OperationClaim>> GetPredefinedClaims()
         {
             return new SuccessDataResult<List<OperationClaim>>(_predefinedClaims,
                 Messages.PredefinedClaimsListedSuccessfully);
         }
+
         [SecuredOperation("admin,user.admin")]
         public IDataResult<OperationClaim> GetById(int id)
         {
@@ -70,6 +73,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<OperationClaim>(result, Messages.GetOperationClaimByNameSuccessfully);
         }
+
         [SecuredOperation("admin")]
         [CacheRemoveAspect("IUserService.Get")]
         public IResult Add(OperationClaim operationClaim)
@@ -95,6 +99,7 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.ClaimAddedSuccessfully);
         }
+
         [SecuredOperation("admin")]
         [CacheRemoveAspect("IUserService.Get")]
         [TransactionScopeAspect]

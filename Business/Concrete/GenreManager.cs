@@ -26,6 +26,7 @@ namespace Business.Concrete
         {
             _genreDal = genreDal;
         }
+
         [SecuredOperation("user")]
         [CacheAspect()]
         public IDataResult<List<Genre>> GetAll()
@@ -61,6 +62,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<Genre>(result, Messages.GetGenreByIdSuccessfully);
         }
+
         [SecuredOperation("admin,genre.admin")]
         [CacheRemoveAspect("IGenreService.Get")]
         [TransactionScopeAspect]
@@ -87,6 +89,7 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.GenreAddedSuccessfully);
         }
+
         [SecuredOperation("admin,genre.admin")]
         [CacheRemoveAspect("IGenreService.Get")]
         [TransactionScopeAspect]
@@ -114,6 +117,7 @@ namespace Business.Concrete
             _genreDal.Update(tryToGetGenre.Data);
             return new SuccessResult(Messages.GenreUpdatedSuccessfully);
         }
+
         [SecuredOperation("admin,genre.admin")]
         [CacheRemoveAspect("IGenreService.Get")]
         [TransactionScopeAspect]
