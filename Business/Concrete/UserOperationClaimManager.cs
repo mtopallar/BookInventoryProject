@@ -88,10 +88,23 @@ namespace Business.Concrete
                 UserId = userOperationClaimWithAttemptingUserIdDto.UserId,
                 OperationClaimId = userOperationClaimWithAttemptingUserIdDto.OperationClaimId
             };
-            var checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin = BusinessRules.Run( ThisUserHasAdminRoleNow(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId, userOperationClaim));
+            
+            var checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin = BusinessRules.Run(IsTheRoleAdminAndHasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto), CheckIfRoleAddedToUserAlready(userOperationClaim), ThisUserHasAdminRoleAlready(userOperationClaim));
+
             if (checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin != null)
             {
                 return checkIfRoleAddedBeforeAndHasUserAdminRoleOrRoleTryToAddIsAdmin;
+            }
+
+            var claimToAdd = _operationClaimService.Value.GetById(userOperationClaim.OperationClaimId);
+
+            if (claimToAdd.Data.Name == "admin")
+            {
+                var result = BusinessRules.Run(ThisUserHasAdminRoleNow(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId, userOperationClaim));
+                if (result!=null)
+                {
+                    return result;
+                }
             }
 
             _userOperationClaimDal.Add(userOperationClaim);
@@ -115,11 +128,22 @@ namespace Business.Concrete
                 OperationClaimId = userOperationClaimWithAttemptingUserIdDto.OperationClaimId
             };
 
-            var checkIfUpdateSutable = BusinessRules.Run(CanNotDeleteOrUpdateUserRole(userOperationClaim), ThisUserHasAdminRoleNow(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId, userOperationClaim));
+            var checkIfUpdateSutable = BusinessRules.Run(CanNotDeleteOrUpdateUserRole(userOperationClaim), IsTheRoleAdminAndHasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto), CheckIfRoleAddedToUserAlready(userOperationClaim), ThisUserHasAdminRoleAlready(userOperationClaim));
 
             if (checkIfUpdateSutable != null)
             {
                 return checkIfUpdateSutable;
+            }
+
+            var claimToUpdate = _operationClaimService.Value.GetById(userOperationClaim.OperationClaimId);
+
+            if (claimToUpdate.Data.Name == "admin" || claimToUpdate.Data.Name == "user")
+            {
+                var result = BusinessRules.Run(ThisUserHasAdminRoleNow(userOperationClaimWithAttemptingUserIdDto.AttemptingUserId, userOperationClaim));
+                if (result != null)
+                {
+                    return result;
+                }
             }
 
             var tryToGetUserOperationClaim = _userOperationClaimDal.Get(u => u.Id == userOperationClaim.Id);
@@ -141,7 +165,7 @@ namespace Business.Concrete
                 Id = userOperationClaimWithAttemptingUserIdDto.Id
             };
 
-            var checkRoleAndAttemptingUserRoleSuitableForDelete = BusinessRules.Run(CanNotDeleteOrUpdateUserRole(userOperationClaim), IsTheRoleAdminAndHasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto), CheckIfRoleAdminAndSystemHasAnotherAdmin(userOperationClaim));
+            var checkRoleAndAttemptingUserRoleSuitableForDelete = BusinessRules.Run(CanNotDeleteOrUpdateUserRole(userOperationClaim), IsTheRoleAdminAndHasAttemptingUserAdminRole(userOperationClaimWithAttemptingUserIdDto),CheckIfRoleAdminAndSystemHasAnotherAdmin(userOperationClaim));
             if (checkRoleAndAttemptingUserRoleSuitableForDelete != null)
             {
                 return checkRoleAndAttemptingUserRoleSuitableForDelete;
@@ -227,7 +251,8 @@ namespace Business.Concrete
             var getAdminRoleFirst = _operationClaimService.Value.GetByClaimNameIfClaimActive("admin").Data;
             var getUsersOperationClaimsByUserId = _userOperationClaimDal.GetAll(u => u.UserId == userOperationClaim.UserId);
             var getUserRole = _operationClaimService.Value.GetByClaimNameIfClaimActive("user").Data;
-            if (getAdminRoleFirst != null && getUsersOperationClaimsByUserId.Any(u => u.OperationClaimId == getAdminRoleFirst.Id) && userOperationClaim.OperationClaimId != getUserRole.Id)
+
+            if (getUsersOperationClaimsByUserId.Exists(u => u.OperationClaimId == getAdminRoleFirst.Id) && userOperationClaim.OperationClaimId != getUserRole.Id)
             {
                 return new ErrorResult(Messages.ThisUserHasAdminRoleAlready);
             }
@@ -237,18 +262,6 @@ namespace Business.Concrete
 
         private IResult ThisUserHasAdminRoleNow(int attemptedUserId, UserOperationClaim userOperationClaim)
         {
-            var result = BusinessRules.Run(IsTheRoleAdminAndHasAttemptingUserAdminRole(new UserOperationClaimWithAttemptingUserIdDto
-            {
-                Id = userOperationClaim.Id,
-                UserId = userOperationClaim.UserId,
-                OperationClaimId = userOperationClaim.OperationClaimId,
-                AttemptingUserId = attemptedUserId
-            }), CheckIfRoleAddedToUserAlready(userOperationClaim), ThisUserHasAdminRoleAlready(userOperationClaim));
-
-            if (result != null)
-            {
-                return result;
-            }
             
             var getUsersOperationClaimsByUserId = _userOperationClaimDal.GetAll(u => u.UserId == userOperationClaim.UserId);
             var getAdminRole = _operationClaimService.Value.GetByClaimNameIfClaimActive("admin").Data; //kullanıcıya admin rolü ekleneceği için null check gerekmez.
@@ -284,6 +297,7 @@ namespace Business.Concrete
 
             if (userOperationClaimWithAttemptingUserIdDto.OperationClaimId != 0)
             {
+                //operationClaimID != 0 ise bu bir eklemedir. == 0 ise silmedir.
 
                 if (userOperationClaimWithAttemptingUserIdDto.OperationClaimId == getAdminRole.Data.Id)
                 {
