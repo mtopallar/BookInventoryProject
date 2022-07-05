@@ -16,7 +16,7 @@ namespace Core.Utilities.StringEditor
             return editedFinishentry;
         }
 
-        public static string ToTrLocaleCamelCase(string entry)
+        public static string ToTrLocaleTitleCase(string entry)
         {
             var toLoverCase = entry.ToLower();
             TextInfo textInfo = new CultureInfo("tr-TR", false).TextInfo;
@@ -24,7 +24,7 @@ namespace Core.Utilities.StringEditor
             return editedText;
         }
 
-        public static string ToEngLocaleCamelCase(string entry)
+        public static string ToEngLocaleTitleCase(string entry)
         {
             var toLoverCase = entry.ToLower();
             var engText= StringReplace(toLoverCase);
