@@ -34,8 +34,8 @@ namespace Business.Concrete
             var user = new User
             {
                 Email = StringEditorHelper.TrimStartAndFinish(userForRegisterDto.Email),
-                FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(userForRegisterDto.FirstName)),
-                LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(userForRegisterDto.LastName)),
+                FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(userForRegisterDto.FirstName)),
+                LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(userForRegisterDto.LastName)),
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt
             };

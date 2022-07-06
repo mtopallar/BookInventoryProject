@@ -142,19 +142,19 @@ namespace Business.Concrete
             if (!author.Native)
             {
                 author.FirstName =
-                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToEngLocaleCamelCase(author.FirstName));
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToEngLocaleTitleCase(author.FirstName));
 
                 author.LastName =
-                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToEngLocaleCamelCase(author.LastName));
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToEngLocaleTitleCase(author.LastName));
 
             }
             else if (author.Native)
             {
                 author.FirstName =
-                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(author.FirstName));
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(author.FirstName));
 
                 author.LastName =
-                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(author.LastName));
+                    StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(author.LastName));
             }
 
             return author;

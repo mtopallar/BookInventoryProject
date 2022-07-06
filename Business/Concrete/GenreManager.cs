@@ -78,7 +78,7 @@ namespace Business.Concrete
             var result = IsGenreAddedBeforeAndNotActiveNow(genre);
             if (result == null)
             {
-                genre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+                genre.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(genre.Name));
                 genre.Active = true;
                 _genreDal.Add(genre);
             }
@@ -113,7 +113,7 @@ namespace Business.Concrete
             {
                 return new ErrorResult(tryToGetGenre.Message);
             }
-            tryToGetGenre.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+            tryToGetGenre.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(genre.Name));
             _genreDal.Update(tryToGetGenre.Data);
             return new SuccessResult(Messages.GenreUpdatedSuccessfully);
         }
@@ -137,7 +137,7 @@ namespace Business.Concrete
         private Genre IsGenreAddedBeforeAndNotActiveNow(Genre genre)
         {
             var genreNameToFind =
-                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(genre.Name));
             var tryToGetGenre = _genreDal.Get(g => g.Name == genreNameToFind && g.Active == false);
             if (tryToGetGenre != null)
             {
@@ -151,7 +151,7 @@ namespace Business.Concrete
         private IResult IsGenreAlreadyExistAndActive(Genre genre)
         {
             var genreNameToFind =
-                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(genre.Name));
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(genre.Name));
             var tryToGetGenre = _genreDal.Get(g => g.Name == genreNameToFind && g.Active);
 
             if (tryToGetGenre != null)

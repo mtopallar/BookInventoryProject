@@ -80,7 +80,7 @@ namespace Business.Concrete
 
             if (result == null)
             {
-                publisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+                publisher.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(publisher.Name));
                 publisher.Active = true;
                 _publisherDal.Add(publisher);
             }
@@ -116,7 +116,7 @@ namespace Business.Concrete
             {
                 return new ErrorResult(tryToGetPublisher.Message);
             }
-            tryToGetPublisher.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+            tryToGetPublisher.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(publisher.Name));
             _publisherDal.Update(tryToGetPublisher.Data);
             return new SuccessResult(Messages.UpdatedPublisherSuccessfully);
         }
@@ -139,7 +139,7 @@ namespace Business.Concrete
         private Publisher IsPublisherAddedBeforeAndNotActiveNow(Publisher publisher)
         {
             var nameEditedPublisher =
-                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(publisher.Name));
             var tryToGetPublisher = _publisherDal.Get(p => p.Name == nameEditedPublisher && p.Active == false);
 
             if (tryToGetPublisher != null)
@@ -154,7 +154,7 @@ namespace Business.Concrete
         private IResult IsPublisherAlreadyExistAndActive(Publisher publisher)
         {
             var nameEditedPublisher =
-                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(publisher.Name));
+                StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(publisher.Name));
             var tryToGetPublisher = _publisherDal.Get(p => p.Name == nameEditedPublisher && p.Active);
 
             if (tryToGetPublisher != null)

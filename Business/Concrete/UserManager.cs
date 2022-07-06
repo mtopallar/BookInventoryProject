@@ -207,8 +207,8 @@ namespace Business.Concrete
                 user = new User
                 {
                     Id = existUser.Id,
-                    FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(updateUserDto.FirstName)),
-                    LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(updateUserDto.LastName)),
+                    FirstName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(updateUserDto.FirstName)),
+                    LastName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(updateUserDto.LastName)),
                     Email = StringEditorHelper.TrimStartAndFinish(updateUserDto.NewEmail),
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt

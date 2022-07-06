@@ -180,7 +180,7 @@ namespace Business.Concrete
                 return isAddedIsbnUsedBefore;
             }
 
-            book.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
+            book.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(book.Name));
             _bookDal.Add(book);
             return new SuccessResult(Messages.BookAddedSuccessfully);
         }
@@ -201,7 +201,7 @@ namespace Business.Concrete
             {
                 return new ErrorResult(tryToGetBook.Message);
             }
-            tryToGetBook.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
+            tryToGetBook.Data.Name = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(book.Name));
             tryToGetBook.Data.Isbn = book.Isbn;
             tryToGetBook.Data.PublisherId = book.PublisherId;
             tryToGetBook.Data.AuthorId = book.AuthorId;
@@ -212,7 +212,7 @@ namespace Business.Concrete
 
         private IResult IsBookAddedBefore(Book book)
         {
-            var editedBookName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleCamelCase(book.Name));
+            var editedBookName = StringEditorHelper.TrimStartAndFinish(StringEditorHelper.ToTrLocaleTitleCase(book.Name));
             if (book.Id == 0)
             {
                 var tryGetBook = _bookDal.Get(b => b.AuthorId == book.AuthorId && b.GenreId == book.GenreId && b.Isbn == book.Isbn &&
